@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HomeManageController {
 	@GetMapping("/admin")
 	public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		ModelAndView mav = new ModelAndView("admin/home/main");
+		ModelAndView mav = new ModelAndView("admin/main");
 		return mav;
 	}
 }
