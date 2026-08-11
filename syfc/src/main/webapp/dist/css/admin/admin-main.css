@@ -1,0 +1,149 @@
+@charset "UTF-8";
+
+.adminContainer {
+	width: 1024px;
+	margin: 40px auto 60px;
+}
+
+.adminHeader {
+	margin-bottom: 30px;
+	padding-bottom: 20px;
+	border-bottom: 2px solid #6b4ba1;
+}
+
+.adminTitle {
+	margin: 0 0 8px;
+	font-size: 26px;
+	font-weight: 700;
+	color: #333;
+}
+
+.adminDesc {
+	margin: 0;
+	font-size: 14px;
+	color: #777;
+}
+
+.adminMenuGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+
+.adminCard {
+	min-height: 230px;
+	padding: 24px;
+	border: 1px solid #e5e5e5;
+	border-radius: 10px;
+	background: #fff;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	transition: 0.2s;
+}
+
+.adminCard:hover {
+	border-color: #b9a8d4;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+	transform: translateY(-2px);
+}
+
+.cardIcon {
+	width: 48px;
+	height: 48px;
+	margin-bottom: 18px;
+	border-radius: 10px;
+	background: #f3eef8;
+	color: #6b4ba1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+}
+
+.cardContent {
+	flex: 1;
+}
+
+.cardContent h3 {
+	margin: 0 0 10px;
+	font-size: 18px;
+	font-weight: 700;
+	color: #333;
+}
+
+.cardContent p {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: #777;
+}
+
+.cardButton {
+	width: 100%;
+	height: 40px;
+	margin-top: 20px;
+	border: 1px solid #6b4ba1;
+	border-radius: 6px;
+	background: #fff;
+	color: #6b4ba1;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.cardButton:hover {
+	background: #6b4ba1;
+	color: #fff;
+}
+
+.disabledCard {
+	background: #fafafa;
+}
+
+.disabledCard:hover {
+	border-color: #e5e5e5;
+	box-shadow: none;
+	transform: none;
+}
+
+.disabledCard .cardIcon {
+	background: #f1f1f1;
+	color: #aaa;
+}
+
+.disabledCard .cardContent h3,
+.disabledCard .cardContent p {
+	color: #999;
+}
+
+.disabledButton {
+	border-color: #ddd;
+	background: #f5f5f5;
+	color: #aaa;
+	cursor: default;
+}
+
+.disabledButton:hover {
+	background: #f5f5f5;
+	color: #aaa;
+}
+
+@media (max-width: 1050px) {
+	.adminContainer {
+		width: auto;
+		margin: 30px 20px 50px;
+	}
+}
+
+@media (max-width: 800px) {
+	.adminMenuGrid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 550px) {
+	.adminMenuGrid {
+		grid-template-columns: 1fr;
+	}
+}

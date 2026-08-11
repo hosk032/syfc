@@ -1,0 +1,265 @@
+/* ===== 기본 스타일 Reset ===== */
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+body {
+	background-color: #f8f9fa; /* 메인 페이지 배경색과 통일 */
+	color: #333333;
+	min-height: 100vh;
+	padding: 40px 20px;
+}
+
+/* ===== 회원가입 컨테이너 ===== */
+.register-container {
+	background-color: #ffffff;
+	width: 100%;
+	max-width: 680px;
+	padding: 40px;
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	border: 1px solid #e9ecef;
+	margin:auto;
+}
+
+.register-header {
+	text-align: center;
+	margin-bottom: 32px;
+}
+
+.register-header h1 {
+	font-size: 26px;
+	font-weight: 800;
+	color: #1a1a1a;
+	margin-bottom: 6px;
+}
+
+.register-header h1 span {
+	color: #6b4ba1; /* 브랜드 메인 보라색 포인트 */
+}
+
+.register-header p {
+	font-size: 14px;
+	color: #868e96;
+}
+
+/* ===== 폼 섹션 스타일 ===== */
+.form-section {
+	margin-bottom: 28px;
+}
+
+.section-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: #6b4ba1;
+	border-bottom: 2px solid #f1f3f5;
+	padding-bottom: 8px;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* ===== Grid Layout ===== */
+.form-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+.full-width {
+	grid-column: span 2;
+}
+
+.input-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.input-group label {
+	font-size: 13px;
+	font-weight: 600;
+	color: #495057;
+}
+
+.input-wrapper {
+	display: flex;
+	gap: 8px;
+}
+
+.input-wrapper input {
+	flex: 1;
+}
+
+/* ===== Input Controls ===== */
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"],
+	input[type="date"], select {
+	width: 100%;
+	height: 44px;
+	padding: 0 14px;
+	background-color: #ffffff;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	color: #212529;
+	font-size: 14px;
+	outline: none;
+	transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+	border-color: #6b4ba1;
+	box-shadow: 0 0 0 3px rgba(107, 75, 161, 0.15);
+}
+
+input::placeholder {
+	color: #adb5bd;
+}
+
+input[readonly] {
+	background-color: #f8f9fa;
+}
+
+/* ===== 버튼 스타일 ===== */
+.btn-sub {
+	padding: 0 16px;
+	background-color: #ffffff;
+	color: #6b4ba1;
+	border: 1px solid #6b4ba1;
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+}
+
+.btn-sub:hover {
+	background-color: #6b4ba1;
+	color: #ffffff;
+}
+
+.btn-submit {
+	width: 100%;
+	height: 50px;
+	background-color: #6b4ba1;
+	color: #ffffff;
+	border: none;
+	border-radius: 10px;
+	font-size: 16px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	margin-top: 12px;
+}
+
+.btn-submit:hover {
+	background-color: #553982;
+	transform: translateY(-1px);
+}
+
+/* ===== 성별 / 포지션 라디오 버튼 Custom ===== */
+.radio-group {
+	display: flex;
+	gap: 10px;
+	height: 44px;
+}
+
+.radio-option {
+	flex: 1;
+	position: relative;
+}
+
+.radio-option input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.radio-option label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	color: #495057;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.radio-option input[type="radio"]:checked+label {
+	background-color: #f5f0ff;
+	border-color: #6b4ba1;
+	color: #6b4ba1;
+	font-weight: 700;
+}
+
+/* 반응형 모바일 처리 */
+@media ( max-width : 600px) {
+	.form-grid {
+		grid-template-columns: 1fr;
+	}
+	.full-width {
+		grid-column: span 1;
+	}
+	.register-container {
+		padding: 24px 16px;
+	}
+}
+
+/* ===== 프로필 사진 업로드 Custom ===== */
+.profile-avatar-wrapper {
+	position: relative;
+	width: 110px;
+	height: 110px;
+}
+
+.profile-avatar-preview {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: #f8f9fa;
+	border: 2px solid #e9ecef;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 52px;
+	color: #adb5bd;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.profile-upload-btn {
+	position: absolute;
+	bottom: 2px;
+	right: 2px;
+	width: 34px;
+	height: 34px;
+	background-color: #6b4ba1; /* 브랜드 보라색 */
+	color: #ffffff;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	cursor: pointer;
+	border: 2px solid #ffffff;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+	transition: all 0.2s ease;
+}
+
+.profile-upload-btn:hover {
+	background-color: #553982;
+	transform: scale(1.1);
+}
+
+.extra-small {
+	font-size: 12px;
+}

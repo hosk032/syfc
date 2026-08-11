@@ -1,0 +1,259 @@
+.profile-panel {
+    border: 1px solid #d9e1e8;
+    box-shadow: 0 8px 22px rgba(27, 49, 72, 0.06);
+}
+
+.profile-panel-title {
+    color: #1f2d3d;
+    font-weight: 700;
+}
+
+.profile-form {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.profile-primary {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 34px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #e3e8ed;
+}
+
+.profile-photo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.profile-photo-label {
+    margin: 0;
+}
+.profile-file-input {
+    width: 160px;
+    font-size: 12px;
+}
+
+.profile-image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 124px;
+    height: 124px;
+    border: 1px solid #cfd8e1;
+    border-radius: 50%;
+    color: #7190ad;
+    background: #f5f8fb;
+}
+
+.profile-image-box i {
+    font-size: 54px;
+}
+
+.profile-info-area {
+    min-width: 0;
+}
+
+.profile-info-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 24px;
+}
+
+.profile-form .form-label {
+    margin-bottom: 7px;
+    color: #34495e;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.profile-form .form-control,
+.profile-form .form-select {
+    min-height: 42px;
+    border-color: #ccd6df;
+    color: #243447;
+    box-shadow: none;
+}
+.preferred-position-field {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 24px;
+    border: 1px solid #e0e7ee;
+    border-radius: 6px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.preferred-position-field .form-label {
+    display: block;
+    margin-bottom: 14px;
+    color: #2d4962;
+    font-size: 15px;
+}
+
+.preferred-position-buttons {
+    display: flex;
+    justify-content: center;
+    width: min(100%, 420px);
+    gap: 10px;
+}
+
+.preferred-position-buttons button {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    border: 1px solid #bfcbd6;
+    border-radius: 6px;
+    color: #4b6277;
+    background-color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.preferred-position-buttons button:first-child {
+    border-radius: 6px;
+}
+
+.preferred-position-buttons button:last-child {
+    border-right: 1px solid #bfcbd6;
+    border-radius: 6px;
+}
+
+.preferred-position-buttons button:hover {
+    color: #176ec0;
+    background-color: #eef7ff;
+}
+
+.preferred-position-buttons button.active {
+    border-color: #1976d2;
+    color: #fff;
+    background-color: #1976d2;
+}
+
+.profile-form .form-control::placeholder {
+    color: #a6b2bd;
+}
+
+.profile-form .form-control:focus,
+.profile-form .form-select:focus {
+    border-color: #4c8bc8;
+    box-shadow: 0 0 0 3px rgba(76, 139, 200, 0.14);
+}
+.phone-fields {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 420px;
+}
+
+.phone-fields .form-select {
+    width: 82px;
+    flex: 0 0 82px;
+}
+
+.phone-fields .form-control {
+    width: 120px;
+    flex: 0 0 120px;
+}
+
+.phone-separator {
+    color: #506477;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.email-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(148px, 0.9fr);
+    align-items: center;
+    gap: 8px;
+}
+
+.email-at {
+    color: #506477;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.tel-area {
+    margin-top: 20px;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px 24px;
+    padding-top: 28px;
+}
+
+.address-field {
+    grid-column: 1 / -1;
+}
+
+.zip-row {
+    display: flex;
+    gap: 8px;
+}
+
+.zip-row .form-control {
+    max-width: 160px;
+}
+
+.postcode-btn,
+.profile-save-btn,
+.profile-reset-btn {
+    border: 0;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.postcode-btn {
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid #c9d6e2;
+    border-radius: 4px;
+    color: #356ea4;
+    background: #f7fbff;
+}
+
+.postcode-btn:hover {
+    background: #edf6ff;
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 30px;
+}
+
+.profile-save-btn,
+.profile-reset-btn {
+    min-width: 112px;
+    min-height: 42px;
+    border-radius: 4px;
+}
+
+.profile-save-btn {
+    color: #fff;
+    background: #1976d2;
+}
+
+.profile-save-btn:hover {
+    background: #1266b5;
+}
+
+.profile-reset-btn {
+    border: 1px solid #cbd5df;
+    color: #53687b;
+    background: #fff;
+}
+
+.profile-reset-btn:hover {
+    background: #f4f7fa;
+}
