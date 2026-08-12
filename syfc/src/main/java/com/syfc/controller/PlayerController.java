@@ -49,4 +49,9 @@ public class PlayerController {
 	public ModelAndView clubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
 	    return new ModelAndView("player/clubOwnerRequest");
 	}
+	@GetMapping("/member/matchApply")
+	public ModelAndView matchApplyForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    // WEB-INF/views/member/matchApply.jsp 파일로 이동
+	    return new ModelAndView("member/matchApply");
+	}
 }
