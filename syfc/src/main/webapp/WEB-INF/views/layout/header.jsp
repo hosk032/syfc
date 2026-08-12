@@ -83,7 +83,7 @@
 
 		<!-- 필터 태그 바 -->
 		<div class="tag-bar">
-			<button class="tag-btn" onclick="location.href='${pageContext.request.contextPath}/member/mypage';">
+			<button class="tag-btn" onclick="location.href='${pageContext.request.contextPath}/player/mypage';">
 				<i class="bi bi-person me-1"></i>내 프로필
 			</button>
 			<button class="tag-btn">
