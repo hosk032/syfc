@@ -1,0 +1,33 @@
+.clubJoin-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 30px;
+    margin-bottom: 28px;
+}
+
+.clubJoin-save-btn,
+.clubJoin-reset-btn {
+    min-width: 112px;
+    min-height: 42px;
+    border-radius: 4px;
+}
+
+.clubJoin-save-btn {
+    color: #fff;
+    background: #1976d2;
+}
+
+.clubJoin-save-btn:hover {
+    background: #1266b5;
+}
+
+.clubJoin-reset-btn {
+    border: 1px solid #cbd5df;
+    color: #53687b;
+    background: #fff;
+}
+
+.clubJoin-reset-btn:hover {
+    background: #f4f7fa;
+}

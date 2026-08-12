@@ -1,0 +1,82 @@
+/* My match participation history */
+.col-md-9 > .card {
+    border: 1px solid #dbe5ed;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.col-md-9 > .card > h4 {
+    margin-bottom: 26px !important;
+    padding-bottom: 15px !important;
+    border-color: #dce6ee !important;
+    color: #18344f;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.matchHistory-responsive {
+    overflow-x: auto;
+    border: 1px solid #e0e8ef;
+    border-radius: 9px;
+}
+
+.matchHistory-responsive .table {
+    min-width: 650px;
+    margin: 0;
+    color: #30475a;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.matchHistory-responsive .table thead th {
+    padding: 15px 18px;
+    border-top: 0;
+    border-bottom: 1px solid #cbd8e2;
+    color: #37536d;
+    background: #f4f8fb;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.matchHistory-responsive .table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.matchHistory-responsive .table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.matchHistory-responsive .table tbody td {
+    padding: 17px 18px;
+    border-color: #e7edf2;
+    background: #fff;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.matchHistory-responsive .table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.matchHistory-responsive .table tbody tr:hover td {
+    background: #f7fbff;
+}
+
+.matchHistory-responsive .table tbody td:first-child {
+    color: #1d3f5e;
+    font-weight: 700;
+}
+
+.matchHistory-responsive .table tbody td:nth-child(2) {
+    color: #60798e;
+    font-variant-numeric: tabular-nums;
+}
+
+.matchHistory-responsive .table tbody td:nth-child(3),
+.matchHistory-responsive .table tbody td:nth-child(4) {
+    color: #176db9;
+    font-size: 16px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
