@@ -50,7 +50,7 @@
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
-					<a href="${pageContext.request.contextPath}/player/matchApply" class="list-group-item list-group-item-action ps-4">신청 결과조회</a>
+					<a href="${pageContext.request.contextPath}/player/matchApply" class="list-group-item list-group-item-action ps-4">경기 신청 관리</a>
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
