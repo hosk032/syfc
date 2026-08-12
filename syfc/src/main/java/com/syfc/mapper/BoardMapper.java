@@ -14,6 +14,7 @@ public interface BoardMapper {
 	public void deleteListboard(List<Long> list) throws Exception;
 	
 	public int dataCount(Map<String, Object> map);
+	public List<BoardDTO> listBoard(Map<String, Object> map);
 	
 	public BoardDTO findById(long num);
 	public BoardDTO findByPrev(Map<String, Object> map);

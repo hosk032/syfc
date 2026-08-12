@@ -16,6 +16,14 @@ public class BoardDTO {
 	private String r_Reg_date;
 	private int r_Block;
 	
+	private String userName;
+	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	
 	public long getbNum() {
 		return bNum;

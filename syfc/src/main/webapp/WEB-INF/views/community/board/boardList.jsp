@@ -39,21 +39,33 @@
 				</div>
 			</div>
 
-			<div class="board-header">
-				<span>번호</span> 
-				<span>제목</span> 
-				<span>작성자</span> 
-				<span>작성일</span> 
-				<span>조회수</span>
-			</div>
-			
-			<div class="memo-row" onclick="location.href='${pageContext.request.contextPath}/community/boardDetail';">
-				<span>공지</span> 
-				<span>축구장 예약 이용 안내</span> 
-				<span>관리자</span> 
-				<span>2026-08-04</span> 
-				<span>80</span>
-			</div>
+	<table class="table table-hover board-list">
+	    <thead class="table-light">
+	        <tr>
+	            <th width="70">번호</th>
+	            <th>제목</th>
+	            <th width="100">작성자</th>
+	            <th width="120">작성일</th>
+	            <th width="70">조회수</th>
+	        </tr>
+	    </thead>
+	
+	    <tbody>
+	        <c:forEach var="dto" items="${list}" varStatus="status">
+	            <tr>
+	                <td>${dataCount - (page - 1) * size - status.index}</td>
+	                <td class="left">
+	                    <div class="text-wrap">
+	                        <a href="${boardDetailUrl}&num=${dto.bNum}" class="text-reset"> <c:out value="${dto.b_Subject}"/></a>
+	                    </div>
+	                </td>
+	                <td> ${dto.userName}</td>
+	                <td>${dto.b_Reg_date}</td>
+	                <td>${dto.b_HitCount}</td>
+	            </tr>
+	        </c:forEach>
+	    </tbody>
+	</table>
 			
 			<div class="row board-list-footer">
 				<div class="col">
@@ -65,8 +77,8 @@
 							<select name="schType" class="form-select">
 								<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
 								<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
-								<option value="subject" ${schType=="subject"?"selected":""}>제목</option>
-								<option value="content" ${schType=="content"?"selected":""}>내용</option>
+								<option value="subject" ${schType=="b_Subject"?"selected":""}>제목</option>
+								<option value="content" ${schType=="b_Content"?"selected":""}>내용</option>
 							</select>
 						</div>
 						<div class="col-auto p-1">
@@ -83,7 +95,7 @@
 				</div>
 			</div>
 			<div class="board-number">
-				<span>1 2 3</span>
+				${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 			</div>
 		</section>
 	</div>

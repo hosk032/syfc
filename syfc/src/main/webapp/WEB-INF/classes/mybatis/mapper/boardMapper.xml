@@ -16,8 +16,8 @@
 		<choose>
 			<when test="schType == 'all' ">
 				(
-					INSERT(subject, #{kwd}) &gt; 0
-						OR INSERT(content, #{kwd}) &gt; 0
+					INSTR(b_Subject, #{kwd}) &gt; 0
+						OR INSTR(b_Content, #{kwd}) &gt; 0
 				)
 			</when>
 			<otherwise>
@@ -37,9 +37,21 @@
  			</if>
  			AND b_Block = 0
  		</where>
- 		ORDER BY bNum DESC
  	</select>
 
+	<select id="listBoard" parameterType="map" resultType="com.syfc.dto.BoardDTO">
+		SELECT bNum, m.userName , b_Subject, b_HitCount, TO_CHAR(b_Reg_date, 'YYYY-MM-DD') b_Reg_date
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+	  	<if test="kwd != null and kwd != '' ">
+				<include refid="where-list"/>
+		</if>
+		AND b_Block = 0
+	   </where>
+	   ORDER BY bNum DESC
+	   OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
 
 	
 	
