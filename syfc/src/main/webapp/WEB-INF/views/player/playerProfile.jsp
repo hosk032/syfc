@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/clubOwnerRequestHistory.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/playerProfile.css" />
 </head>
 <body>
 
@@ -50,9 +50,8 @@
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
-						<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
+					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
 					<a href="#" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
-
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
@@ -67,58 +66,50 @@
 			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 			<div class="col-md-9">
 				<div class="card p-4 profile-panel">
-					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">신청결과조회/취소</h4>
-					<div class="table-responsive">
-						<table class="table table-hover text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>구단주명</th>
-									<th>신청일</th>
-									<th>신청결과</th>
-									<th>반려사유</th>
-								</tr>
-							</thead>
-
-							<tbody>
-								<tr>
-									<td>쌍용구단주</td>
-									<td>2026-08-10</td>
-									<td><span class="clubOwnerRequestHistory-status status-pending">반려</span></td>
-									<td>
-										<button type="button" class="btn btn-link p-0 text-danger text-decoration-underline"
-									          data-bs-toggle="modal" data-bs-target="#rejectReasonModal">포지션 불일치
-									    </button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<!-- 반려사유 모달 창 -->
-					<div class="modal fade reject-reason-modal" id="rejectReasonModal" tabindex="-1">
-						<div class="modal-dialog modal-dialog-centered">
-							<div class="modal-content">
+					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">선수 프로필</h4>
 					
-								<div class="modal-header">
-									<h5 class="modal-title">반려 사유</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-								</div>
+					<div class="player-profile-card">
+					    <div class="player-profile-header">
+					        <img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="player-profile-image">
 					
-								<div class="modal-body">
-									신청하신 포지션과 구단에서 모집 중인 포지션이 일치하지 않습니다.
-									모집 공고를 확인한 뒤 다시 신청해 주세요.
-								</div>
+					        <div>
+					            <h3>${member.userName}</h3>
+					            <span class="player-status">${player.status}</span>
+					        </div>
+					    </div>
 					
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">닫기</button>
-								</div>
-					
-							</div>
+						    <div class="player-profile-info">
+						        <div class="profile-item">
+						            <span class="profile-label">주 포지션</span>
+						            <span>${player.position}</span>
+						        </div>
+						
+						        <div class="profile-item">
+						            <span class="profile-label">키</span>
+						            <span>${player.height} cm</span>
+						        </div>
+						
+						        <div class="profile-item">
+						            <span class="profile-label">몸무게</span>
+						            <span>${player.weight} kg</span>
+						        </div>
+						
+						        <div class="profile-item">
+						            <span class="profile-label">소속 구단</span>
+						            <span>${club.clubName}</span>
+						        </div>
+						
+						        <div class="profile-item">
+						            <span class="profile-label">등번호</span>
+						            <span>${player.uniformNo}번</span>
+						        </div>
+						
+						        <div class="profile-item">
+						            <span class="profile-label">가입일</span>
+						            <span>${player.joinDate}</span>
+						        </div>
+						    </div>
 						</div>
-					</div>
-
-
-
 
 				</div>
 			</div>

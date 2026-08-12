@@ -1,0 +1,92 @@
+.profile-panel {
+    border: 1px solid #d9e1e8;
+    box-shadow: none;
+}
+
+.profile-panel-title {
+    color: #1f2d3d;
+    font-weight: 700;
+}
+
+.player-profile-card {
+    max-width: 760px;
+    margin: 0 auto;
+    border: 1px solid #dce4eb;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.player-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 32px;
+    border-bottom: 1px solid #dce4eb;
+    background: #f8fafc;
+}
+
+.player-profile-image {
+    display: block;
+    width: 92px;
+    height: 92px;
+    flex: 0 0 92px;
+    border: 1px solid #cbd7e2;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #eef3f7;
+}
+
+.player-profile-header h3 {
+    margin: 0 0 8px;
+    color: #22313f;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.player-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid #a9c8bb;
+    border-radius: 999px;
+    color: #27724d;
+    background: #f4fbf7;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.player-profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 62px;
+    padding: 18px 24px;
+    border-bottom: 1px solid #e3e9ee;
+}
+
+.profile-item:nth-child(odd) {
+    border-right: 1px solid #e3e9ee;
+}
+
+.profile-item:nth-last-child(-n + 2) {
+    border-bottom: 0;
+}
+
+.profile-label {
+    color: #667787;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.profile-item > span:last-child {
+    color: #263746;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: right;
+}
