@@ -174,8 +174,10 @@ nav.main-nav a.active {
   text-align: left;
 }
 .board-number {
-	text-align: center;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding: 5px 0;
 }
 
 .board-list-footer {

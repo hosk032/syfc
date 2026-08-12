@@ -57,6 +57,18 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	public List<BoardDTO> listBoard(Map<String, Object> map) {
+		List<BoardDTO> list = null;
+		
+		try {
+			list = mapper.listBoard(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
 	public BoardDTO findById(long num) {
 		// TODO Auto-generated method stub
 		return null;
@@ -98,10 +110,6 @@ public class BoardServiceImpl implements BoardService {
 		return null;
 	}
 
-	@Override
-	public List<BoardDTO> listBoard(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 }
