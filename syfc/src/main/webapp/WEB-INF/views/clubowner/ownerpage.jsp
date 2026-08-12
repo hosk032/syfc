@@ -11,7 +11,7 @@
 
 <!-- 2. 구단주 마이페이지 전용 CSS 연결 -->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/dist/css/clubowner/ownerpage.css" />
+	href="${pageContext.request.contextPath}/dist/css/clubowner/ownerpage.css?v=2.0" />
 </head>
 <body class="bg-light">
 
@@ -63,57 +63,48 @@
 			<div class="col-lg-3">
 				<div class="card border-0 shadow-sm rounded-4 p-3 sticky-top"
 					style="top: 20px;">
-					<div class="list-group list-group-flush border-0">
+					<div class="list-group list-group-flush border-0 owner-sidebar">
 
-						<div
-							class="text-uppercase text-muted fw-bold extra-small mb-2 px-2">개인
-							프로필</div>
+						<div class="sidebar-category">개인 프로필</div>
 						<a href="#profile-edit"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1"
+							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-person-gear me-2"></i>프로필
 							수정
 						</a>
 
-						<div
-							class="text-uppercase text-muted fw-bold extra-small my-2 px-2">구단
-							관리</div>
+						<div class="sidebar-category">구단 관리</div>
 						<a href="#team-edit"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1"
+							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-shield-shaded me-2"></i>구단
 							등록 / 수정
 						</a> <a href="#team-history"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1"
+							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-journal-text me-2"></i>구단
 							경기 이력 / 성적
 						</a>
 
-						<div
-							class="text-uppercase text-muted fw-bold extra-small my-2 px-2">선수
-							관리</div>
+						<div class="sidebar-category">선수 관리</div>
 						<a href="#player-approval"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1 active d-flex justify-content-between align-items-center"
+							class="list-group-item list-group-item-action rounded-3 mb-1 active d-flex justify-content-between align-items-center"
 							data-bs-toggle="list"> <span><i
 								class="bi bi-person-plus me-2"></i>입단 승인 관리</span> <span
 							class="badge bg-danger rounded-pill">2</span>
 						</a> <a href="#player-list"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1"
+							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-people me-2"></i>소속 선수
 							조회 / 제적
 						</a>
 
-						<div
-							class="text-uppercase text-muted fw-bold extra-small my-2 px-2">경기
-							및 매칭</div>
+						<div class="sidebar-category">경기 및 매칭</div>
 						<a href="#match-apply"
-							class="list-group-item list-group-item-action border-0 rounded-3 mb-1"
+							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-calendar-check me-2"></i>경기장
 							예약 & 매칭
 						</a>
 
-						<div
-							class="text-uppercase text-muted fw-bold extra-small my-2 px-2">설정</div>
+						<div class="sidebar-category">설정</div>
 						<a href="#owner-transfer"
-							class="list-group-item list-group-item-action border-0 rounded-3 text-danger"
+							class="list-group-item list-group-item-action rounded-3 text-danger"
 							data-bs-toggle="list"> <i class="bi bi-arrow-left-right me-2"></i>구단주
 							변경 신청
 						</a>
@@ -229,7 +220,6 @@
 								</div>
 							</div>
 
-							<!-- ★ ID 추가: 검색 조건(연도별)에 따라 동적으로 바뀔 성적 요약 카드 ★ -->
 							<div class="row g-3 mb-4">
 								<div class="col-6 col-md-3">
 									<div class="p-3 bg-light rounded-3 text-center">
@@ -260,7 +250,6 @@
 								</div>
 							</div>
 
-							<!-- 검색 필터 (조회 버튼에 onclick 이벤트 추가) -->
 							<div
 								class="d-flex flex-wrap gap-2 mb-3 align-items-center justify-content-between">
 								<div class="d-flex gap-2">
@@ -281,7 +270,6 @@
 										<option value="WIN">승리</option>
 										<option value="LOSE">패배</option>
 									</select>
-									<!-- 조회 버튼 클릭 시 loadTeamHistory() 실행 -->
 									<button class="btn btn-sm btn-dark px-3"
 										onclick="loadTeamHistory()">조회</button>
 								</div>
@@ -290,7 +278,6 @@
 								</span>
 							</div>
 
-							<!-- 매치 리스트 테이블 -->
 							<div class="table-responsive">
 								<table
 									class="table table-hover align-middle text-center border-top mb-0">
@@ -304,7 +291,6 @@
 										</tr>
 									</thead>
 									<tbody class="small" id="matchHistoryList">
-										<!-- JS에서 동적으로 매치 리스트가 들어오는 영역 -->
 										<tr>
 											<td class="text-muted">2026-08-01 20:00</td>
 											<td>쌍용 주 경기장</td>
@@ -324,9 +310,8 @@
 							</div>
 						</div>
 					</div>
-					
-					
-					<!-- [탭 3] 입단 승인 관리 (기본 활성화) -->
+
+					<!-- [탭 3] 입단 승인 관리 -->
 					<div class="tab-pane fade show active" id="player-approval">
 						<div class="card border-0 shadow-sm rounded-4 p-4">
 							<div
@@ -353,7 +338,7 @@
 											<td class="text-muted">2026-08-03</td>
 											<td class="text-end">
 												<button class="btn btn-sm btn-primary px-3 me-1"
-													onclick="approvePlayer('김철수')">승인</button> <!-- 거절 버튼 클릭 시 모달 열기 함수 호출 -->
+													onclick="approvePlayer('김철수')">승인</button>
 												<button class="btn btn-sm btn-light border text-danger px-3"
 													onclick="openRejectModal('김철수')">거절</button>
 											</td>
@@ -364,7 +349,7 @@
 											<td class="text-muted">2026-08-02</td>
 											<td class="text-end">
 												<button class="btn btn-sm btn-primary px-3 me-1"
-													onclick="approvePlayer('이영희')">승인</button> <!-- 거절 버튼 클릭 시 모달 열기 함수 호출 -->
+													onclick="approvePlayer('이영희')">승인</button>
 												<button class="btn btn-sm btn-light border text-danger px-3"
 													onclick="openRejectModal('이영희')">거절</button>
 											</td>
@@ -455,193 +440,107 @@
 						</div>
 					</div>
 
-					<!-- [탭 5] 경기장 예약 & 매칭 신청 -->
-					<div class="tab-pane fade" id="match-apply">
-						<div class="card border-0 shadow-sm rounded-4 p-4">
-							<div
-								class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
-								<div>
-									<h5 class="fw-bold mb-1">
-										<i class="bi bi-calendar-plus text-primary me-2"></i>경기장 예약 &
-										매칭 신청
-									</h5>
-									<p class="text-muted small mb-0">경기장을 선택하고 위치, 주차 정보 및 타임
-										슬롯별 매칭 현황을 확인하세요.</p>
-								</div>
-								<span class="badge bg-primary px-3 py-2">실시간 예약</span>
-							</div>
+				<!-- [탭 5] 경기장 예약 & 매칭 신청 (완전 통합본) -->
+<div class="tab-pane fade" id="match-apply">
+	<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+		
+		<!-- 상단 타이틀 -->
+		<div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
+			<div class="d-flex align-items-center">
+				<div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; font-size: 20px;">
+					⚽
+				</div>
+				<div>
+					<h5 class="mb-1 fw-bold text-dark">경기 매칭 & 참가 선수 모집</h5>
+					<p class="text-secondary mb-0 small">경기장을 검색하여 매칭을 개설하거나, 기존 매칭 대기 팀을 선택해 경기를 신청하세요.</p>
+				</div>
+			</div>
+		</div>
 
-							<!-- 지도 & 상세정보 -->
-							<div class="row g-3 mb-4">
-								<div class="col-lg-7">
-									<div
-										class="card border rounded-4 overflow-hidden h-100 shadow-sm">
-										<div
-											class="card-header bg-light border-0 py-2.5 px-3 d-flex justify-content-between align-items-center">
-											<span class="fw-bold small text-dark"><i
-												class="bi bi-geo-alt-fill text-danger me-1"></i> 경기장 위치</span> <span
-												class="text-muted extra-small">지도에서 핀을 클릭해 선택 가능</span>
-										</div>
-										<div id="stadiumMap"
-											class="bg-secondary-subtle d-flex align-items-center justify-content-center p-4"
-											style="min-height: 280px; height: 100%;">
-											<div class="text-center text-muted small">
-												<i class="bi bi-map fs-1 text-secondary d-block mb-2"></i> <strong
-													class="d-block text-dark">카카오 / 네이버 지도 API 영역</strong> <span
-													class="extra-small text-muted">(선택된 구장: 쌍용 주 경기장)</span>
-											</div>
-										</div>
-									</div>
-								</div>
+		<!-- (1) 이용 가능한 경기장 검색 -->
+		<h6 class="fw-bold mb-3 text-dark">
+			<i class="bi bi-search text-primary me-2"></i>(1) 이용 가능한 경기장 검색
+		</h6>
+		
+		<!-- 검색 필터: 날짜 - 지역 -->
+		<div class="row g-3 p-3 bg-light rounded-3 mb-4 align-items-end border">
+			<div class="col-md-4">
+				<label class="form-label small fw-bold text-muted mb-1">날짜 선택</label>
+				<input type="date" class="form-control form-control-sm fw-bold bg-white" id="searchDate" value="2026-08-20">
+			</div>
+			<div class="col-md-4">
+				<label class="form-label small fw-bold text-muted mb-1">지역 선택</label>
+				<select class="form-select form-select-sm fw-bold bg-white" id="searchRegion">
+					<option value="서울 마포구" selected>서울 마포구</option>
+					<option value="서울 강남구">서울 강남구</option>
+					<option value="경기 고양시">경기 고양시</option>
+				</select>
+			</div>
+			<div class="col-md-4">
+				<button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2" onclick="searchStadiums()">
+					<i class="bi bi-search me-1"></i> 가능 경기장 조회 (DB)
+				</button>
+			</div>
+		</div>
 
-								<div class="col-lg-5">
-									<div
-										class="card border rounded-4 p-3 bg-light-subtle h-100 d-flex flex-column justify-content-between shadow-sm">
-										<div>
-											<div class="mb-2">
-												<label
-													class="form-label fw-bold extra-small text-muted mb-1">경기장
-													선택</label> <select
-													class="form-select form-select-sm fw-bold border-primary-subtle"
-													id="stadiumSelect" onchange="changeStadiumInfo(this.value)">
-													<option value="1" selected>쌍용 주 경기장 (인조잔디)</option>
-													<option value="2">마포 구민 체육센터 (풋살장)</option>
-													<option value="3">상암 월드컵 보조경기장 (천연잔디)</option>
-												</select>
-											</div>
-
-											<div class="position-relative rounded-3 overflow-hidden mb-3"
-												style="height: 110px; background-color: #e9ecef;">
-												<img
-													src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=500&auto=format&fit=crop"
-													id="stadiumImg" class="w-100 h-100 object-fit-cover"
-													alt="경기장 이미지"> <span
-													class="badge bg-success position-absolute top-0 end-0 m-2 shadow-sm"
-													id="stadiumStatus">예약 가능</span>
-											</div>
-
-											<div class="small space-y-2">
-												<div
-													class="d-flex justify-content-between align-items-center border-bottom pb-1.5 mb-1.5">
-													<span class="text-muted extra-small"><i
-														class="bi bi-geo-alt text-primary me-1"></i> 주소</span> <span
-														class="text-dark small fw-normal text-truncate ms-2"
-														style="max-width: 170px;" id="stadiumAddress">서울
-														마포구 월드컵북로 21</span>
-												</div>
-												<div
-													class="d-flex justify-content-between align-items-center border-bottom pb-1.5 mb-1.5">
-													<span class="text-muted extra-small"><i
-														class="bi bi-cash-stack text-primary me-1"></i> 대관료</span> <span
-														class="text-dark small fw-normal" id="stadiumPrice">100,000원
-														/ 2시간</span>
-												</div>
-												<div
-													class="d-flex justify-content-between align-items-center border-bottom pb-1.5 mb-1.5">
-													<span class="text-muted extra-small"><i
-														class="bi bi-p-square text-primary me-1"></i> 주차</span> <span
-														class="text-dark small fw-normal" id="stadiumParking">가능
-														(최대 40대 무료)</span>
-												</div>
-												<div
-													class="d-flex justify-content-between align-items-center border-bottom pb-1.5 mb-1.5">
-													<span class="text-muted extra-small"><i
-														class="bi bi-layers text-primary me-1"></i> 잔디</span> <span
-														class="text-dark small fw-normal" id="stadiumTurf">최고급
-														인조잔디</span>
-												</div>
-												<div
-													class="d-flex justify-content-between align-items-center">
-													<span class="text-muted extra-small"><i
-														class="bi bi-info-circle text-primary me-1"></i> 편의시설</span> <span
-														class="text-dark small fw-normal" id="stadiumFacility">샤워실,
-														조명, 대기실</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- 3. 날짜 선택 & 정돈된 팁 박스 -->
-							<div class="card border-0 bg-light rounded-3 p-3 mb-4">
-								<div class="row align-items-center g-3">
-									<div class="col-md-4 col-lg-3">
-										<label class="form-label fw-bold small text-dark mb-1">경기
-											예약 희망 날짜</label> <input type="date"
-											class="form-control form-control-sm fw-bold bg-white"
-											id="bookingDate" value="2026-08-15">
-									</div>
-									<div class="col-md-8 col-lg-9">
-										<div
-											class="d-flex align-items-center gap-2 p-2 px-3 bg-white border rounded-3 text-secondary small">
-											<i class="bi bi-info-circle-fill text-primary fs-6"></i> <span>이미
-												선 예약된 팀이 있는 타임에 신청하시면 <strong class="text-primary">[어웨이(원정)팀]</strong>으로
-												자동 매칭 신청됩니다.
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- 4. 타임 슬롯 -->
-							<h6 class="fw-bold text-dark mb-3">
-								<i class="bi bi-clock me-1 text-primary"></i> 시간대별 매칭 현황 선택
-							</h6>
-							<div class="row g-3 mb-4">
-								<div class="col-md-6">
-									<div
-										class="card border border-primary border-opacity-50 bg-primary-subtle rounded-3 p-3 shadow-sm">
-										<div
-											class="d-flex justify-content-between align-items-center mb-2">
-											<span class="fw-bold text-dark"><i
-												class="bi bi-clock me-1"></i> 16:00 ~ 18:00</span> <span
-												class="badge bg-warning text-dark">매칭 대기중 (1/2)</span>
-										</div>
-										<div
-											class="p-2 bg-white rounded border mb-2 extra-small text-muted d-flex justify-content-between">
-											<span>[홈팀] 선 예약 완료</span> <strong class="text-dark">FC
-												드림</strong>
-										</div>
-										<div class="form-check mb-0">
-											<input class="form-check-input" type="radio" name="matchSlot"
-												id="slot1" value="slot1_away"> <label
-												class="form-check-label small fw-bold text-primary"
-												for="slot1"> [어웨이팀]으로 매칭 참가 신청 </label>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-md-6">
-									<div class="card border rounded-3 p-3 shadow-sm bg-white">
-										<div
-											class="d-flex justify-content-between align-items-center mb-2">
-											<span class="fw-bold text-dark"><i
-												class="bi bi-clock me-1"></i> 18:00 ~ 20:00</span> <span
-												class="badge bg-success">신규 예약 가능</span>
-										</div>
-										<div
-											class="p-2 bg-light rounded border mb-2 extra-small text-muted text-center">
-											현재 예약된 팀이 없습니다.</div>
-										<div class="form-check mb-0">
-											<input class="form-check-input" type="radio" name="matchSlot"
-												id="slot2" value="slot2_home"> <label
-												class="form-check-label small fw-bold text-success"
-												for="slot2"> [홈팀]으로 신규 예약 신청 </label>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="d-flex justify-content-end pt-3 border-top">
-								<button type="button" class="btn btn-primary px-4 fw-bold"
-									onclick="submitMatchBooking()">
-									<i class="bi bi-check-circle me-1"></i> 선택한 타임에 경기장 예약 신청
-								</button>
-							</div>
-						</div>
+		<!-- 조회된 경기장 목록 영역 -->
+		<h6 class="fw-bold mb-2 small text-muted">조회된 경기장 선택</h6>
+		<div class="row g-3 mb-4" id="stadiumListArea">
+			<div class="col-md-6">
+				<div class="card stadium-card border p-3 rounded-3 shadow-sm bg-white" onclick="selectStadium(this, '쌍용 주 경기장')" style="cursor: pointer;">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h6 class="fw-bold mb-0 text-dark">쌍용 주 경기장</h6>
+						<span class="badge bg-success">예약가능</span>
 					</div>
+					<p class="text-muted extra-small mb-1">서울 마포구 월드컵북로 21 | 인조잔디</p>
+					<div class="text-primary fw-bold small">100,000원 / 2시간</div>
+				</div>
+			</div>
+		</div>
 
+		<!-- 경기 종류 선택 (대분류, 중분류) -->
+		<div class="row g-3 mb-4">
+			<div class="col-md-6">
+				<label class="form-label small fw-bold text-muted mb-1">경기 종류 (대분류)</label>
+				<select class="form-select form-select-sm fw-bold" id="matchTypeMain" onchange="changeSubTypes(this.value)">
+					<option value="11" selected>11vs11 정규 축구</option>
+					<option value="6">6vs6 풋살</option>
+				</select>
+			</div>
+			<div class="col-md-6">
+				<label class="form-label small fw-bold text-muted mb-1">성별/유형 (중분류)</label>
+				<select class="form-select form-select-sm fw-bold" id="matchTypeSub">
+					<option value="남성">남성 매치</option>
+					<option value="여성">여성 매치</option>
+					<option value="혼성" selected>혼성 매치</option>
+				</select>
+			</div>
+		</div>
+
+		<hr class="my-4">
+
+		<!-- (2) 매칭 대기 중인 다른 팀 선택 옵션 -->
+		<h6 class="fw-bold mb-3 text-dark">
+			<i class="bi bi-calendar-event text-primary me-2"></i>(2) 또는, 기존 매칭 대기중인 팀 선택
+		</h6>
+		<div class="p-3 bg-light rounded-3 border mb-4">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="existingMatch" id="matchA" value="A팀 (2026-08-20 / 잠실경기장)">
+				<label class="form-check-label small fw-bold text-dark cursor-pointer" for="matchA">
+					[매칭 대기중] A팀 - 2026년 8월 20일 | 잠실 경기장 (어웨이 참가)
+				</label>
+			</div>
+		</div>
+
+		<!-- 작성 모달 열기 버튼 -->
+		<div class="d-flex justify-content-end pt-2 border-top">
+			<button type="button" class="btn btn-primary px-4 py-2 fw-bold" onclick="openWriteModal()">
+				<i class="bi bi-pencil-square me-1"></i> 선수 모집글 작성하기
+			</button>
+		</div>
+
+	</div>
+</div>
 					<!-- [탭 6] 구단주 변경 신청 -->
 					<div class="tab-pane fade" id="owner-transfer">
 						<div class="card border-0 shadow-sm rounded-4 p-4">
@@ -697,7 +596,7 @@
 		</div>
 	</div>
 
-	<!-- ★ 1. 선수 평점 등록/수정/삭제 모달 팝업 ★ -->
+	<!-- 1. 선수 평점 관리 모달 -->
 	<div class="modal fade" id="playerRatingModal" tabindex="-1"
 		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -714,7 +613,6 @@
 					<form id="playerRatingForm">
 						<input type="hidden" id="targetPlayerName">
 
-						<!-- 별점 선택 -->
 						<div class="mb-3 text-center">
 							<label class="form-label d-block fw-bold small text-muted mb-2">평점
 								선택 (1.0 ~ 5.0)</label> <select
@@ -728,7 +626,6 @@
 							</select>
 						</div>
 
-						<!-- 평점 코멘트/메모 -->
 						<div class="mb-2">
 							<label class="form-label fw-bold extra-small text-muted mb-1">선수
 								평가 메모 (선택사항)</label>
@@ -739,7 +636,6 @@
 				</div>
 				<div
 					class="modal-footer border-top pt-3 d-flex justify-content-between">
-					<!-- 삭제 버튼 -->
 					<button type="button"
 						class="btn btn-light border text-danger btn-sm px-3"
 						onclick="deletePlayerRating()">
@@ -757,7 +653,7 @@
 		</div>
 	</div>
 
-	<!-- ★ 2. [신규] 입단 거절 사유 입력 모달 팝업 ★ -->
+	<!-- 2. 입단 거절 사유 입력 모달 -->
 	<div class="modal fade" id="rejectReasonModal" tabindex="-1"
 		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -801,8 +697,8 @@
 	<!-- 하단 푸터 -->
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
-	<!-- JS 스크립트 연결 -->
+	<!-- JS 스크립트 연결 (v=2.0) -->
 	<script
-		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js"></script>
+		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=2.0"></script>
 </body>
 </html>
