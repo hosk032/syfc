@@ -60,9 +60,9 @@
 				<!-- 드롭다운 슬라이드 패널 -->
 				<div class="dropdown-panel">
 					<div class="dropdown-column">
-						<a href="${pageContext.request.contextPath}/community/noticeList">공지사항</a> 
-						<a href="${pageContext.request.contextPath}/community/boardList">게시판</a> 
-						<a href="${pageContext.request.contextPath}/community/qnaList">문의/신고</a>
+						<a href="${pageContext.request.contextPath}/community/notices/noticeList">공지사항</a> 
+						<a href="${pageContext.request.contextPath}/community/board/boardList">게시판</a> 
+						<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고</a>
 					</div>
 					<div class="dropdown-column">
 						<a href="${pageContext.request.contextPath}/community/stadium_info">경기장 정보 검색</a>

@@ -27,14 +27,16 @@ body {
    1. MAIN CONTAINER & HEADER
    ========================================================================== */
 .writeContainer {
-  width: 100%;
-  max-width: 850px;
-  margin: 40px auto 60px;
-  padding: 32px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e9ecef;
+    width: 100% !important;
+    max-width: 1024px !important;
+    margin: 40px auto 60px;
+    padding: 32px;
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
 }
 
 .writeHeader {

@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spring</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community/board.css" type="text/css">
 </head>
 <body>
 
@@ -17,14 +17,13 @@
 </header>
 
 
-<body>
 <main class="writeContainer">
     <div class="writeHeader">
       <h2 class="writeTitle"><i class="bi bi-pencil-square me-2"></i>게시글 작성</h2>
       <p class="writeDesc">구단 모집 및 자유로운 축구 이야기를 작성해 보세요.</p>
     </div>
 
-    <form class="writeForm" action="#" method="post" enctype="multipart/form-data">
+    <form class="writeForm" name="writeForm" method="post" enctype="multipart/form-data">
       <!-- 카테고리 -->
       <div class="formGroup">
         <label for="boardCategory" class="formLabel">카테고리</label>
@@ -45,7 +44,7 @@
           <input 
             type="text" 
             id="boardTitle" 
-            name="title" 
+            name="b_subject" 
             class="formControl" 
             placeholder="제목을 입력해 주세요." 
             required 
@@ -60,7 +59,7 @@
           <input 
             type="text" 
             id="boardAuthor" 
-            name="author" 
+            name="auther" 
             class="formControl authorControl" 
             value="admin" 
             readonly 
@@ -74,7 +73,7 @@
         <div class="formInputWrap">
           <textarea 
             id="boardContent" 
-            name="content" 
+            name="b_content" 
             class="formControl textareaControl" 
             placeholder="내용을 작성해 주세요. (매치 신청 시 일시, 장소, 실력대를 적어주시면 좋습니다)" 
             required
@@ -92,14 +91,39 @@
 
       <!-- 하단 버튼 -->
       <div class="formActions">
-        <button type="submit" class="btn btnSubmit">등록완료</button>
+        <button type="button" class="btn btnSubmit" onclick="sendOk();">등록완료</button>
         <button type="reset" class="btn btnReset">다시입력</button>
         <button type="button" class="btn btnCancel" onclick="history.back()">등록취소</button>
       </div>
     </form>
   </main>
 
-</body>
+
+<script type="text/javascript">
+function sendOk() {
+	const f = document.writeForm;
+	let str;
+	
+	str = f.b_subject.value.trim();
+	if( ! str ) {
+		alert('제목을 입력하세요. ');
+		f.b_subject.focus();
+		return;
+	}
+
+	str = f.b_content.value.trim();
+	if( ! str ) {
+		alert('내용을 입력하세요. ');
+		f.b_content.focus();
+		return;
+	}
+	
+	
+	f.action = '${pageContext.request.contextPath}/community/board/write';
+	f.submit();
+}
+</script>
+
 
 <footer>
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
