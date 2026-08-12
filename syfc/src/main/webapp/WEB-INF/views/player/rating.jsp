@@ -10,7 +10,8 @@
 	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchApply.css" />
+	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/rating.css" />
 </head>
 <body>
 
@@ -49,7 +50,7 @@
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
-					<a href="${pageContext.request.contextPath}/player/matchApply" class="list-group-item list-group-item-action ps-4">신청 결과조회</a>
+					<a href="${pageContext.request.contextPath}/player/matchApply" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a>
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
@@ -63,51 +64,60 @@
 		
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 		<div class="col-md-9">
-			<div class="card p-4">
-			
-			<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
-
-					<h4 class="border-bottom pb-2 mb-4">경기 참가신청 결과조회</h4>
-					<div class="table-responsive">
-						<table class="table table-hover text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>신청일</th>
-									<th>경기장</th>
-									<th>매치 구분</th>
-									<th>상대 구단</th>
-									<th>신청 상태</th>
-								</tr>
-							</thead>
-
-							<tbody>
-								<tr>
-									<td>2026-08-10</td>
-									<td>쌍용 풋살장</td>
-									<td>풋살</td>
-									<td>FC 쌍용</td>
-									<td><span class="apply-status status-pending">대기</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-08</td>
-									<td>강남 축구장</td>
-									<td>축구</td>
-									<td>강남 유나이티드</td>
-									<td><span class="apply-status status-approved">승인</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-05</td>
-									<td>역삼 풋살장</td>
-									<td>풋살</td>
-									<td>FC 서울</td>
-									<td><span class="apply-status status-rejected">반려</span></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</form>
+			<div class="card p-4 rating-panel">
+				<h4 class="border-bottom pb-2 mb-4">내 평점 조회</h4>
+				
+			<div class="table-responsive">
+				<table class="table table-hover text-center align-middle rating-table">
+					<thead class="table-light">
+						<tr>
+							<th>경기일</th>
+							<th>경기명</th>
+							<th>평점</th>
+							<th>득점</th>
+							<th>도움</th>
+							<th>자책골</th>
+							<th>🟨카드</th>
+							<th>🟥카드</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+							<td>2026-08-01</td>
+							<td>주말 경기</td>
+							<td>4.5</td>
+							<td>2</td>
+							<td>1</td>
+							<td>0</td>
+							<td>1</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<td>2026-08-05</td>
+							<td>야간 경기</td>
+							<td>4.0</td>
+							<td>0</td>
+							<td>2</td>
+							<td>0</td>
+							<td>0</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<td>2026-08-09</td>
+							<td>평일 경기</td>
+							<td>3.5</td>
+							<td>1</td>
+							<td>0</td>
+							<td>1</td>
+							<td>1</td>
+							<td>0</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
-			
+			</div>
+
 		</div>
 	</div>
 </div>

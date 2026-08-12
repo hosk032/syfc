@@ -1,0 +1,84 @@
+.club-profile {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    padding: 6px 0;
+}
+.club-logo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 132px;
+    height: 132px;
+    border: 1px solid #ccd8e3;
+    border-radius: 50%;
+    color: #2b6fa7;
+    background-color: #f3f8fc;
+    margin: 0 auto;
+}
+.club-logo-box i {
+    font-size: 58px;
+}
+
+.club-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e1e7ed;
+}
+
+.club-title-row h4 {
+    margin: 0;
+    color: #23384b;
+    font-weight: 700;
+}
+
+.club-status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: #19713a;
+    background-color: #dff3e5;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.club-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.club-grid span,
+.club-date {
+    padding: 12px 14px;
+    border: 1px solid #e0e7ee;
+    border-radius: 4px;
+    color: #405466;
+    background-color: #f8fafc;
+}
+
+.club-date {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.club-introduction {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 14px;
+    border-left: 3px solid #4c8bc8;
+    color: #405466;
+    background-color: #f7fbff;
+}
+
+.club-introduction span:first-child {
+    color: #2e4961;
+    font-size: 13px;
+    font-weight: 700;
+}

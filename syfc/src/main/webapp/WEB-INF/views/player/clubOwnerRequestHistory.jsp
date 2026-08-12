@@ -10,7 +10,8 @@
 	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchApply.css" />
+	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/clubOwnerRequestHistory.css" />
 </head>
 <body>
 
@@ -60,58 +61,64 @@
 
 				</div>
 			</div>
-		
-		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
-		<div class="col-md-9">
-			<div class="card p-4">
-			
-			<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
 
-					<h4 class="border-bottom pb-2 mb-4">경기 참가신청 결과조회</h4>
+			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
+			<div class="col-md-9">
+				<div class="card p-4 profile-panel">
+					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">신청결과조회/취소</h4>
 					<div class="table-responsive">
 						<table class="table table-hover text-center align-middle">
 							<thead class="table-light">
 								<tr>
+									<th>구단주명</th>
 									<th>신청일</th>
-									<th>경기장</th>
-									<th>매치 구분</th>
-									<th>상대 구단</th>
-									<th>신청 상태</th>
+									<th>신청결과</th>
+									<th>반려사유</th>
 								</tr>
 							</thead>
 
 							<tbody>
 								<tr>
+									<td>쌍용구단주</td>
 									<td>2026-08-10</td>
-									<td>쌍용 풋살장</td>
-									<td>풋살</td>
-									<td>FC 쌍용</td>
-									<td><span class="apply-status status-pending">대기</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-08</td>
-									<td>강남 축구장</td>
-									<td>축구</td>
-									<td>강남 유나이티드</td>
-									<td><span class="apply-status status-approved">승인</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-05</td>
-									<td>역삼 풋살장</td>
-									<td>풋살</td>
-									<td>FC 서울</td>
-									<td><span class="apply-status status-rejected">반려</span></td>
+									<td><span class="clubOwnerRequestHistory-status status-pending">반려</span></td>
+									<td>
+										<button type="button" class="btn btn-link p-0 text-danger text-decoration-underline"
+									          data-bs-toggle="modal" data-bs-target="#rejectReasonModal">포지션 불일치
+									    </button>
+									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-				</form>
+					<!-- 반려사유 모달 창 -->
+					<div class="modal fade reject-reason-modal" id="rejectReasonModal" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+					
+								<div class="modal-header">
+									<h5 class="modal-title">반려 사유</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+								</div>
+					
+								<div class="modal-body">
+									신청하신 포지션과 구단에서 모집 중인 포지션이 일치하지 않습니다.
+									모집 공고를 확인한 뒤 다시 신청해 주세요.
+								</div>
+					
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-bs-dismiss="modal">닫기</button>
+								</div>
+					
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</div>
 			</div>
-			
 		</div>
 	</div>
-</div>
-
-<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
-</body>
-</html>

@@ -10,7 +10,8 @@
 	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchApply.css" />
+	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchHistory.css" />
 </head>
 <body>
 
@@ -64,49 +65,44 @@
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 		<div class="col-md-9">
 			<div class="card p-4">
-			
-			<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
-
-					<h4 class="border-bottom pb-2 mb-4">경기 참가신청 결과조회</h4>
-					<div class="table-responsive">
+				<h4 class="border-bottom pb-2 mb-4">⚽ 내 경기 참가 이력</h4>
+				
+					<div class="matchHistory-responsive">
 						<table class="table table-hover text-center align-middle">
 							<thead class="table-light">
 								<tr>
-									<th>신청일</th>
-									<th>경기장</th>
-									<th>매치 구분</th>
-									<th>상대 구단</th>
-									<th>신청 상태</th>
+									<th>경기날짜</th>
+									<th>경기시간</th>
+									<th>⚽ 홈팀점수 ⚽</th>
+									<th>⚽ 원정팀점수 ⚽</th>
 								</tr>
 							</thead>
 
 							<tbody>
 								<tr>
-									<td>2026-08-10</td>
-									<td>쌍용 풋살장</td>
-									<td>풋살</td>
-									<td>FC 쌍용</td>
-									<td><span class="apply-status status-pending">대기</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-08</td>
-									<td>강남 축구장</td>
-									<td>축구</td>
-									<td>강남 유나이티드</td>
-									<td><span class="apply-status status-approved">승인</span></td>
+									<td>2026-08-01</td>
+									<td>09:00</td>
+									<td>2:0</td>
+									<td>2:0</td>
 								</tr>
 								<tr>
 									<td>2026-08-05</td>
-									<td>역삼 풋살장</td>
-									<td>풋살</td>
-									<td>FC 서울</td>
-									<td><span class="apply-status status-rejected">반려</span></td>
+									<td>09:00</td>
+									<td>1:0</td>
+									<td>1:0</td>
+								</tr>
+								<tr>
+									<td>2026-08-09</td>
+									<td>17:00</td>
+									<td>0:1</td>
+									<td>0:1</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-				</form>
 			</div>
+			
+
 			
 		</div>
 	</div>

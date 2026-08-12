@@ -10,7 +10,8 @@
 	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchApply.css" />
+	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/clubOwnerRequest.css" />
 </head>
 <body>
 
@@ -60,58 +61,41 @@
 
 				</div>
 			</div>
-		
-		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
-		<div class="col-md-9">
-			<div class="card p-4">
-			
-			<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
 
-					<h4 class="border-bottom pb-2 mb-4">경기 참가신청 결과조회</h4>
-					<div class="table-responsive">
-						<table class="table table-hover text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>신청일</th>
-									<th>경기장</th>
-									<th>매치 구분</th>
-									<th>상대 구단</th>
-									<th>신청 상태</th>
-								</tr>
-							</thead>
+			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
+			<!-- 신청사유, 신청할 구단주명, 신청일, 신청상태(대기,승인,반려) -->
+			<div class="col-md-9">
+				<div class="card p-4 profile-panel">
+					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">구단주 신청</h4>
+					
+					<div class="clubOwnerRequest-form">
+						<div class="row g-3">
+							<div class="col-md-6">
+								<label class="form-label" for="구단주명별명">구단주명</label>
 
-							<tbody>
-								<tr>
-									<td>2026-08-10</td>
-									<td>쌍용 풋살장</td>
-									<td>풋살</td>
-									<td>FC 쌍용</td>
-									<td><span class="apply-status status-pending">대기</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-08</td>
-									<td>강남 축구장</td>
-									<td>축구</td>
-									<td>강남 유나이티드</td>
-									<td><span class="apply-status status-approved">승인</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-05</td>
-									<td>역삼 풋살장</td>
-									<td>풋살</td>
-									<td>FC 서울</td>
-									<td><span class="apply-status status-rejected">반려</span></td>
-								</tr>
-							</tbody>
-						</table>
+								<input class="구단주이름넣는곳" type="text">
+							</div>
+
+							<div class="col-md-6">
+								<label class="form-label">신청일</label> 
+								<input type="date" class="form-control" name="clubOwnerRequest-date">
+							</div>
+							
+							<div class="clubOwnerRequest-reason">
+								<span>신청사유</span> 
+								<textarea class="form-control" rows="5" name="clubOwnerRequest-info" placeholder="해당 구단에 구단주로 신청하게된 사유를 간단히 작성해주세요."></textarea>
+							</div>
+
+						</div>
+						
 					</div>
-				</form>
+				
+				</div>
+					
+					<div class="clubOwnerRequest-actions">
+						<button type="button" class="clubOwnerRequest-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
+						<button type="reset" class="clubOwnerRequest-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
+					</div>
 			</div>
-			
 		</div>
 	</div>
-</div>
-
-<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
-</body>
-</html>
