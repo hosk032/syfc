@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.BoardMapper">
+	<select id="boardDetailSeq" resultType="Long">
+		SELECT notice_seq.NEXTVAL FROM dual
+	</select>
+	
+	<insert id="insertboard" parameterType="com.syfc.dto.BoardDTO">
+		INSERT INTO board(bNum, b_Subject, b_Content, b_HitCount, b_Reg_date, b_Block, b_Type, memberIdx)
+			VALUES (board_seq.NEXTVAL, #{b_Subject}, #{b_Content}, 0, SYSDATE, 0, 0, #{memberIdx})
+	</insert>
+
+
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all' ">
+				(
+					INSERT(subject, #{kwd}) &gt; 0
+						OR INSERT(content, #{kwd}) &gt; 0
+				)
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+
+ 
+ 	<select id="dataCount" parameterType="map" resultType="Integer">
+ 		SELECT COUNT(*)
+ 		FROM board b
+ 		JOIN member1 m ON b.memberIdx = m.memberIdx
+ 		<where>
+ 			<if test="kwd != null and kwd != '' ">
+ 				<include refid="where-list"/>
+ 			</if>
+ 			AND b_Block = 0
+ 		</where>
+ 		ORDER BY bNum DESC
+ 	</select>
+
+
+	
+	
+</mapper>

@@ -22,9 +22,9 @@
 		<!-- 왼쪽 서브 메뉴 (사이드바) -->
 		<aside class="community-side-menu">
 			<div class="side-menu-title">커뮤니티</div>
-			<a href="${pageContext.request.contextPath}/community/noticeList">공지사항</a> 
-			<a href="${pageContext.request.contextPath}/community/boardList" class="active">게시판</a> 
-			<a href="${pageContext.request.contextPath}/community/qnaList">문의/신고 게시판</a>
+			<a href="${pageContext.request.contextPath}/community/notices/noticeList">공지사항</a> 
+			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">게시판</a> 
+			<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
 		</aside>
 
 		<!-- 오른쪽 목록 본문 영역 -->
@@ -55,22 +55,33 @@
 				<span>80</span>
 			</div>
 			
-			<div class="memo-row" onclick="location.href='${pageContext.request.contextPath}/community/boardDetail';">
-				<span>공지</span> 
-				<span>축구장 이용시 주의사항 안내</span> 
-				<span>관리자</span> 
-				<span>2026-08-04</span> 
-				<span>70</span>
+			<div class="row board-list-footer">
+				<div class="col">
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/boardList';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+				</div>
+				<div class="col-6 d-flex justify-content-center">
+					<form class="row" name="searchForm">
+						<div class="col-auto p-1">
+							<select name="schType" class="form-select">
+								<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+								<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
+								<option value="subject" ${schType=="subject"?"selected":""}>제목</option>
+								<option value="content" ${schType=="content"?"selected":""}>내용</option>
+							</select>
+						</div>
+						<div class="col-auto p-1">
+							<input type="text" name="kwd" value="${kwd}" class="form-control">
+						</div>
+						<div class="col-auto p-1">
+							<button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
+						</div>
+					</form>
+				</div>
+				
+				<div class="col text-end">
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/write';">글올리기</button>
+				</div>
 			</div>
-			
-			<div class="memo-row" onclick="location.href='${pageContext.request.contextPath}/community/boardDetail';">
-				<span>공지</span> 
-				<span>더운 여름! 음료한잔 이벤트</span> 
-				<span>관리자</span> 
-				<span>2026-08-04</span> 
-				<span>100</span>
-			</div>
-			
 			<div class="board-number">
 				<span>1 2 3</span>
 			</div>
@@ -81,6 +92,8 @@
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
 	<!-- 3. 게시판 목록 전용 JS 연결 (dist/js/community/boardList.js) -->
+	<!-- 
 	<script src="${pageContext.request.contextPath}/dist/js/community/boardList.js"></script>
+	 -->
 </body>
 </html>
