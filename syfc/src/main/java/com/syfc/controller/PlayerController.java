@@ -3,6 +3,7 @@ package com.syfc.controller;
 import java.io.File;
 import java.io.IOException;
 
+import com.syfc.dto.PlayerMypageDTO;
 import com.syfc.dto.PlayerProfileDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.mvc.annotation.Controller;
@@ -12,6 +13,8 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.PlayerProfileService;
 import com.syfc.service.PlayerProfileServiceImpl;
+import com.syfc.service.PlayerService;
+import com.syfc.service.PlayerServiceImpl;
 import com.syfc.util.FileManager;
 import com.syfc.util.MyMultipartFile;
 
@@ -25,6 +28,7 @@ import jakarta.servlet.http.Part;
 @RequestMapping("/player/*")
 public class PlayerController {
 	private PlayerProfileService service = new PlayerProfileServiceImpl();
+	private PlayerService playerService = new PlayerServiceImpl();
 	private FileManager fileManager = new FileManager();
 	
 	@PostMapping("profile")
@@ -34,7 +38,7 @@ public class PlayerController {
 		
 		// 프로필 수정
 		try {
-			PlayerProfileDTO dto = service.findProfile(info.getMemberIdx());
+			PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
 			
 			// setMemberIdx : 로그인 세션에서 info 로 가져옴
 			// memberIdx, email, birth, profile_photo, tel,
@@ -83,7 +87,7 @@ public class PlayerController {
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		PlayerProfileDTO dto = service.findProfile(info.getMemberIdx());
+		PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
 		
 		ModelAndView mav = new ModelAndView("player/mypage");
 		mav.addObject("dto", dto);
@@ -95,10 +99,10 @@ public class PlayerController {
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		PlayerProfileDTO dto = service.findProfile(info.getMemberIdx());
+		PlayerProfileDTO player = playerService.findPlayer(info.getMemberIdx());
 		
 		ModelAndView mav = new ModelAndView("player/playerProfile");
-		mav.addObject("dto", dto);
+		mav.addObject("player", player);
 		
 		return mav;
 	}

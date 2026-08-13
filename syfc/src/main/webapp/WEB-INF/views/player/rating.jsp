@@ -50,7 +50,7 @@
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
-					<a href="${pageContext.request.contextPath}/player/matchApply" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
+					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
 					<a href="#" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
 
 					<!-- 대분류 3 -->
@@ -60,6 +60,11 @@
 					<a href="${pageContext.request.contextPath}/player/clubOwnerRequest" class="list-group-item list-group-item-action ps-4">구단주 신청</a> 
 					<a href="${pageContext.request.contextPath}/player/clubOwnerRequestHistory" class="list-group-item list-group-item-action ps-4">구단주 신청 결과 조회/취소</a>
 
+					<!-- 대분류 4 -->
+					<div class="list-group-item bg-light fw-bold">경기 신청</div>
+					<a href="#" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a> 
+					<a href="#" class="list-group-item list-group-item-action ps-4">신청 경기 조회</a>
+					<a href="#" class="list-group-item list-group-item-action ps-4">경기 신청 수정/취소</a> 
 				</div>
 			</div>
 		
