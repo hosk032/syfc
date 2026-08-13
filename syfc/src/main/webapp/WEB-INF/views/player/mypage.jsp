@@ -51,7 +51,7 @@
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
 					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
+					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
