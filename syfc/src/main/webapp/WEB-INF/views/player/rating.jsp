@@ -46,12 +46,11 @@
 					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4 active">프로필 등록/수정</a> 
 					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 평점 조회</a>
 
-					<!-- 대분류 2 -->
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
 					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
+					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
@@ -71,14 +70,13 @@
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 		<div class="col-md-9">
 			<div class="card p-4 rating-panel">
-				<h4 class="border-bottom pb-2 mb-4">내 평점 조회</h4>
+				<h4 class="border-bottom pb-2 mb-4">내 경기성적 조회</h4>
 				
 			<div class="table-responsive">
 				<table class="table table-hover text-center align-middle rating-table">
 					<thead class="table-light">
 						<tr>
 							<th>경기일</th>
-							<th>경기명</th>
 							<th>평점</th>
 							<th>득점</th>
 							<th>도움</th>
@@ -89,36 +87,17 @@
 					</thead>
 					
 					<tbody>
-						<tr>
-							<td>2026-08-01</td>
-							<td>주말 경기</td>
-							<td>4.5</td>
-							<td>2</td>
-							<td>1</td>
-							<td>0</td>
-							<td>1</td>
-							<td>0</td>
-						</tr>
-						<tr>
-							<td>2026-08-05</td>
-							<td>야간 경기</td>
-							<td>4.0</td>
-							<td>0</td>
-							<td>2</td>
-							<td>0</td>
-							<td>0</td>
-							<td>0</td>
-						</tr>
-						<tr>
-							<td>2026-08-09</td>
-							<td>평일 경기</td>
-							<td>3.5</td>
-							<td>1</td>
-							<td>0</td>
-							<td>1</td>
-							<td>1</td>
-							<td>0</td>
-						</tr>
+						<c:forEach var="dto" items="${list}">
+							<tr>
+								<td>${dto.matchDate}</td>
+								<td>${dto.rating}</td>
+								<td>${dto.goal}</td>
+								<td>${dto.assist}</td>
+								<td>${dto.ownGoal}</td>
+								<td>${dto.yellow}</td>
+								<td>${dto.red}</td>
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>

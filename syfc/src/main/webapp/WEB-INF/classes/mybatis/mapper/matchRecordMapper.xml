@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.MatchRecordMapper">
+<!-- 내 경기 성적 컬럼: 성적번호, 평점, 득점, 도움, 옐로카드, 
+		레드카드, 자책골, 경기번호, 선수번호
+	- 경기일, 경기명, 평점, 득점, 도움, 자책골, 옐로카드, 레드카드
+		선수성적 테이블: Player_Record -->
+	<select id="listMatchRecord" parameterType="long" resultType="com.syfc.dto.MatchRecordDTO">
+		SELECT cj.memberIdx, pr.record_id, pr.rating, pr.goal, 
+		     pr.assist, pr.yellow, pr.red, pr.own_goal, 
+		     pr.Match_num, pr.clubJoin_num, TO_CHAR(m.match_date, 'YYYY-MM-DD') AS matchDate
+		FROM Player_Record pr
+		JOIN clubJoin cj ON cj.clubJoin_num = pr.clubJoin_num
+		JOIN match m ON m.match_num = pr.match_num
+		WHERE cj.memberIdx = #{memberIdx}
+		ORDER BY m.match_date DESC
+	</select>
+
+
+</mapper>

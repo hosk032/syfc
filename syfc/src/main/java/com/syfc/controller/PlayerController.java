@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.syfc.dto.MatchHistoryDTO;
+import com.syfc.dto.MatchRecordDTO;
 import com.syfc.dto.PlayerMypageDTO;
 import com.syfc.dto.PlayerProfileDTO;
 import com.syfc.dto.SessionInfo;
@@ -15,6 +16,8 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
+import com.syfc.service.MatchRecordService;
+import com.syfc.service.MatchRecordServiceImpl;
 import com.syfc.service.PlayerProfileService;
 import com.syfc.service.PlayerProfileServiceImpl;
 import com.syfc.service.PlayerService;
@@ -34,7 +37,7 @@ public class PlayerController {
 	private PlayerProfileService service = new PlayerProfileServiceImpl();
 	private PlayerService playerService = new PlayerServiceImpl();
 	private MatchHistoryService matchHistoryService = new MatchHistoryImpl();	
-
+	private MatchRecordService matchRecordService = new MatchRecordServiceImpl();
 
 	private FileManager fileManager = new FileManager();
 	
@@ -116,7 +119,15 @@ public class PlayerController {
 	
 	@GetMapping("rating")
 	public ModelAndView rating(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		return new ModelAndView("player/rating");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		List<MatchRecordDTO> list = matchRecordService.listMatchRecord(info.getMemberIdx());
+		
+		ModelAndView mav = new ModelAndView("player/rating");
+		mav.addObject("list", list);
+		
+		return mav;
 	}
 	
 	@GetMapping("matchHistory")
