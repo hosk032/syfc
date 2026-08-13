@@ -1,18 +1,20 @@
 package com.syfc.dto;
 
-// 컬럼: memberIdx, email, birth, profile_photo, tel,
-//		zip, addr1, addr2, gender, pref_position
+// playerProfile 컬럼: memberIdx, clubJoinNum, position, uniformNo, 
+//			height, weight, joinDate, status, clubOwnerKey, 
+//			reason, leaveDate
 public class PlayerProfileDTO {
 	private long memberIdx;
-	private String email;
-	private String birth;
-	private String profile_photo;
-	private String tel;
-	private String zip;
-	private String addr1;
-	private String addr2;
-	private String gender;
-	private int pref_position;
+	private long clubJoinNum;
+	private String position;
+	private int uniformNo;
+	private int height;
+	private int weight;
+	private String joinDate;
+	private String status;
+	private long clubOwnerKey;
+	private String reason;
+	private String leaveDate;
 	
 	public long getMemberIdx() {
 		return memberIdx;
@@ -20,60 +22,67 @@ public class PlayerProfileDTO {
 	public void setMemberIdx(long memberIdx) {
 		this.memberIdx = memberIdx;
 	}
-	public String getEmail() {
-		return email;
+	public long getClubJoinNum() {
+		return clubJoinNum;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setClubJoinNum(long clubJoinNum) {
+		this.clubJoinNum = clubJoinNum;
 	}
-	public String getBirth() {
-		return birth;
+	public String getPosition() {
+		return position;
 	}
-	public void setBirth(String birth) {
-		this.birth = birth;
+	public void setPosition(String position) {
+		this.position = position;
 	}
-	public String getProfile_photo() {
-		return profile_photo;
+	public int getUniformNo() {
+		return uniformNo;
 	}
-	public void setProfile_photo(String profile_photo) {
-		this.profile_photo = profile_photo;
+	public void setUniformNo(int uniformNo) {
+		this.uniformNo = uniformNo;
 	}
-	public String getTel() {
-		return tel;
+	public int getHeight() {
+		return height;
 	}
-	public void setTel(String tel) {
-		this.tel = tel;
+	public void setHeight(int height) {
+		this.height = height;
 	}
-	public String getZip() {
-		return zip;
+	public int getWeight() {
+		return weight;
 	}
-	public void setZip(String zip) {
-		this.zip = zip;
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
-	public String getAddr1() {
-		return addr1;
+	public String getJoinDate() {
+		return joinDate;
 	}
-	public void setAddr1(String addr1) {
-		this.addr1 = addr1;
+	public void setJoinDate(String joinDate) {
+		this.joinDate = joinDate;
 	}
-	public String getAddr2() {
-		return addr2;
+	public String getStatus() {
+		return status;
 	}
-	public void setAddr2(String addr2) {
-		this.addr2 = addr2;
+	public void setStatus(String status) {
+		this.status = status;
 	}
-	public String getGender() {
-		return gender;
+	public long getClubOwnerKey() {
+		return clubOwnerKey;
 	}
-	public void setGender(String gender) {
-		this.gender = gender;
+	public void setClubOwnerKey(long clubOwnerKey) {
+		this.clubOwnerKey = clubOwnerKey;
 	}
-	public int getPref_position() {
-		return pref_position;
+	public String getReason() {
+		return reason;
 	}
-	public void setPref_position(int pref_position) {
-		this.pref_position = pref_position;
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
+	public String getLeaveDate() {
+		return leaveDate;
+	}
+	public void setLeaveDate(String leaveDate) {
+		this.leaveDate = leaveDate;
+	}
+	
 	
 	
 }

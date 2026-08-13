@@ -6,7 +6,7 @@
 <mapper namespace="com.syfc.mapper.PlayerProfileMapper">
 	<!-- 프로필 조회 컬럼: memberIdx, email, birth, profile_photo,
 			tel, zip, addr1, addr2, gender, pref_position  -->
-	<select id="findByMemberIdx" parameterType="long" resultType="com.syfc.dto.PlayerProfileDTO">
+	<select id="findByMemberIdx" parameterType="long" resultType="com.syfc.dto.PlayerMypageDTO">
 		SELECT memberIdx, email, TO_CHAR(birth, 'YYYY-MM-DD') AS birth, profile_photo, tel,
 			zip, addr1, addr2, gender, pref_position
 		FROM member2
@@ -14,7 +14,7 @@
 	</select>
 	
 	<!-- 프로필 수정 -->
-	<update id="updateProfile" parameterType="com.syfc.dto.PlayerProfileDTO">
+	<update id="updateProfile" parameterType="com.syfc.dto.PlayerMypageDTO">
 		UPDATE member2 SET email = #{email}, birth = TO_DATE(#{birth}, 'YYYY-MM-DD'), 
 			profile_photo = #{profile_photo, jdbcType=VARCHAR}, tel = #{tel}, zip = #{zip}, addr1 = #{addr1}, 
 			addr2 = #{addr2}, gender = #{gender}, pref_position = #{pref_position}

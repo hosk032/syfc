@@ -1,10 +1,10 @@
 package com.syfc.mapper;
 
-import com.syfc.dto.PlayerProfileDTO;
+import com.syfc.dto.PlayerMypageDTO;
 
 public interface PlayerProfileMapper {
-	PlayerProfileDTO findByMemberIdx(long memberIdx);
+	PlayerMypageDTO findByMemberIdx(long memberIdx);
 	
-	public void updateProfile(PlayerProfileDTO dto);
+	public void updateProfile(PlayerMypageDTO dto);
 }
 

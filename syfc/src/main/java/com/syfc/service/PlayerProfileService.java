@@ -1,9 +1,9 @@
 package com.syfc.service;
 
-import com.syfc.dto.PlayerProfileDTO;
+import com.syfc.dto.PlayerMypageDTO;
 
 public interface PlayerProfileService {
-	PlayerProfileDTO findProfile(long memberIdx);
+	PlayerMypageDTO findProfile(long memberIdx);
 	
-	public void updateProfile(PlayerProfileDTO dto) throws Exception;
+	public void updateProfile(PlayerMypageDTO dto) throws Exception;
 }

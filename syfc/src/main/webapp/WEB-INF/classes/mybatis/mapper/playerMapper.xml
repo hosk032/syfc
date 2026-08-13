@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.PlayerMapper">
+	<!-- 내 선수 프로필 조회 컬럼: memberIdx, clubJoinNum, position, uniformNo, 
+		height, weight, joinDate, status 선수상태, clubOwnerKey, reason, leaveDate, 
+		clubName 구단명 -->
+	<select id="findPlayer" parameterType="long" resultType="com.syfc.dto.PlayerProfileDTO">
+		SELECT p.clubJoin_Num, p.position, p.uniform_No, p.height, 
+		        p.weight, TO_CHAR(p.join_Date, 'YYYY-MM-DD') AS joinDate,
+		        c.club_Name, p.status
+		FROM clubjoin cj
+		JOIN player p ON p.clubJoin_Num = cj.clubJoin_Num
+		JOIN club c ON p.clubOwner_Key = c.clubOwner_Key
+		WHERE cj.memberIdx = #{memberIdx}
+	</select>
+
+
+</mapper>
