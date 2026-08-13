@@ -2,7 +2,9 @@ package com.syfc.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.PlayerMypageDTO;
 import com.syfc.dto.PlayerProfileDTO;
 import com.syfc.dto.SessionInfo;
@@ -11,6 +13,8 @@ import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
+import com.syfc.service.MatchHistoryImpl;
+import com.syfc.service.MatchHistoryService;
 import com.syfc.service.PlayerProfileService;
 import com.syfc.service.PlayerProfileServiceImpl;
 import com.syfc.service.PlayerService;
@@ -29,6 +33,9 @@ import jakarta.servlet.http.Part;
 public class PlayerController {
 	private PlayerProfileService service = new PlayerProfileServiceImpl();
 	private PlayerService playerService = new PlayerServiceImpl();
+	private MatchHistoryService matchHistoryService = new MatchHistoryImpl();	
+
+
 	private FileManager fileManager = new FileManager();
 	
 	@PostMapping("profile")
@@ -114,7 +121,16 @@ public class PlayerController {
 	
 	@GetMapping("matchHistory")
 	public ModelAndView matchHistory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		return new ModelAndView("player/matchHistory");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		List<MatchHistoryDTO> list = matchHistoryService.listMatchHistory(info.getMemberIdx());
+	
+		ModelAndView mav = new ModelAndView("player/matchHistory");
+		
+		mav.addObject("list", list);
+		
+		return mav;
 	}
 	
 	@GetMapping("matchApply")

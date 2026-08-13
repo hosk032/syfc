@@ -86,24 +86,14 @@
 							</thead>
 
 							<tbody>
-								<tr>
-									<td>2026-08-01</td>
-									<td>09:00</td>
-									<td>2:0</td>
-									<td>2:0</td>
-								</tr>
-								<tr>
-									<td>2026-08-05</td>
-									<td>09:00</td>
-									<td>1:0</td>
-									<td>1:0</td>
-								</tr>
-								<tr>
-									<td>2026-08-09</td>
-									<td>17:00</td>
-									<td>0:1</td>
-									<td>0:1</td>
-								</tr>
+								<c:forEach var="dto" items="${list}">
+									<tr>
+										<td>${dto.matchDate}</td>
+										<td>${dto.matchTime}</td>
+										<td>${dto.homeScore}</td>
+										<td>${dto.awayScore}</td>
+									</tr>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
