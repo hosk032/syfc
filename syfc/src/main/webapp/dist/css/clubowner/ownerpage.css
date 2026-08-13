@@ -1,81 +1,61 @@
 @charset "UTF-8";
 
-body {
-	background-color: #f8f9fa;
+/* ==========================================================================
+   구단주 마이페이지 전용 통합 CSS (ownerpage.css v2.3)
+   ========================================================================== */
+
+/* 1. 공통 요소 & 유틸리티 */
+.cursor-pointer { cursor: pointer; }
+.extra-small { font-size: 0.78rem; }
+.fs-7 { font-size: 0.82rem; }
+
+/* 2. 상단 프로필 바 */
+.owner-profile-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
 }
 
-/* 폰트 및 여백 보정 유틸리티 */
-.extra-small {
-	font-size: 12px !important;
+/* 3. 사이드바 (LNB) */
+.owner-sidebar-card {
+    top: 20px;
 }
 
-.fs-7 {
-	font-size: 13px !important;
+/* 4. [탭 1] 구단 정보 등록 / 수정 */
+.emblem-wrapper {
+    width: 80px;
+    height: 80px;
+}
+.emblem-icon {
+    font-size: 32px;
+}
+.emblem-camera-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
 }
 
-.p-3\.5 {
-	padding: 1.125rem !important;
+/* 5. [탭 2] 경기 이력 / 성적 */
+.select-year-width { width: 110px; }
+.select-month-width { width: 100px; }
+.select-result-width { width: 110px; }
+.th-date-width { width: 140px; }
+.th-score-width { width: 110px; }
+.th-result-width { width: 90px; }
+
+/* 6. [탭 3] 입단 승인 관리 & [탭 4] 소속 선수 목록 */
+.msg-truncate-width { max-width: 220px; }
+.comment-truncate-width { max-width: 180px; }
+
+/* 7. [탭 5] 경기장 예약 & 매칭 */
+.match-header-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
 }
 
-.gap-1\.5 {
-	gap: 0.375rem !important;
-}
+/* 8. [탭 6] 구단주 변경 신청 */
+.transfer-form-max-width { max-width: 550px; }
 
-/* 사이드바 스타일 */
-.owner-sidebar .list-group-item {
-	border: none;
-	padding: 12px 20px;
-	font-size: 14px;
-	color: #495057;
-}
-
-.owner-sidebar .list-group-item-action:hover {
-	background-color: #e9ecef;
-	color: #0d6efd;
-}
-
-.owner-sidebar .list-group-item.active {
-	background-color: #0d6efd;
-	color: #fff;
-	font-weight: bold;
-	border-radius: 6px;
-}
-
-.sidebar-category {
-	font-size: 12px;
-	font-weight: bold;
-	color: #adb5bd;
-	text-transform: uppercase;
-	padding: 15px 20px 5px 20px;
-}
-
-/* 타임슬롯 카드 전용 깨끗한 여백 커스텀 */
-.match-status-card {
-	background-color: #f8f9fa;
-	border: 1px solid #e9ecef;
-	border-radius: 12px;
-	padding: 16px 20px;
-}
-
-.match-status-card .status-line {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding-bottom: 10px;
-	margin-bottom: 10px;
-	border-bottom: 1px solid #dee2e6;
-}
-
-/* 경기장 선택 카드 강조 스타일 */
-.stadium-card {
-	transition: all 0.2s ease-in-out;
-}
-
-.stadium-card:hover {
-	border-color: #0d6efd !important;
-}
-
-.stadium-card.selected {
-	border: 2px solid #0d6efd !important;
-	background-color: #f0f7ff !important;
-}
+/* 9. 공통 모달 스타일 */
+.modal-score-select { max-width: 200px; }
