@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchHistory.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/rating.css" />
 </head>
 <body>
 
@@ -52,7 +52,6 @@
 					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
 					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
 
-
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
 					<a href="${pageContext.request.contextPath}/player/club" class="list-group-item list-group-item-action ps-4">내 구단팀 조회</a> 
@@ -70,36 +69,18 @@
 		
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 		<div class="col-md-9">
-			<div class="card p-4">
-				<h4 class="border-bottom pb-2 mb-4">⚽ 내 경기 참가 이력</h4>
+			<div class="card p-4 rating-panel">
+				<h4 class="border-bottom pb-2 mb-4">📝투두리스트</h4>
 				
-					<div class="matchHistory-responsive">
-						<table class="table table-hover text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>경기날짜</th>
-									<th>경기시간</th>
-									<th>⚽ 홈팀점수 ⚽</th>
-									<th>⚽ 원정팀점수 ⚽</th>
-								</tr>
-							</thead>
+			<div class="table-responsive">
+				<p>오늘 할일</p>
+				<span>1. 워밍업 달리기 10km</span>
+				<span>2. 골 차기 연습 10분</span>
+				<span>3. 헤딩 연습 10분</span>
 
-							<tbody>
-								<c:forEach var="dto" items="${list}">
-									<tr>
-										<td>${dto.matchDate}</td>
-										<td>${dto.matchTime}</td>
-										<td>${dto.homeScore}</td>
-										<td>${dto.awayScore}</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-					</div>
 			</div>
-			
+			</div>
 
-			
 		</div>
 	</div>
 </div>

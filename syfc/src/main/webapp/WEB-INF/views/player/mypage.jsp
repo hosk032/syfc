@@ -44,7 +44,7 @@
 					<!-- 대분류 1 -->
 					<div class="list-group-item bg-light fw-bold">내 프로필</div>
 					<a href="${pageContext.request.contextPath}/player/mypage" class="list-group-item list-group-item-action ps-4 active">프로필 등록/수정</a> 
-					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 평점 조회</a>
+					<a href="${pageContext.request.contextPath}/player/todo" class="list-group-item list-group-item-action ps-4">투두리스트</a>
 
 					<!-- 대분류 2 -->
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
@@ -70,9 +70,13 @@
 
 			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 			<div class="col-md-9">
-				<div class="card p-4 profile-panel">
-					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">프로필 등록 및 수정</h4>
-
+				<div class="profile-panel-heading">
+					<h4 class="profile-panel-title">프로필 등록 및 수정</h4>
+					<p class="profile-edit-notice">
+						※프로필 수정은 하단의 수정하기 버튼을 클릭해주세요※
+					</p>
+				</div>
+				
 					<form action="${pageContext.request.contextPath}/player/profile" method="post" class="profile-form" enctype="multipart/form-data">
 						<div class="profile-primary">
 							<div class="profile-photo-area">
@@ -92,8 +96,7 @@
 										프로필 사진 
 									</label> 
 									
-									<input type="file" id="profilePhoto" class="profile-file-input"
-										name="profilePhoto" accept="image/*" disabled>
+									<input type="file" id="profilePhoto" class="profile-file-input" name="profilePhoto" accept="image/*" disabled>
 							</div>
 
 							<div class="profile-info-area">
@@ -182,36 +185,92 @@
 						</div>
 
 						<div class="profile-form-actions">
-							<button type="button" class="profile-edit-btn" id="editBtn"><i class="bi bi-check-lg"></i> 수정하기</button>
-							<button type="submit" class="profile-save-btn" id="saveBtn" style="display: none;"><i class="bi bi-check-lg"></i> 저장하기</button>
-							<button type="reset" class="profile-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
+							<div class="profile-main-actions">
+								<button type="button" class="profile-edit-btn" id="editBtn"><i class="bi bi-check-lg"></i> 수정하기</button>
+								<button type="submit" class="profile-save-btn" id="saveBtn" style="display: none;"><i class="bi bi-check-lg"></i> 저장하기</button>
+								<button type="reset" class="profile-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
+							</div>
+							<button type="button" class="profile-delete-btn" id="withdrawBtn"> 탈퇴하기</button>
 						</div>
 					</form>
 
 				</div>
 			</div>
 		</div>
-	</div>
+
 
 	<!-- 하단 푸터 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+	
+		
+	<!-- 비밀번호 확인 모달창 -->
+	<div class="modal fade" id="passwordCheckModal" tabindex="-1" aria-labelledby="passwordCheckModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<form action="${pageContext.request.contextPath}/member/pwd" method="post">
+					<input type="hidden" name="mode" value="playerUpdate">
+					
+					<div class="modal-header">
+						<h5 class="modal-title" id="passwordCheckModalLabel">
+							비밀번호 확인
+						</h5>
+						
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					
+					<div class="modal-body">
+						<p class="small text-muted">
+							개인정보 수정을 위해 비밀번호를 입력해주세요.
+						</p>
+						
+						<label for="checkPassword" class="form-label">
+							비밀번호
+						</label>
+						
+						<input type="password" id="checkPassword" name="userPwd" class="form-control" required>
+					
+						<div class="text-danger small mt-2" id="passwordError">
+						
+						</div>
 
+					</div>
+					
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">
+							확인
+						</button>
+						
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							취소
+						</button>
+						
+					</div>
+				
+				</form>
+	
+			</div>
+		</div>
+	</div>
+	<!-- 비밀번호 확인 모달창 끝 -->
+	
 	<!-- 3. 마이페이지 전용 JS 연결 (dist/js/member/mypage.js) -->
 	<script src="${pageContext.request.contextPath}/dist/js/member/mypage.js"></script>
 	
 	<script type="text/javascript">
-	// 수정 전에 읽기전용 -> 수정버튼 클릭 후 수정창으로 변경
-	document.getElementById("editBtn").addEventListener("click", function(){
-		document.querySelectorAll(".profile-form input, .profile-form select, .profile-form button")
-			.forEach(function(element){
-				element.removeAttribute("readonly");
-				element.removeAttribute("disabled");
-			});
-		
-		document.getElementById("editBtn").style.display = "none";
-		document.getElementById("saveBtn").style.display = "inline-block";
-		
+	// 수정 전에 읽기전용 -> 수정버튼 클릭 후 비밀번호 수정창으로 변경
+	// editBtn 버튼 찾기
+	const editBtn = document.getElementById("editBtn");
+	
+	// 부트스트랩 생성 + 아이디 호출
+	const passwordModal = new bootstrap.Modal(
+		document.getElementById("passwordCheckModal")
+	);
+	
+	// 버튼 클릭이벤트 , 모달창 보여주기
+	editBtn.addEventListener("click", function(){
+		passwordModal.show();
 	});
+	
 	
 	// 버튼 클릭 이벤트
 	document.querySelectorAll(".position-btn").forEach(function(button) {
@@ -246,6 +305,28 @@
 			defaultIcon.style.display = "none";
 		}
 	});
+	
+	// 하단 회원 탈퇴하기 버튼 이벤트
+	const withdrawBtn = document.getElementById("withdrawBtn");
+	
+	// 클릭 이벤트 발생
+	withdrawBtn.addEventListener("click", function(){
+		// 정말 탈퇴하실건지 물어보는 문구
+		const iswithdrawBtn = confirm("정말 탈퇴하시겠습니까 ?");
+		
+		if(! iswithdrawBtn){
+			return;
+		}
+		
+		// 회원탈퇴 POST 요청 보내기
+	});
+	
+
+	
+	
 	</script>
+
+	
+	
 </body>
 </html>

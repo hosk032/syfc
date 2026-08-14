@@ -92,6 +92,7 @@ public class PlayerController {
 		return new ModelAndView("redirect:/player/mypage");
 	}
 	
+	// 회원정보 등록 및 수정
 	@GetMapping("mypage")
 	public ModelAndView mypage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
@@ -104,6 +105,14 @@ public class PlayerController {
 		
 		return mav;
 	}
+	
+	// 투두리스트
+	@GetMapping("todo")
+	public ModelAndView todo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		return new ModelAndView("player/todo");
+	}
+	
+	// 내 선수 프로필 조회
 	@GetMapping("playerProfile")
 	public ModelAndView playerProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
@@ -117,6 +126,7 @@ public class PlayerController {
 		return mav;
 	}
 	
+	// 내 경기성적 조회
 	@GetMapping("rating")
 	public ModelAndView rating(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
@@ -130,6 +140,7 @@ public class PlayerController {
 		return mav;
 	}
 	
+	// 내 경기 참가 이력
 	@GetMapping("matchHistory")
 	public ModelAndView matchHistory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
@@ -144,6 +155,7 @@ public class PlayerController {
 		return mav;
 	}
 	
+	//
 	@GetMapping("matchApply")
 	public ModelAndView matchApply(HttpServletRequest req, HttpServletResponse resp) {
 	    return new ModelAndView("player/matchApply");
@@ -154,6 +166,7 @@ public class PlayerController {
 	    return new ModelAndView("player/club");
 	}
 	
+	// 입단 신청
 	@GetMapping("clubJoin")
 	public ModelAndView clubJoin(HttpServletRequest req, HttpServletResponse resp) {
 	    return new ModelAndView("player/clubJoin");
