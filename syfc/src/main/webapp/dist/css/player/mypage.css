@@ -2,10 +2,22 @@
     border: 1px solid #d9e1e8;
     box-shadow: 0 8px 22px rgba(27, 49, 72, 0.06);
 }
+.profile-panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #d9e0e8;
+}
 
 .profile-panel-title {
-    color: #1f2d3d;
-    font-weight: 700;
+    margin: 0;
+}
+.profile-edit-notice {
+    margin: 0;
+    font-size: 10px;
+    color: #0d6efd;
 }
 
 .profile-form {
@@ -238,6 +250,30 @@
     gap: 10px;
     padding-top: 30px;
 }
+.profile-form-actions {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 36px;
+}
+
+.profile-main-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.profile-delete-btn {
+    position: absolute;
+    right: 0;
+    padding: 5px 9px;
+    font-size: 12px;
+    color: #b42318;
+    background: #fff;
+    border: 1px solid #f0b7b2;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
 .profile-save-btn,
 .profile-reset-btn,
@@ -270,4 +306,81 @@
 .position-btn.active {
     background-color: #0d6efd;
     color: white;
+}
+.profile-delete-btn {
+    margin-left: auto;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #b42318;
+    background: #fff;
+    border: 1px solid #f0b7b2;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#passwordCheckModal .modal-dialog {
+    max-width: 400px;
+    margin: 1.5rem auto;
+}
+
+#passwordCheckModal.modal.fade .modal-dialog {
+    transform: translateY(-8px);
+    transition: transform 0.18s ease-out;
+}
+
+#passwordCheckModal.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+#passwordCheckModal .modal-content {
+    border: 1px solid #d9e1e8;
+    border-radius: 10px;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+#passwordCheckModal .modal-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid #e4e9ee;
+}
+
+#passwordCheckModal .modal-title {
+    color: #243447;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+#passwordCheckModal .modal-body {
+    padding: 22px 20px;
+}
+
+#passwordCheckModal .modal-body .form-label {
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#passwordCheckModal .modal-body .form-control {
+    min-height: 42px;
+    border-color: #ccd6df;
+    box-shadow: none;
+}
+
+#passwordCheckModal .modal-body .form-control:focus {
+    border-color: #4c8bc8;
+    box-shadow: none;
+}
+
+#passwordCheckModal .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid #e4e9ee;
+}
+
+#passwordCheckModal .modal-footer .btn {
+    min-width: 74px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
 }
