@@ -1,0 +1,399 @@
+@charset "UTF-8";
+
+
+/* =========================================================
+   전체 영역
+   ========================================================= */
+
+.memberContainer {
+	width: 1024px;
+	margin: 40px auto;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.memberHeader {
+	margin-bottom: 25px;
+}
+
+
+.memberTitle {
+	margin: 0 0 8px;
+	font-size: 26px;
+	font-weight: 700;
+	color: #333;
+}
+
+
+.memberDesc {
+	margin: 0;
+	font-size: 14px;
+	color: #777;
+}
+
+
+.memberCount {
+	margin-bottom: 10px;
+	font-size: 15px;
+	color: #555;
+}
+
+
+.memberCount strong {
+	color: #6b4ba1;
+}
+
+
+
+/* =========================================================
+   테이블
+   ========================================================= */
+
+.tableWrap {
+	width: 100%;
+}
+
+
+.memberTable {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-size: 15px;
+}
+
+
+.memberTable thead tr {
+	border-top: 2px solid #555;
+	border-bottom: 1px solid #ddd;
+}
+
+
+.memberTable tbody tr {
+	border-bottom: 1px solid #eee;
+}
+
+
+.memberTable th {
+	height: 48px;
+	text-align: center;
+	vertical-align: middle;
+
+	font-size: 15px;
+	font-weight: 600;
+
+	background: #fafafa;
+	color: #333;
+}
+
+
+.memberTable td {
+	height: 55px;
+	vertical-align: middle;
+	color: #444;
+}
+
+
+.memberTable .center {
+	text-align: center;
+}
+
+
+.emptyMember {
+	height: 100px !important;
+	text-align: center;
+	color: #888;
+}
+
+
+
+/* =========================================================
+   회원 등급
+   ========================================================= */
+
+.levelNormal {
+	color: #555;
+}
+
+
+.levelPlayer {
+	color: #2468d4;
+	font-weight: 600;
+}
+
+
+.levelOwner {
+	color: #6b4ba1;
+	font-weight: 600;
+}
+
+
+.levelAdmin {
+	color: #d14949;
+	font-weight: 600;
+}
+
+
+
+/* =========================================================
+   회원 상태
+   ========================================================= */
+
+.statusNormal {
+	color: #2f8a51;
+	font-weight: 600;
+}
+
+
+.statusStop {
+	color: #d14949;
+	font-weight: 600;
+}
+
+
+
+/* =========================================================
+   관리 버튼
+   ========================================================= */
+
+.manageCell {
+	white-space: nowrap;
+}
+
+
+.inlineForm {
+	display: inline-block;
+	margin: 0 2px;
+}
+
+
+.btnSmall {
+	padding: 6px 10px;
+
+	border: 1px solid #ddd;
+	border-radius: 5px;
+
+	background: #fff;
+
+	font-size: 13px;
+	white-space: nowrap;
+
+	cursor: pointer;
+}
+
+
+.btnLevel {
+	color: #6b4ba1;
+	border-color: #b9a8d4;
+}
+
+
+.btnLevel:hover {
+	background: #f5f0fa;
+}
+
+
+.btnStop {
+	color: #d14949;
+	border-color: #e7bcbc;
+}
+
+
+.btnStop:hover {
+	background: #fff1f1;
+}
+
+
+.btnRelease {
+	color: #2f8a51;
+	border-color: #aed5bb;
+}
+
+
+.btnRelease:hover {
+	background: #eef8f1;
+}
+
+
+.noManage {
+	display: inline-block;
+	padding: 6px 10px;
+
+	font-size: 13px;
+	color: #aaa;
+}
+
+
+
+/* =========================================================
+   페이징
+   ========================================================= */
+
+.pagingArea {
+	margin-top: 25px;
+	text-align: center;
+}
+
+
+
+/* =========================================================
+   하단 영역
+   왼쪽 새로고침 / 가운데 검색
+   ========================================================= */
+
+.memberFooter {
+	display: grid;
+
+	grid-template-columns: 1fr auto 1fr;
+
+	align-items: center;
+
+	width: 100%;
+	margin-top: 15px;
+}
+
+
+.footerLeft {
+	justify-self: start;
+}
+
+
+.footerSearch {
+	justify-self: center;
+}
+
+
+.footerRight {
+	justify-self: end;
+}
+
+
+
+/* =========================================================
+   새로고침
+   ========================================================= */
+
+.btnRefresh {
+	width: 42px;
+	height: 38px;
+
+	border: 1px solid #ddd;
+	border-radius: 6px;
+
+	background: #fff;
+	color: #555;
+
+	font-size: 20px;
+	line-height: 1;
+
+	cursor: pointer;
+}
+
+
+.btnRefresh:hover {
+	background: #f5f5f5;
+}
+
+
+
+/* =========================================================
+   검색
+   ========================================================= */
+
+.searchArea {
+	display: flex;
+
+	align-items: center;
+	justify-content: center;
+
+	gap: 6px;
+
+	white-space: nowrap;
+}
+
+
+.searchSelect {
+	width: 140px;
+	height: 38px;
+
+	padding: 0 8px;
+
+	border: 1px solid #ddd;
+	border-radius: 5px;
+
+	background: #fff;
+
+	font-size: 14px;
+
+	box-sizing: border-box;
+}
+
+
+.searchInput {
+	width: 220px;
+	height: 38px;
+
+	padding: 0 10px;
+
+	border: 1px solid #ddd;
+	border-radius: 5px;
+
+	box-sizing: border-box;
+
+	font-size: 14px;
+}
+
+
+.btnSearch {
+	width: 60px;
+	height: 38px;
+
+	padding: 0;
+
+	border: none;
+	border-radius: 5px;
+
+	background: #6b4ba1;
+	color: #fff;
+
+	font-size: 14px;
+
+	white-space: nowrap;
+
+	cursor: pointer;
+}
+
+
+.btnSearch:hover {
+	opacity: 0.9;
+}
+
+
+
+/* =========================================================
+   화면이 좁아질 때
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+	.memberContainer {
+		padding: 0 12px;
+	}
+
+
+	.memberFooter {
+		grid-template-columns: auto;
+		gap: 12px;
+	}
+
+
+	.footerLeft,
+	.footerSearch,
+	.footerRight {
+		justify-self: center;
+	}
+
+
+	.searchInput {
+		width: 180px;
+	}
+}

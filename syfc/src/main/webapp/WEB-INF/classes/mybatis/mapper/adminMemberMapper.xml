@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.AdminMemberMapper">
+
+	<!-- 검색 조건 -->
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all'">
+				( INSTR(userId, #{kwd}) &gt; 0
+					OR INSTR(userName, #{kwd}) &gt; 0 )
+			</when>
+
+			<when test="schType == 'userId'">
+				INSTR(userId, #{kwd}) &gt; 0
+			</when>
+
+			<when test="schType == 'userName'">
+				INSTR(userName, #{kwd}) &gt; 0
+			</when>
+		</choose>
+	</sql>
+
+	<!-- 회원 전체 개수 -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM member1
+		<where>
+			<if test="kwd != null and kwd != ''">
+				<include refid="where-list"/>
+			</if>
+		</where>
+	</select>
+
+	<!-- 회원 목록 -->
+	<select id="listMember" parameterType="map" resultType="com.syfc.dto.AdminMemberDTO">
+		SELECT memberIdx, userId, userName, userLevel, status
+		FROM member1
+		<where>
+			<if test="kwd != null and kwd != ''">
+				<include refid="where-list"/>
+			</if>
+		</where>
+		ORDER BY memberIdx DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<!--
+		회원 등급 변경
+		
+		1   : 일반회원
+		10  : 선수
+		50  : 구단주
+		100 : 관리자
+	-->
+	<update id="updateMemberLevel" parameterType="map">
+		UPDATE member1 SET userLevel = #{userLevel}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+	<!--
+		회원 상태 변경
+		
+		1 : 이용가능
+		2 : 정지
+	-->
+	<update id="updateMemberStatus" parameterType="map">
+		UPDATE member1 SET status = #{status}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+</mapper>

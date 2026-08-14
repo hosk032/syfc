@@ -12,7 +12,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class HomeManageController {
-	@GetMapping("/admin")
+
+	// =========================================================
+	// 관리자 메인
+	// GET /admin
+	// =========================================================
+	@GetMapping("/admin/main")
 	public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ModelAndView mav = new ModelAndView("admin/main");
 		return mav;

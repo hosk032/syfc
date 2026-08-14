@@ -147,3 +147,96 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* =========================================================
+   관리자 메인 - 카드 내부 세부 메뉴
+   ========================================================= */
+
+.subMenu {
+	margin-top: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+/* 세부 메뉴 버튼 */
+.subMenuButton {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 44px;
+	padding: 0 42px 0 16px;
+
+	border: 1px solid #e5e0eb;
+	border-radius: 10px;
+
+	background: #faf9fc;
+	color: #555;
+
+	font-size: 14px;
+	font-weight: 500;
+	text-align: left;
+
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+/* 오른쪽 화살표 */
+.subMenuButton::after {
+	content: "›";
+	position: absolute;
+	right: 16px;
+	top: 50%;
+	transform: translateY(-52%);
+
+	font-size: 22px;
+	font-weight: 300;
+	color: #aaa;
+}
+
+/* 마우스를 올렸을 때 */
+.subMenuButton:hover {
+	background: #f5f0fa;
+	border-color: #bba8d3;
+	color: #6f4aa1;
+}
+
+/* 화살표도 보라색 */
+.subMenuButton:hover::after {
+	color: #6f4aa1;
+}
+
+
+/* =========================================================
+   아직 구현하지 않은 메뉴
+   ========================================================= */
+
+.disabledSubButton {
+	background: #f8f8f8;
+	border-color: #eeeeee;
+	color: #bbb;
+
+	cursor: default;
+}
+
+/* 비활성화 메뉴 오른쪽에 준비중 표시 */
+.disabledSubButton::after {
+	content: "준비중";
+	right: 14px;
+
+	padding: 3px 8px;
+	border-radius: 10px;
+
+	background: #eeeeee;
+	color: #aaa;
+
+	font-size: 11px;
+	font-weight: 400;
+}
+
+/* 비활성화 메뉴는 마우스를 올려도 변화 없음 */
+.disabledSubButton:hover {
+	background: #f8f8f8;
+	border-color: #eeeeee;
+	color: #bbb;
+}
