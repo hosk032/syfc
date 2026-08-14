@@ -31,7 +31,7 @@
       <c:when test="${sessionScope.member.userLevel == 50}">
          <i class="fa-regular fa-user"
             title="마이페이지"
-            onclick="location.href='${pageContext.request.contextPath}/clubOwner/ownerpage';"></i>
+            onclick="location.href='${pageContext.request.contextPath}/clubowner/ownerpage';"></i>
       </c:when>
    
       <c:when test="${sessionScope.member.userLevel == 100}">
