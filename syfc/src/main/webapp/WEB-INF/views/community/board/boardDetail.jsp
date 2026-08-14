@@ -23,38 +23,113 @@
         <!-- 왼쪽 서브 메뉴 (사이드바) -->
         <aside class="community-side-menu">
             <div class="side-menu-title">커뮤니티</div>
-            <a href="${pageContext.request.contextPath}/community/noticeList">공지사항</a>
-            <a href="${pageContext.request.contextPath}/community/boardList" class="active">게시판</a>
-            <a href="${pageContext.request.contextPath}/community/qnaList">문의/신고 게시판</a>
+            <a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a>
+            <a href="${pageContext.request.contextPath}/community/board/boardList" class="active">게시판</a>
+            <a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
         </aside>
 
         <!-- 오른쪽 상세 본문 영역 -->
         <section class="board-detail-area">
             <div class="detail-top">
                 <h3>게시판</h3>
-                <a href="${pageContext.request.contextPath}/community/boardList" class="list-btn">목록</a>
+                <a href="${pageContext.request.contextPath}/community/board/boardList" class="list-btn">목록</a>
             </div>
 
             <div class="detail-box">
+                    <h4><c:out value="${dto.b_subject}"/></h4>
+
+                	<table>
+	                	<tr>
+		                    <td>
+		            		이름 : ${dto.userName}
+		            		</td>
+		            		<td align="right">
+								${dto.b_reg_date} | 조회 ${dto.b_hitCount}
+							</td>
+	                	</tr>
+                	
+	                	<tr>
+		                    <td>
+		            		${dto.b_content}
+		            		</td>
+	                	</tr>
+	                	
+	                	<tr>
+							<td colspan="2" class="text-center p-3">
+								<button type="button" class="btn btn-outline-primary btnSendBoardLike" title="좋아요"><i class="bi ${isUserLiked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>&nbsp;&nbsp;<span id="likeCount">${dto.boardLikeCount}</span></button>
+							</td>
+						</tr>
+												
+						<tr>
+							<td colspan="2">
+								이전글 :
+								<c:if test="${not empty prevDto}">
+									<a href="${pageContext.request.contextPath}/community/board/boardDetail?${query}&bnum=${prevDto.bnum}"><c:out value="${prevDto.b_subject}"/></a>
+								</c:if>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								다음글 :
+								<c:if test="${not empty nextDto}">
+									<a href="${pageContext.request.contextPath}/community/board/boardDetail?${query}&bnum=${nextDto.bnum}"><c:out value="${nextDto.b_subject}"/></a>
+								</c:if>
+							</td>
+						</tr>
+	                	
+                	</table>
+            
+            <!-- 
                 <div class="detail-title">
-                    <h4>축구장 예약 이용 안내</h4>
-                    <span>공지</span>
                 </div>
-
                 <div class="detail-info">
-                    <span>작성자 관리자</span>
-                    <span>작성일 2026-08-04</span>
-                    <span>조회수 80</span>
                 </div>
-
                 <div class="detail-content">
-                    <p>축구장 예약 이용 방법을 안내드립니다.</p>
-                    <p>원하는 경기장을 선택한 뒤 날짜와 시간을 확인하고 예약 신청을 진행해주세요.</p>
-                    <p>예약 변경이나 취소가 필요한 경우 마이페이지에서 신청 내역을 확인할 수 있습니다.</p>
                 </div>
+             -->
+                	
+					<table class="table table-borderless mb-2">
+						<tr>
+							<td width="50%">
+								<c:choose>
+									<c:when test="${sessionScope.member.memberIdx == dto.memberIdx}">
+										<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/update?bnum=${dto.bnum}&page=${page}';">수정</button>
+									</c:when>
+									<c:otherwise>
+										<button type="button" class="btn btn-light" disabled>수정</button>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${sessionScope.member.memberIdx == dto.memberIdx || sessionScope.member.userLevel >= 51}">
+										<button type="button" class="btn btn-light" onclick="deleteOk()">삭제</button>
+									</c:when>
+									<c:otherwise>
+										<button type="button" class="btn btn-light" disabled>삭제</button>
+									</c:otherwise>
+								</c:choose>
+							
+								
+					    		
+							</td>
+							<td class="text-end">
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/boardList?${query}';">리스트</button>
+							</td>
+						</tr>
+					</table>
+                	
+                	
+                	
             </div>
+            
+            
         </section>
     </div>
+
+<script type="text/javascript">
+
+
+</script>
 
     <!-- 하단 푸터 조립 -->
     <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

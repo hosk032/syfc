@@ -1,71 +1,67 @@
 package com.syfc.dto;
 
 public class BoardDTO {
-	private long bNum;
-	private String b_Subject;
-	private String b_Content;
-	private String b_HitCount;
-	private String b_Reg_date;
-	private int b_Block;
-	private int b_Type;
+	private long bnum;
+	private String b_subject;
+	private String b_content;
+	private String b_hitCount;
+	private String b_reg_date;
+	private int b_block;
+	private int b_type;
 	
 	private long memberIdx;
 	
-	private long reply_Num;
-	private String r_Content;
-	private String r_Reg_date;
-	private int r_Block;
+	private long reply_num;
+	private String r_content;
+	private String r_reg_date;
+	private int r_block;
 	
 	private String userName;
 	
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+	private int replyCount;
+	private int boardLikeCount;
 	
-	public long getbNum() {
-		return bNum;
+	public long getBnum() {
+		return bnum;
 	}
-	public void setbNum(long bNum) {
-		this.bNum = bNum;
+	public void setBnum(long bnum) {
+		this.bnum = bnum;
 	}
-	public String getB_Subject() {
-		return b_Subject;
+	public String getB_subject() {
+		return b_subject;
 	}
-	public void setB_Subject(String b_Subject) {
-		this.b_Subject = b_Subject;
+	public void setB_subject(String b_subject) {
+		this.b_subject = b_subject;
 	}
-	public String getB_Content() {
-		return b_Content;
+	public String getB_content() {
+		return b_content;
 	}
-	public void setB_Content(String b_Content) {
-		this.b_Content = b_Content;
+	public void setB_content(String b_content) {
+		this.b_content = b_content;
 	}
-	public String getB_HitCount() {
-		return b_HitCount;
+	public String getB_hitCount() {
+		return b_hitCount;
 	}
-	public void setB_HitCount(String b_HitCount) {
-		this.b_HitCount = b_HitCount;
+	public void setB_hitCount(String b_hitCount) {
+		this.b_hitCount = b_hitCount;
 	}
-	public String getB_Reg_date() {
-		return b_Reg_date;
+	public String getB_reg_date() {
+		return b_reg_date;
 	}
-	public void setB_Reg_date(String b_Reg_date) {
-		this.b_Reg_date = b_Reg_date;
+	public void setB_reg_date(String b_reg_date) {
+		this.b_reg_date = b_reg_date;
 	}
-	public int getB_Block() {
-		return b_Block;
+	public int getB_block() {
+		return b_block;
 	}
-	public void setB_Block(int b_Block) {
-		this.b_Block = b_Block;
+	public void setB_block(int b_block) {
+		this.b_block = b_block;
 	}
-	public int getB_Type() {
-		return b_Type;
+	public int getB_type() {
+		return b_type;
 	}
-	public void setB_Type(int b_Type) {
-		this.b_Type = b_Type;
+	public void setB_type(int b_type) {
+		this.b_type = b_type;
 	}
 	public long getMemberIdx() {
 		return memberIdx;
@@ -73,30 +69,50 @@ public class BoardDTO {
 	public void setMemberIdx(long memberIdx) {
 		this.memberIdx = memberIdx;
 	}
-	public long getReply_Num() {
-		return reply_Num;
+	public long getReply_num() {
+		return reply_num;
 	}
-	public void setReply_Num(long reply_Num) {
-		this.reply_Num = reply_Num;
+	public void setReply_num(long reply_num) {
+		this.reply_num = reply_num;
 	}
-	public String getR_Content() {
-		return r_Content;
+	public String getR_content() {
+		return r_content;
 	}
-	public void setR_Content(String r_Content) {
-		this.r_Content = r_Content;
+	public void setR_content(String r_content) {
+		this.r_content = r_content;
 	}
-	public String getR_Reg_date() {
-		return r_Reg_date;
+	public String getR_reg_date() {
+		return r_reg_date;
 	}
-	public void setR_Reg_date(String r_Reg_date) {
-		this.r_Reg_date = r_Reg_date;
+	public void setR_reg_date(String r_reg_date) {
+		this.r_reg_date = r_reg_date;
 	}
-	public int getR_Block() {
-		return r_Block;
+	public int getR_block() {
+		return r_block;
 	}
-	public void setR_Block(int r_Block) {
-		this.r_Block = r_Block;
+	public void setR_block(int r_block) {
+		this.r_block = r_block;
 	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	public int getBoardLikeCount() {
+		return boardLikeCount;
+	}
+	public void setBoardLikeCount(int boardLikeCount) {
+		this.boardLikeCount = boardLikeCount;
+	}
+	
+	
 	
 
 }
