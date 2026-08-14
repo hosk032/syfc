@@ -76,6 +76,10 @@
 						<a href="#player-list" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
 							<i class="bi bi-people me-2"></i>소속 선수 조회 / 제적
 						</a>
+						<!-- 🆕 [신규 추가] 선수 평점 & 경기 성적 관리 탭 -->
+						<a href="#player-rating-manage" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
+							<i class="bi bi-star-half me-2"></i>선수 평점 / 성적 관리
+						</a>
 
 						<div class="sidebar-category">경기 및 매칭</div>
 						<a href="#match-apply" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
@@ -97,6 +101,8 @@
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_team_history.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_approval.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_player_list.jsp" />
+					<!-- 🆕 [신규 추가] tab_player_rating.jsp Include -->
+					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_player_rating.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_match_apply.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_owner_transfer.jsp" />
 				</div>
@@ -105,49 +111,7 @@
 		</div>
 	</div>
 
-	<!-- 공통 모달 1. 평점 모달 -->
-	<div class="modal fade" id="playerRatingModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content border-0 rounded-4 shadow">
-				<div class="modal-header border-bottom pb-3">
-					<h6 class="modal-header-title fw-bold mb-0">
-						<i class="bi bi-star-fill text-warning me-2"></i><span id="modalPlayerName">선수</span> 평점 관리
-					</h6>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body py-4">
-					<form id="playerRatingForm">
-						<input type="hidden" id="targetPlayerName">
-						<div class="mb-3 text-center">
-							<label class="form-label d-block fw-bold small text-muted mb-2">평점 선택 (1.0 ~ 5.0)</label>
-							<select class="form-select form-select-lg fw-bold text-center mx-auto modal-score-select" id="playerScore">
-								<option value="5.0">⭐⭐⭐⭐⭐ (5.0)</option>
-								<option value="4.0">⭐⭐⭐⭐ (4.0)</option>
-								<option value="3.0">⭐⭐⭐ (3.0)</option>
-								<option value="2.0">⭐⭐ (2.0)</option>
-								<option value="1.0">⭐ (1.0)</option>
-							</select>
-						</div>
-						<div class="mb-2">
-							<label class="form-label fw-bold extra-small text-muted mb-1">선수 평가 메모 (선택사항)</label>
-							<textarea class="form-control" id="playerComment" rows="3" placeholder="출석률, 매너, 경기 활약도에 대한 간단한 메모를 남겨주세요."></textarea>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer border-top pt-3 d-flex justify-content-between">
-					<button type="button" class="btn btn-light border text-danger btn-sm px-3" onclick="deletePlayerRating()">
-						<i class="bi bi-trash me-1"></i>평점 삭제
-					</button>
-					<div>
-						<button type="button" class="btn btn-light border btn-sm px-3 me-1" data-bs-dismiss="modal">취소</button>
-						<button type="button" class="btn btn-primary btn-sm px-4 fw-bold" onclick="savePlayerRating()">저장하기</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- 공통 모달 2. 거절 모달 -->
+	<!-- 공통 모달. 입단 거절 모달 -->
 	<div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content border-0 rounded-4 shadow">
@@ -182,6 +146,6 @@
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
 
-	<script src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=2.3"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=2.4"></script>
 </body>
 </html>

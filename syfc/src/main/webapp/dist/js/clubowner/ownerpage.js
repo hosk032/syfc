@@ -1,5 +1,5 @@
 /* ==========================================================================
-   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 함수 스크립트 (v2.3)
+   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 함수 스크립트 (v2.4)
    ========================================================================== */
 
 // 전역 변수: 선택된 경기장 이름 및 타임슬롯 참가 선수 수
@@ -7,9 +7,9 @@ let selectedStadiumName = "쌍용 주 경기장";
 let currentSelectedPlayerCount = 0;
 
 // 페이지 로드 시 부트스트랩 툴팁 활성화
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
@@ -257,7 +257,7 @@ function updatePendingCount() {
 
 
 /* ==========================================================================
-   [탭 4] 소속 선수 목록 & 평점 관리 전용
+   [탭 4] 소속 선수 목록 전용 (제적 및 필터링)
    ========================================================================== */
 
 // 소속 선수 제적 처리
@@ -285,124 +285,12 @@ function updateTotalPlayerCount() {
     if (remainingRows === 0) {
         listBody.innerHTML = `
             <tr class="empty-row">
-                <td colspan="6" class="py-5 text-center text-muted">
+                <td colspan="4" class="py-5 text-center text-muted">
                     <i class="bi bi-people fs-1 d-block mb-2 text-secondary opacity-50"></i>
                     소속된 선수가 없습니다.
                 </td>
             </tr>
         `;
-    }
-}
-
-// 평점 모달 열기
-function openRatingModal(playerName, currentScore, currentComment, rowId) {
-    const modalName = document.getElementById('modalPlayerName');
-    const targetName = document.getElementById('targetPlayerName');
-
-    if (modalName) modalName.innerText = playerName;
-    if (targetName) {
-        targetName.value = playerName;
-        targetName.setAttribute('data-row-id', rowId);
-    }
-
-    const scoreNum = parseFloat(currentScore);
-    const scoreSelect = document.getElementById('playerScore');
-
-    if (scoreSelect) {
-        if (!isNaN(scoreNum) && scoreNum > 0) {
-            scoreSelect.value = scoreNum.toFixed(1);
-        } else {
-            scoreSelect.value = "5.0";
-        }
-    }
-
-    const commentInput = document.getElementById('playerComment');
-    if (commentInput) commentInput.value = currentComment || "";
-
-    const modalElement = document.getElementById('playerRatingModal');
-    if (modalElement) {
-        const ratingModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        ratingModal.show();
-    }
-}
-
-// 평점 저장 후 화면 실시간 업데이트
-function savePlayerRating() {
-    const targetInput = document.getElementById('targetPlayerName');
-    if (!targetInput) return;
-
-    const name = targetInput.value;
-    const rowId = targetInput.getAttribute('data-row-id');
-    const score = document.getElementById('playerScore').value;
-    const comment = document.getElementById('playerComment').value.trim();
-
-    if (confirm(`${name} 선수의 평점을 [${score}점]으로 저장하시겠습니까?`)) {
-        alert("선수 평점이 성공적으로 등록/수정되었습니다.");
-
-        const row = document.getElementById(`player-row-${rowId}`);
-        if (row) {
-            const scoreElem = row.querySelector('.rating-score');
-            const commentElem = row.querySelector('.rating-comment');
-            const btnElem = row.querySelector('.btn-rating-action');
-
-            if (scoreElem) {
-                scoreElem.className = "fw-bold text-warning rating-score";
-                scoreElem.innerText = `⭐ ${score}`;
-            }
-            if (commentElem) {
-                commentElem.innerText = comment || '-';
-                commentElem.title = comment || '';
-            }
-            if (btnElem) {
-                btnElem.innerHTML = `<i class="bi bi-star-fill me-1"></i>평점 관리`;
-                btnElem.setAttribute('onclick', `openRatingModal('${name}', '${score}', '${comment}', ${rowId})`);
-            }
-        }
-
-        const modalElement = document.getElementById('playerRatingModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
-    }
-}
-
-// 평점 삭제 후 화면 실시간 업데이트
-function deletePlayerRating() {
-    const targetInput = document.getElementById('targetPlayerName');
-    if (!targetInput) return;
-
-    const name = targetInput.value;
-    const rowId = targetInput.getAttribute('data-row-id');
-
-    if (confirm(`${name} 선수의 등록된 평점을 삭제하시겠습니까?`)) {
-        alert("평점이 삭제되었습니다.");
-
-        const row = document.getElementById(`player-row-${rowId}`);
-        if (row) {
-            const scoreElem = row.querySelector('.rating-score');
-            const commentElem = row.querySelector('.rating-comment');
-            const btnElem = row.querySelector('.btn-rating-action');
-
-            if (scoreElem) {
-                scoreElem.className = "text-muted extra-small rating-score";
-                scoreElem.innerText = "평점 없음";
-            }
-            if (commentElem) {
-                commentElem.innerText = "-";
-                commentElem.title = "";
-            }
-            if (btnElem) {
-                btnElem.innerHTML = `<i class="bi bi-star me-1"></i>평점 등록`;
-                btnElem.setAttribute('onclick', `openRatingModal('${name}', '0', '', ${rowId})`);
-            }
-        }
-
-        const modalElement = document.getElementById('playerRatingModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
     }
 }
 
@@ -586,5 +474,101 @@ function submitOwnerTransfer() {
         alert(`${selectedName} 선수에게 구단주 권한 양도 신청이 성공적으로 완료되었습니다.\n마이페이지로 이동합니다.`);
         // 백엔드 연동 시 주석 해제 후 submit
         // document.getElementById('ownerTransferForm').submit();
+    }
+}
+
+/* ==========================================================================
+   [신규 탭] 선수 평점 & 경기 성적 관리 전용 (등록, 수정, 삭제)
+   ========================================================================== */
+
+// 1. 성적 저장 (신규 등록 및 수정 처리)
+function saveMatchRecord() {
+    const matchDate = document.getElementById('matchDate').value;
+    const playerSelect = document.getElementById('ratingPlayerSelect');
+    const recordIdx = document.getElementById('recordIdx').value;
+
+    if (!matchDate) {
+        alert("경기 일자를 선택해 주세요.");
+        document.getElementById('matchDate').focus();
+        return;
+    }
+
+    if (!playerSelect.value) {
+        alert("대상 선수를 선택해 주세요.");
+        playerSelect.focus();
+        return;
+    }
+
+    const playerName = playerSelect.options[playerSelect.selectedIndex].getAttribute('data-name');
+    const isEdit = recordIdx !== "";
+
+    const confirmMsg = isEdit
+        ? `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 수정하시겠습니까?`
+        : `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 등록하시겠습니까?`;
+
+    if (confirm(confirmMsg)) {
+        alert(isEdit ? "성적이 성공적으로 수정되었습니다." : "성적이 성공적으로 등록되었습니다.");
+
+        // 프론트엔드 입력 폼 리셋
+        resetRatingForm();
+
+        // 백엔드 연결 시: AJAX 호출 또는 form.submit() 진행
+    }
+}
+
+// 2. 수정 버튼 클릭 시 목록 데이터를 입력 폼에 바인딩
+function editMatchRecord(recordId) {
+    const row = document.getElementById(`record-row-${recordId}`);
+    if (!row) return;
+
+    // dataset에서 기존 기록 추출
+    const date = row.getAttribute('data-date');
+    const playerId = row.getAttribute('data-player-id');
+    const score = row.getAttribute('data-score');
+    const goal = row.getAttribute('data-goal');
+    const assist = row.getAttribute('data-assist');
+    const ownGoal = row.getAttribute('data-owngoal');
+    const yellow = row.getAttribute('data-yellow') === 'true';
+    const red = row.getAttribute('data-red') === 'true';
+    const comment = row.getAttribute('data-comment');
+
+    // 입력 폼에 값 채우기
+    document.getElementById('recordIdx').value = recordId;
+    document.getElementById('matchDate').value = date;
+    document.getElementById('ratingPlayerSelect').value = playerId;
+    document.getElementById('playerRatingScore').value = score;
+    document.getElementById('statGoal').value = goal;
+    document.getElementById('statAssist').value = assist;
+    document.getElementById('statOwnGoal').value = ownGoal;
+    document.getElementById('statYellowCard').checked = yellow;
+    document.getElementById('statRedCard').checked = red;
+    document.getElementById('statComment').value = comment;
+
+    // 폼 UI를 [수정 모드]로 전환
+    document.getElementById('ratingFormTitle').innerText = "경기 성적 수정";
+    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-pencil-square me-1"></i>성적 수정 완료`;
+    document.getElementById('btnCancelEdit').classList.remove('d-none');
+
+    // 입력 폼 위치로 상단 스크롤
+    document.getElementById('playerRatingForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+// 3. 수정 취소 / 폼 초기화 (등록 모드로 복귀)
+function resetRatingForm() {
+    document.getElementById('playerRatingForm').reset();
+    document.getElementById('recordIdx').value = "";
+
+    document.getElementById('ratingFormTitle').innerText = "경기 성적 등록 / 수정";
+    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-check-lg me-1"></i>성적 저장하기`;
+    document.getElementById('btnCancelEdit').classList.add('d-none');
+}
+
+// 4. 성적 기록 삭제
+function deleteMatchRecord(recordId) {
+    if (confirm("해당 경기 성적 기록을 삭제하시겠습니까?\n삭제된 기록은 복구되지 않습니다.")) {
+        alert("기록이 삭제되었습니다.");
+
+        const row = document.getElementById(`record-row-${recordId}`);
+        if (row) row.remove();
     }
 }
