@@ -14,12 +14,19 @@ public interface BoardService {
 	public int dataCount(Map<String, Object> map);
 	public List<BoardDTO> listBoard(Map<String, Object> map);
 	
-	public BoardDTO findById(long num);
+	public BoardDTO findById(long bnum);
 	public BoardDTO findByPrev(Map<String, Object> map);
 	public BoardDTO findByNext(Map<String, Object> map);
-	public void updateHitCount(long num) throws Exception;
+	public void updateHitCount(long bnum) throws Exception;
+	
+	public boolean isUserBoardLiked(Map<String, Object> map);
+	public void insertBoardLike(Map<String, Object> map) throws Exception;
+	public void deleteBoardLike(Map<String, Object> map) throws Exception;
+	public int boardLikeCount(long bnum);
+	
+	
 	
 	public void deleteboardFile(Map<String, Object> map) throws Exception;
-	public List<BoardDTO> listboardFile(long num);
-	public BoardDTO findByFileId(long fileNum);
+	public List<BoardDTO> listboardFile(long bnum);
+	public BoardDTO findByFileId(long filebnum);
 }
