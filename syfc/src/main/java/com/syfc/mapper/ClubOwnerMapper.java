@@ -5,6 +5,8 @@ import com.syfc.dto.TeamRecordDTO;
 
 
 public interface ClubOwnerMapper {
+	// 구단지 키로 기존 구단 정보 가져오기 (화면 진입 시 데이터 바인딩)
+	ClubDTO selectClubInfoByOwnerKey(Long clubOwnerKey);
 
 	// 1. 회원번호(memberIdx) 로 구단주 키(clubOwnerKey) 조회
 	public Long findClubOwnerKeyByMemberIdx(Long memberIdx);
@@ -17,4 +19,6 @@ public interface ClubOwnerMapper {
 	
 	// 4. 구단 팀 성적 조회
 	public TeamRecordDTO selectTeamRecord(Long clubOwnerkey);
+	
+
 }

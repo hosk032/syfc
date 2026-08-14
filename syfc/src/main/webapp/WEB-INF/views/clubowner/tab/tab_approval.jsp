@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 
-<div class="tab-pane fade show active" id="player-approval">
+<div class="tab-pane fade" id="player-approval" role="tabpanel">
 	<div class="card border-0 shadow-sm rounded-4 p-4">
 		<div class="d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
 			<div>
