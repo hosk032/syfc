@@ -50,15 +50,15 @@
                 <div class="section-title">⚽ 계정 정보</div>
                 <div class="form-grid">
                     <div class="input-group full-width">
-                        <label for="userId">아이디 (user_id)</label>
+                        <label for="userId">아이디 </label>
                         <div class="input-wrapper">
-                            <input type="text" id="userId" name="user_id" placeholder="아이디를 입력하세요" required>
-                            <button type="button" class="btn-sub">중복확인</button>
+                            <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요" required>
+                            <button type="button" id="userIdCheckBtn" class="btn-sub">중복확인</button>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="userPwd">비밀번호 (user_pwd)</label>
-                        <input type="password" id="userPwd" name="user_pwd" placeholder="영문, 숫자 포함 8자 이상" required>
+                        <label for="userPwd">비밀번호 </label>
+                        <input type="password" id="userPwd" name="userPwd" placeholder="영문, 숫자 포함 8자 이상" required>
                     </div>
                     <div class="input-group">
                         <label for="userPwdCheck">비밀번호 확인</label>
@@ -72,15 +72,15 @@
                 <div class="section-title">👤 개인 정보</div>
                 <div class="form-grid">
                     <div class="input-group">
-                        <label for="userName">이름 (user_name)</label>
-                        <input type="text" id="userName" name="user_name" placeholder="홍길동" required>
+                        <label for="userName">이름 </label>
+                        <input type="text" id="userName" name="userName" placeholder="홍길동" required>
                     </div>
                     <div class="input-group">
                         <label for="birth">생년월일 (birth)</label>
                         <input type="date" id="birth" name="birth" required>
                     </div>
                     <div class="input-group full-width">
-                        <label>성별 (gender : 1-남성 / 2-여성)</label>
+                        <label>성별</label>
                         <div class="radio-group">
                             <div class="radio-option">
                                 <input type="radio" id="genderM" name="gender" value="1" checked>
@@ -93,12 +93,12 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="email">이메일 (email)</label>
+                        <label for="email">이메일 </label>
                         <input type="email" id="email" name="email" placeholder="example@football.com" required>
                     </div>
                     <div class="input-group">
                         <label for="tel">연락처 (tel)</label>
-                        <input type="tel" id="tel" name="tel" placeholder="01012345678 ('-' 제외)" required>
+                        <input type="tel" id="tel" name="tel" placeholder="01012345678 ('-' 제외)">
                     </div>
                 </div>
             </div>
@@ -108,19 +108,19 @@
                 <div class="section-title">📍 주소 정보</div>
                 <div class="form-grid">
                     <div class="input-group full-width">
-                        <label for="zipcode">우편번호 (zipcode)</label>
+                        <label for="zipcode">우편번호 </label>
                         <div class="input-wrapper">
-                            <input type="text" id="zipcode" name="zipcode" placeholder="우편번호" readonly required>
+                            <input type="text" id="zipcode" name="zip" placeholder="우편번호" readonly required>
                             <button type="button" class="btn-sub" onclick="execDaumPostcode()">주소 검색</button>
                         </div>
                     </div>
                     <div class="input-group full-width">
                         <label for="address1">기본 주소 (address1)</label>
-                        <input type="text" id="address1" name="address1" placeholder="기본 주소" readonly required>
+                        <input type="text" id="address1" name="addr1" placeholder="기본 주소" readonly required>
                     </div>
                     <div class="input-group full-width">
                         <label for="address2">상세 주소 (address2)</label>
-                        <input type="text" id="address2" name="address2" placeholder="상세 주소를 입력하세요">
+                        <input type="text" id="address2" name="addr2" placeholder="상세 주소를 입력하세요">
                     </div>
                 </div>
             </div>

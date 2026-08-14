@@ -3,7 +3,9 @@ package com.syfc.controller;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.syfc.dto.MemberDTO;
@@ -59,7 +61,7 @@ public class MemberController {
 				// 로그인 실패인 경우
 				ModelAndView mav = new ModelAndView("member/login");
 				
-				String msg = "아이디 또는 패스워드가 일치하지 않거나, 탈퇴/정지회원입니다.";
+				String msg = "활동가능한 회원 중 일치하는 정보가 존재하지 않습니다.";
 				mav.addObject("message", msg);
 
 				return mav;
@@ -339,15 +341,15 @@ public class MemberController {
 			return new ModelAndView("redirect:/");
 		}
 		
-		String title;
+		String title = "";
 		String message = "<b>" + userName + "</b>님 ";
 		if(mode.equals("account")) {
 			title = "회원가입";
 			message += "회원가입이 완료 되었습니다.<br>로그인 하시면 정보를 이용하실수 있습니다.";
-		} else {
+		} else if(mode.equals("update"))  {
 			title = "정보수정";
 			message += "회원정보가 수정 되었습니다.<br>메인 화면으로 이동하시기 바랍니다.";
-		}
+		} 
 
 		ModelAndView mav = new ModelAndView("member/complete");
 
@@ -410,4 +412,94 @@ public class MemberController {
 		
 		return model;
 	}
+	
+	@GetMapping("pwdFind")
+	public ModelAndView pwdFindForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info != null) {
+			return new ModelAndView("redirect:/");
+		} //info가 있다면, 즉 로그인한 상태라면 '비밀번호 찾기'가 필요없으므로 메인으로 보내기
+		
+		return new ModelAndView("member/pwdFind");
+	}
+
+	@ResponseBody
+	@PostMapping("pwdFind")
+	public Map<String, Object> pwdFindSubmit(HttpServletRequest req, HttpServletResponse resp) {
+		
+		String userId = req.getParameter("userId");
+		String userName1 = req.getParameter("userName1");
+				
+		userName1 = userName1.trim();
+		MemberDTO dto = service.findById(userId);
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			if(dto == null) {
+				map.put("success", false);
+			     map.put("message", "존재하지 않는 아이디입니다.");
+			     return map;
+			}
+			if (dto.getEmail() == null) {
+				//일치하는 레코드가 없거나 입력한 이메일이 없거나 입력한 유저이름과 db에서 갖고온 이름이 다를 때
+				 map.put("success", false);
+			     map.put("message", "등록된 이메일이 없습니다.");
+			     return map;
+			}
+			if(! userName1.equals(dto.getUserName())){
+				map.put("success", false);
+			     map.put("message", "이름이 일치하지 않습니다.");
+			     return map;
+			}
+			
+			service.generatePwd(dto);
+			
+			 map.put("success", true);
+		     map.put("message", "임시 비밀번호를 이메일로 발송했습니다.");
+		
+		} catch (Exception e) {
+			map.put("success", false);
+		    map.put("message", "메일 발송 중 오류가 발생하였습니다.");
+		}
+
+	    return map;
+	}
+
+	
+	@ResponseBody
+	@PostMapping("idFind")
+	public Map<String, Object> idFind(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		String userName = req.getParameter("userName");
+		String email = req.getParameter("email");
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userName", userName);
+		map.put("email", email);
+			
+		List<MemberDTO> list = service.idFind(map);
+
+		// list가 null이 아닐 때만 반복문 실행
+		if (list != null) {
+		    for (MemberDTO dto : list) {
+		        String userId = dto.getUserId();
+		        String maskedId = (userId != null && userId.length() >= 2) 
+		            ? userId.substring(0, 2) + "****" 
+		            : (userId != null ? userId : "") + "****"; 
+		        dto.setUserId(maskedId);
+		    }
+		} else {
+		    // 앞단에서 터지는 것을 방지하기 위해 null 대신 빈 리스트를 넣어줌
+		    list = new ArrayList<>(); 
+		}
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("list", list);
+
+		return result;
+
+	}
+	
 }

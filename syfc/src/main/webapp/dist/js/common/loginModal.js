@@ -66,3 +66,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const keepLoginCheckbox = document.getElementById("keepLogin");
+
+    // 1. 페이지 로드 시 기존에 저장된 상태가 있다면 반영
+    const isRemembered = localStorage.getItem("rememberMe") === "true";
+    keepLoginCheckbox.checked = isRemembered;
+
+    // 2. 체크박스 상태가 변경될 때마다 LocalStorage에 저장
+    keepLoginCheckbox.addEventListener("change", function () {
+        localStorage.setItem("rememberMe", keepLoginCheckbox.checked);
+    });
+});

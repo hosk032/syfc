@@ -47,7 +47,7 @@
 								class="form-check-label small text-muted cursor-pointer"
 								for="keepLogin"> 로그인 유지하기 </label>
 						</div>
-						<a href="#"
+						<a href="${pageContext.request.contextPath}/member/pwdFind"
 							class="small text-muted text-decoration-none hover-purple">아이디
 							/ 비밀번호 찾기</a>
 					</div>

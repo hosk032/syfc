@@ -103,7 +103,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="tel
 	padding: 0 14px;
 	background-color: #ffffff;
 	border: 1px solid #dee2e6;
-	border-radius: 8px;
+	border-radius: 8px !important; 
 	color: #212529;
 	font-size: 14px;
 	outline: none;
@@ -129,7 +129,7 @@ input[readonly] {
 	background-color: #ffffff;
 	color: #6b4ba1;
 	border: 1px solid #6b4ba1;
-	border-radius: 8px;
+	border-radius: 8px !important;
 	font-size: 13px;
 	font-weight: 600;
 	cursor: pointer;
@@ -148,7 +148,7 @@ input[readonly] {
 	background-color: #6b4ba1;
 	color: #ffffff;
 	border: none;
-	border-radius: 10px;
+	border-radius: 10px !important;
 	font-size: 16px;
 	font-weight: 700;
 	cursor: pointer;
@@ -187,7 +187,7 @@ input[readonly] {
 	height: 100%;
 	background-color: #f8f9fa;
 	border: 1px solid #dee2e6;
-	border-radius: 8px;
+	border-radius: 8px !important;
 	color: #495057;
 	font-size: 14px;
 	cursor: pointer;
@@ -263,3 +263,12 @@ input[readonly] {
 .extra-small {
 	font-size: 12px;
 }
+
+.input-wrapper .btn.sub {
+	flex: 0 0 60%;
+}
+
+.input-wrapper #userIdMessage {
+	flex: 0 0 40%;
+}
+

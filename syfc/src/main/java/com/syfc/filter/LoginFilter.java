@@ -77,7 +77,7 @@ public class LoginFilter implements Filter {
 	private boolean isAjaxRequest(HttpServletRequest req) {
 		String h = req.getHeader("AJAX"); //요청에 담긴 헤더 AJAX의 값을 꺼냄
 		
-		return h != null && h.equals("true"); //AJAX헤더의 값이 있고 true일 경우 ture 반환
+		return h != null && h.equals("true"); //AJAX헤더의 값이 있고 true일 경우 true 반환
 	}
 	
 	//로그인 체크가 필요하지 않은지의 여부 판단
@@ -90,6 +90,7 @@ public class LoginFilter implements Filter {
 				"/index.jsp", "/main",
 				"/member/login", "/member/logout",
 				"/member/account", "/member/userIdCheck", "/member/complete",
+				"/member/pwdFind", "/member/idFind",
 				"/uploads/photo/**",
 				"/dist/**"
 		}; //로그인하지 않아도 들어올 수 있는 주소들

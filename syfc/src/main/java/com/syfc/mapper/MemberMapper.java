@@ -1,6 +1,7 @@
 package com.syfc.mapper;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import com.syfc.dto.MemberDTO;
@@ -19,4 +20,5 @@ public interface MemberMapper {
 	public void deleteMember2(Map<String, Object> map) throws SQLException;
 	
 	public MemberDTO findById(String userId);	
+	public List<MemberDTO> idFind(Map<String, Object> map);
 }
