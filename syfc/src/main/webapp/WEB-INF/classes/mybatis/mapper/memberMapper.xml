@@ -30,6 +30,13 @@
 		LEFT OUTER JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
 		WHERE m1.userId = #{userId}
 	</select>
+	
+	<select id="idFind" parameterType="map" resultType="com.syfc.dto.MemberDTO">
+		SELECT m1.memberIdx, userId, userName, userLevel, status, email
+		FROM member1 m1
+		LEFT OUTER JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE m1.userName = #{userName} and email = #{email}
+	</select>
 	    
 	<update id="updateMember1" parameterType="com.syfc.dto.MemberDTO">
 		UPDATE member1 SET userPwd = #{userPwd}, userName = #{userName}

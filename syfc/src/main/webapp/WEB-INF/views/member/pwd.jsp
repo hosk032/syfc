@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Spring</title>
+<title>쌍용축구예약</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 </head>
 <body>

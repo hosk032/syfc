@@ -11,32 +11,41 @@
         
         <!-- 우측 아이콘 3개 -->
         <div class="header-icons">
-            <i id="singupBtn" class="fa-regular fa-bell" title="알림/로그인" data-bs-toggle="modal" data-bs-target="#signupModal"></i> 
-            <c:choose>
-	   <c:when test="${sessionScope.member.userLevel < 50}">
-	      <i class="fa-regular fa-user"
-	         title="마이페이지"
-	         onclick="location.href='${pageContext.request.contextPath}/player/mypage';"></i>
-	   </c:when>
-	
-	   <c:when test="${sessionScope.member.userLevel == 50}">
-	      <i class="fa-regular fa-user"
-	         title="마이페이지"
-	         onclick="location.href='${pageContext.request.contextPath}/clubowner/ownerpage';"></i>
-	   </c:when>
-	
-	   <c:when test="${sessionScope.member.userLevel == 100}">
-	      <i class="fa-regular fa-user"
-	         title="마이페이지"
-	         onclick="location.href='${pageContext.request.contextPath}/admin/main';"></i>
-	   </c:when>
-	
-	   <c:otherwise>
-	      <i class="fa-regular fa-user"
-	         title="마이페이지"
-	         onclick="location.href='${pageContext.request.contextPath}/member/login';"></i>
-	   </c:otherwise>
-	      </c:choose>
+        <c:choose>
+      <c:when test="${sessionScope.member.userLevel >= 1}">
+         <i class="fa-regular fa-bell" title="알림"
+            onclick="location.href='${pageContext.request.contextPath}/notice';"></i>
+      </c:when>
+       <c:otherwise>
+        <i id="singupBtn" class="fa-regular fa-bell" title="로그인/회원가입" data-bs-toggle="modal" data-bs-target="#signupModal"></i> 
+     </c:otherwise>
+      </c:choose>
+      
+          <c:choose>   
+      <c:when test="${sessionScope.member.userLevel < 50}">
+         <i class="fa-regular fa-user"
+            title="마이페이지"
+            onclick="location.href='${pageContext.request.contextPath}/player/mypage';"></i>
+      </c:when>
+   
+      <c:when test="${sessionScope.member.userLevel == 50}">
+         <i class="fa-regular fa-user"
+            title="마이페이지"
+            onclick="location.href='${pageContext.request.contextPath}/clubOwner/ownerpage';"></i>
+      </c:when>
+   
+      <c:when test="${sessionScope.member.userLevel == 100}">
+         <i class="fa-regular fa-user"
+            title="마이페이지"
+            onclick="location.href='${pageContext.request.contextPath}/admin/main';"></i>
+      </c:when>
+   
+      <c:otherwise>
+         <i class="fa-regular fa-user"
+            title="마이페이지"
+            onclick="location.href='${pageContext.request.contextPath}/member/login';"></i>
+      </c:otherwise>
+         </c:choose>
       
             
             <i class="fa-solid fa-right-from-bracket" title="로그아웃" onclick="location.href='${pageContext.request.contextPath}/member/logout';"></i>

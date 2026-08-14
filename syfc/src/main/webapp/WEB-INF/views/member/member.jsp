@@ -15,6 +15,9 @@
 
     <!-- 카카오/다음 우편번호 서비스 API CDN -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script defer>
+    const contextPath = "${pageContext.request.contextPath}";
+	</script> 
     
 </head>
 <body>
@@ -54,7 +57,8 @@
                         <label for="userId">아이디</label>
                         <div class="input-wrapper">
                             <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요" required>
-                            <button type="button" class="btn-sub">중복확인</button>
+                            <button type="button" id="userIdCheckBtn" class="btn-sub">중복확인</button>
+                            <span id="userIdMessage"></span>
                         </div>
                     </div>
                     <div class="input-group">
@@ -64,6 +68,7 @@
                     <div class="input-group">
                         <label for="userPwdCheck">비밀번호 확인</label>
                         <input type="password" id="userPwdCheck" placeholder="비밀번호 재입력" required>
+                        <span id="pwdMatchMessage" class="msg"></span>
                     </div>
                 </div>
             </div>
@@ -99,7 +104,7 @@
                     </div>
                     <div class="input-group">
                         <label for="tel">연락처</label>
-                        <input type="tel" id="tel" name="tel" placeholder="01012345678 ('-' 제외)" required>
+                        <input type="tel" id="tel" name="tel" placeholder="01012345678 ('-' 제외)">
                     </div>
                 </div>
             </div>
@@ -109,18 +114,18 @@
                 <div class="section-title">📍 주소 정보</div>
                 <div class="form-grid">
                     <div class="input-group full-width">
-                        <label for="zipcode">우편번호 (zipcode)</label>
+                        <label for="zipcode">우편번호 </label>
                         <div class="input-wrapper">
                             <input type="text" id="zipcode" name="zip" placeholder="우편번호" readonly required>
                             <button type="button" class="btn-sub" onclick="execDaumPostcode()">주소 검색</button>
                         </div>
                     </div>
                     <div class="input-group full-width">
-                        <label for="address1">기본 주소 (address1)</label>
+                        <label for="address1">기본 주소 </label>
                         <input type="text" id="address1" name="addr1" placeholder="기본 주소" readonly required>
                     </div>
                     <div class="input-group full-width">
-                        <label for="address2">상세 주소 (address2)</label>
+                        <label for="address2">상세 주소 </label>
                         <input type="text" id="address2" name="addr2" placeholder="상세 주소를 입력하세요">
                     </div>
                 </div>
@@ -165,7 +170,7 @@
     <!-- 회원가입 전용 JS 연결 (dist/js/main/register.js) -->
     <script src="${pageContext.request.contextPath}/dist/js/main/register.js"></script>
     <script src="${pageContext.request.contextPath}/dist/js/common/footer.js"></script>
-    
+       
 
 </body>
 </html>
