@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+/* =========================================================
+   관리자 게시판 관리
+   - 공지사항
+   - 자유게시판
+   - 문의 / 신고
+   ========================================================= */
+
+/* 현재 선택된 게시판 탭 */
+.nav-pills .nav-link.active {
+	background-color: #6b4ba1 !important;
+	color: #ffffff !important;
+	font-weight: bold;
+}
+
+/* 게시판 탭 기본 모양 */
+.nav-pills .nav-link {
+	color: #495057;
+	border-radius: 12px;
+	padding: 10px 20px;
+}
+
+/* 관리자 게시판용 보라색 배지 */
+.badge-purple {
+	background-color: #6b4ba1;
+	color: #fff;
+}

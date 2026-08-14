@@ -1,0 +1,531 @@
+@charset "UTF-8";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333333;
+}
+
+.noticeContainer {
+    width: 100%;
+    max-width: 1024px;
+    margin: 40px auto 60px;
+    padding: 32px;
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.noticeHeader {
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #6b4ba1;
+}
+
+.noticeTitle {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.noticeDesc {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #868e96;
+}
+
+.searchArea {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.searchSelect,
+.searchInput,
+.formControl {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    outline: none;
+}
+
+.searchSelect {
+    width: 130px;
+    height: 40px;
+    padding: 0 10px;
+}
+
+.searchInput {
+    width: 250px;
+    height: 40px;
+    padding: 0 12px;
+}
+
+.searchInput:focus,
+.formControl:focus {
+    border-color: #6b4ba1;
+    box-shadow: 0 0 0 3px rgba(107, 75, 161, 0.12);
+}
+
+.btnSearch,
+.btnWrite,
+.btnSubmit {
+    background-color: #6b4ba1;
+    color: #ffffff;
+    border: none;
+}
+
+.btnSearch:hover,
+.btnWrite:hover,
+.btnSubmit:hover {
+    background-color: #553982;
+}
+
+.btnSearch {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tableWrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.noticeTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.noticeTable thead {
+    border-top: 2px solid #454545;
+    background-color: #f8f9fa;
+}
+
+.noticeTable th {
+    padding: 14px 10px;
+    font-size: 14px;
+    color: #495057;
+}
+
+.noticeTable td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+    font-size: 14px;
+}
+
+.noticeTable .subject {
+    text-align: left;
+}
+
+.noticeTable .num { width: 70px; }
+.noticeTable .writer { width: 110px; }
+.noticeTable .date { width: 120px; }
+.noticeTable .hit { width: 80px; }
+.noticeTable .manage { width: 140px; }
+
+.noticeBadge {
+    display: inline-block;
+    margin-right: 7px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background-color: #ede7f6;
+    color: #6b4ba1;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.btnSmall {
+    padding: 6px 11px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btnUpdate {
+    color: #6b4ba1;
+    background-color: #ffffff;
+    border: 1px solid #6b4ba1;
+}
+
+.btnDelete,
+.btnDanger {
+    color: #842029;
+    background-color: #ffffff;
+    border: 1px solid #dc3545;
+}
+
+.pagingArea {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 25px;
+}
+
+.pageBtn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #dee2e6;
+    border-radius: 7px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.pageBtn.active {
+    background-color: #6b4ba1;
+    border-color: #6b4ba1;
+    color: #ffffff;
+}
+
+.buttonArea {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btnWrite {
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.noticeWriteForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.formGroup.alignTop {
+    align-items: flex-start;
+}
+
+.formLabel {
+    width: 140px;
+    min-width: 120px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #495057;
+}
+
+.formInputWrap {
+    flex: 1;
+}
+
+.formControl {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+.contentArea {
+    min-height: 260px;
+    resize: vertical;
+}
+
+.checkboxWrap {
+    display: flex;
+    gap: 24px;
+}
+
+.formActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 35px;
+}
+
+.btn {
+    height: 46px;
+    padding: 0 28px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btnReset {
+    background-color: #f1f3f5;
+    color: #495057;
+}
+
+.btnCancel {
+    background-color: #ffffff;
+    color: #868e96;
+    border: 1px solid #dee2e6;
+}
+
+.btnDanger {
+    height: 46px;
+    padding: 0 28px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.articleBox {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.articleSubject {
+    padding: 18px;
+    font-size: 19px;
+    font-weight: 700;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.articleInfo {
+    display: flex;
+    gap: 24px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: #868e96;
+    background-color: #f8f9fa;
+}
+
+.articleContent {
+    min-height: 280px;
+    padding: 24px 18px;
+    line-height: 1.8;
+}
+
+@media (max-width: 700px) {
+    .noticeContainer {
+        width: auto;
+        margin: 20px 10px;
+        padding: 20px 15px;
+    }
+
+    .searchArea {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .searchInput {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .formGroup {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .formLabel {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
+
+
+.articlePrevNext {
+    border-top: 1px solid #e9ecef;
+    margin-top: 10px;
+}
+
+.prevNextRow {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
+}
+
+.prevNextLabel {
+    width: 80px;
+    font-weight: 700;
+    color: #495057;
+}
+
+.prevNextRow a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.prevNextRow a:hover {
+    text-decoration: underline;
+}
+
+.noPost {
+    color: #adb5bd;
+}
+
+/* =========================================================
+   관리자 공지사항 목록 - 열 정렬 보정
+   ========================================================= */
+
+.noticeTable {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+/* 헤더 */
+.noticeTable thead th {
+	text-align: center;
+	vertical-align: middle;
+	box-sizing: border-box;
+}
+
+/* 제목 헤더만 왼쪽 */
+.noticeTable thead th.subjectHead {
+	text-align: left;
+}
+
+/* 번호 / 작성자 / 작성일 / 조회수 / 관리 */
+.noticeTable td.cellCenter {
+	text-align: center;
+	vertical-align: middle;
+	box-sizing: border-box;
+}
+
+/* 제목만 왼쪽 */
+.noticeTable td.subject {
+	text-align: left;
+	vertical-align: middle;
+	box-sizing: border-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+
+/* =========================================================
+   목록 하단 - 강사님 방식
+   왼쪽 새로고침 / 가운데 검색 / 오른쪽 게시글 등록
+   ========================================================= */
+.listFooterArea {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.footerLeft {
+    justify-self: start;
+}
+
+.footerCenter {
+    justify-self: center;
+}
+
+.footerRight {
+    justify-self: end;
+}
+
+/* 하단 검색 영역 */
+.listFooterArea .searchArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+/* 강사님 코드의 왼쪽 새로고침 버튼 역할 */
+.btnRefresh {
+    width: 42px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #495057;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btnRefresh:hover {
+    background-color: #f1f3f5;
+}
+
+@media (max-width: 800px) {
+    .listFooterArea {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .footerCenter {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: 100%;
+    }
+
+    .footerLeft {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .footerRight {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .listFooterArea .searchArea {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}
+
+/* 게시글 제목 링크 */
+.noticeTable .subject a {
+	color: #333333;
+	text-decoration: none;
+}
+
+/* 마우스를 올렸을 때 */
+.noticeTable .subject a:hover {
+	color: #6b4ba1;
+	text-decoration: none;
+}
+
+/* 공지 글자 */
+.noticeBadge {
+	color: #0d6efd;
+	font-weight: 600;
+}
+
+/* 공지사항 목록 글씨 크기 */
+.noticeTable {
+	font-size: 15px;
+}
+
+/* 표 제목 : 번호 / 제목 / 작성자 / 작성일 / 조회수 / 관리 */
+.noticeTable thead th {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+/* 게시글 제목 */
+.noticeTable .subject a {
+	font-size: 15px;
+}
+
+/* 공지 글자 */
+.noticeBadge {
+	font-size: 15px;
+	color: #0d6efd;
+	font-weight: 600;
+}

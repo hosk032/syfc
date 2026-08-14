@@ -1,38 +1,55 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 
+<%-- 공통 리소스 --%>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
+<%-- 관리자 메인 전용 CSS --%>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/admin/admin-main.css">
 
+<%-- 공통 헤더 --%>
 <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
 <div class="adminContainer">
 
+	<%-- =====================================================
+	     관리자 메인
+	     메뉴구조도 기준 : 게시판 → 회원 관리 → 경기장 관리
+	     ===================================================== --%>
 	<div class="adminHeader">
 		<h2 class="adminTitle">관리자 페이지</h2>
-		<p class="adminDesc">회원, 게시판, 구단 및 경기장 정보를 관리할 수 있습니다.</p>
+		<p class="adminDesc">게시판, 회원 및 경기장 관련 기능을 관리할 수 있습니다.</p>
 	</div>
 
 	<div class="adminMenuGrid">
 
+		<%-- =====================================================
+		     1. 게시판 관리
+		     공지사항 / 자유게시판 / 문의·신고가 한 화면에 있으므로
+		     세부 버튼을 나누지 않고 '게시판 관리' 버튼 하나만 사용한다.
+		     ===================================================== --%>
 		<div class="adminCard">
 			<div class="cardIcon">
-				<i class="bi bi-megaphone"></i>
+				<i class="bi bi-chat-square-text"></i>
 			</div>
 
 			<div class="cardContent">
-				<h3>공지사항 관리</h3>
-				<p>공지사항을 등록하고 수정·삭제할 수 있습니다.</p>
-			</div>
+				<h3>게시판 관리</h3>
+				<p>공지사항, 자유게시판 및 문의·신고 게시판을 통합 관리합니다.</p>
 
-			<button type="button" class="cardButton"
-				onclick="location.href='${pageContext.request.contextPath}/admin/notice/list';">
-				관리하기
-			</button>
+				<div class="subMenu">
+					<button type="button" class="subMenuButton"
+						onclick="location.href='${pageContext.request.contextPath}/admin/notice/list';">
+						게시판 관리
+					</button>
+				</div>
+			</div>
 		</div>
 
 
+		<%-- =====================================================
+		     2. 회원 관리
+		     ===================================================== --%>
 		<div class="adminCard">
 			<div class="cardIcon">
 				<i class="bi bi-people"></i>
@@ -40,82 +57,50 @@
 
 			<div class="cardContent">
 				<h3>회원 관리</h3>
-				<p>회원 등급과 이용 상태를 관리할 수 있습니다.</p>
-			</div>
+				<p>회원 등급, 구단 승인 및 회원 이용 상태를 관리합니다.</p>
 
-			<button type="button" class="cardButton"
-				onclick="location.href='${pageContext.request.contextPath}/admin/member/list';">
-				관리하기
-			</button>
+				<div class="subMenu">
+					<button type="button" class="subMenuButton"
+						onclick="location.href='${pageContext.request.contextPath}/admin/member/list';">
+						회원 등급 / 상태 관리
+					</button>
+
+					<button type="button" class="subMenuButton"
+						onclick="location.href='${pageContext.request.contextPath}/admin/clubowner/list';">
+						구단 관리
+					</button>
+				</div>
+			</div>
 		</div>
 
 
+		<%-- =====================================================
+		     3. 경기장 관리
+		     ===================================================== --%>
 		<div class="adminCard">
-			<div class="cardIcon">
-				<i class="bi bi-person-badge"></i>
-			</div>
-
-			<div class="cardContent">
-				<h3>구단주 신청 관리</h3>
-				<p>구단주 신청 내용을 확인하고 승인 또는 반려합니다.</p>
-			</div>
-
-			<button type="button" class="cardButton"
-				onclick="location.href='${pageContext.request.contextPath}/admin/clubowner/list';">
-				관리하기
-			</button>
-		</div>
-
-
-		<div class="adminCard disabledCard">
-			<div class="cardIcon">
-				<i class="bi bi-shield"></i>
-			</div>
-
-			<div class="cardContent">
-				<h3>구단 관리</h3>
-				<p>구단 승인과 구단 상태를 관리합니다.</p>
-			</div>
-
-			<button type="button" class="cardButton disabledButton" disabled>
-				준비중
-			</button>
-		</div>
-
-
-		<div class="adminCard disabledCard">
 			<div class="cardIcon">
 				<i class="bi bi-geo-alt"></i>
 			</div>
 
 			<div class="cardContent">
 				<h3>경기장 관리</h3>
-				<p>경기장 정보와 이용 가능 상태를 관리합니다.</p>
+				<p>경기장 상태와 경기장 이용 신청 내역을 관리합니다.</p>
+
+				<div class="subMenu">
+					<button type="button" class="subMenuButton disabledSubButton" disabled>
+						경기장 상태 및 관리
+					</button>
+
+					<button type="button" class="subMenuButton disabledSubButton" disabled>
+						경기장 신청 관리
+					</button>
+				</div>
 			</div>
-
-			<button type="button" class="cardButton disabledButton" disabled>
-				준비중
-			</button>
-		</div>
-
-
-		<div class="adminCard disabledCard">
-			<div class="cardIcon">
-				<i class="bi bi-chat-left-text"></i>
-			</div>
-
-			<div class="cardContent">
-				<h3>문의 / 신고 관리</h3>
-				<p>문의와 신고 내용을 확인하고 처리합니다.</p>
-			</div>
-
-			<button type="button" class="cardButton disabledButton" disabled>
-				준비중
-			</button>
 		</div>
 
 	</div>
 
 </div>
 
+<%-- 공통 푸터 --%>
 <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

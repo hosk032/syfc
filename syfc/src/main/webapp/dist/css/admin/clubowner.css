@@ -1,0 +1,225 @@
+@charset "UTF-8";
+
+.clubOwnerContainer {
+	width: 1024px;
+	margin: 40px auto;
+}
+
+.clubOwnerHeader {
+	margin-bottom: 25px;
+}
+
+.clubOwnerTitle {
+	margin: 0 0 8px;
+	font-size: 26px;
+	font-weight: 700;
+	color: #333;
+}
+
+.clubOwnerDesc {
+	margin: 0;
+	font-size: 14px;
+	color: #777;
+}
+
+.topArea {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.requestCount {
+	font-size: 15px;
+	color: #555;
+}
+
+.requestCount strong {
+	color: #6b4ba1;
+}
+
+.statusSelect {
+	height: 36px;
+	padding: 0 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	background: #fff;
+	font-size: 14px;
+}
+
+.tableWrap {
+	width: 100%;
+}
+
+.clubOwnerTable {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-size: 14px;
+}
+
+.clubOwnerTable thead tr {
+	border-top: 2px solid #555;
+	border-bottom: 1px solid #ddd;
+}
+
+.clubOwnerTable tbody tr {
+	border-bottom: 1px solid #eee;
+}
+
+.clubOwnerTable th {
+	height: 48px;
+	text-align: center;
+	background: #fafafa;
+	color: #333;
+	font-weight: 600;
+}
+
+.clubOwnerTable td {
+	height: 56px;
+	color: #444;
+	vertical-align: middle;
+}
+
+.center {
+	text-align: center;
+}
+
+.contentCell {
+	padding: 0 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.statusWait {
+	color: #d18a00;
+	font-weight: 600;
+}
+
+.statusApprove {
+	color: #2f8a51;
+	font-weight: 600;
+}
+
+.statusReject {
+	color: #d14949;
+	font-weight: 600;
+}
+
+.manageCell {
+	white-space: nowrap;
+}
+
+.inlineForm {
+	display: inline-block;
+	margin: 0 2px;
+}
+
+.btnSmall {
+	padding: 6px 10px;
+	border-radius: 5px;
+	background: #fff;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.btnApprove {
+	color: #6b4ba1;
+	border: 1px solid #b9a8d4;
+}
+
+.btnApprove:hover {
+	background: #f5f0fa;
+}
+
+.btnReject {
+	color: #d14949;
+	border: 1px solid #e7bcbc;
+}
+
+.btnReject:hover {
+	background: #fff1f1;
+}
+
+.completeText {
+	font-size: 13px;
+	color: #888;
+}
+
+.emptyRow {
+	height: 100px !important;
+	text-align: center;
+	color: #888 !important;
+}
+
+.pagingArea {
+	margin-top: 25px;
+	text-align: center;
+}
+
+.bottomArea {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	margin-top: 15px;
+}
+
+.btnRefresh {
+	justify-self: start;
+	width: 42px;
+	height: 38px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background: #fff;
+	color: #555;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.btnRefresh:hover {
+	background: #f5f5f5;
+}
+
+.searchArea {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.searchSelect {
+	width: 160px;
+	height: 38px;
+	padding: 0 8px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	background: #fff;
+	font-size: 14px;
+}
+
+.searchInput {
+	width: 210px;
+	height: 38px;
+	padding: 0 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-sizing: border-box;
+	font-size: 14px;
+}
+
+.btnSearch {
+	width: 60px;
+	height: 38px;
+	border: none;
+	border-radius: 5px;
+	background: #6b4ba1;
+	color: #fff;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.btnSearch:hover {
+	opacity: 0.9;
+}
