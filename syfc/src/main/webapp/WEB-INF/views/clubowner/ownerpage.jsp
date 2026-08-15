@@ -14,41 +14,56 @@
 
 	<div class="container py-4">
 
-		<!-- 1. 구단 및 구단주 요약 프로필 바 -->
+		<!-- 구단 및 구단주 요약 프로필 바 -->
 		<div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
 			<div class="card-body p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
 				<div class="d-flex align-items-center">
-					<div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3 owner-profile-icon">⚽</div>
+					<!-- 구단 로고 (등록된 로고가 없으면 기본 이미지) -->
+					<div class="me-3">
+						<c:choose>
+							<c:when test="${not empty club.club_logo}">
+								<img src="${pageContext.request.contextPath}/uploads/club/${club.club_logo}" 
+									 class="rounded-circle border border-2 border-white shadow-sm" 
+									 style="width: 65px; height: 65px; object-fit: cover;" alt="구단 로고">
+							</c:when>
+							<c:otherwise>
+								<div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center owner-profile-icon">⚽</div>
+							</c:otherwise>
+						</c:choose>
+					</div>
 					<div>
 						<div class="d-flex align-items-center gap-2 mb-1">
-							<h4 class="mb-0 fw-bold text-dark">FC 쌍용</h4>
+							<h4 class="mb-0 fw-bold text-dark">${empty club.club_name ? '구단 미등록' : club.club_name}</h4>
 							<span class="badge bg-warning text-dark px-2 py-1 fs-7">구단주</span>
 						</div>
 						<p class="text-secondary mb-0 small">
-							구단주 <strong>홍길동</strong> &nbsp;|&nbsp; 연고지 <strong>서울 마포구</strong> &nbsp;|&nbsp; 창단일 <strong>2024-01-15</strong>
+							구단주 <strong>${sessionScope.member.userName}</strong> &nbsp;|&nbsp; 
+							연고지 <strong>${empty club.club_region ? '미설정' : club.club_region}</strong> &nbsp;|&nbsp; 
+							창단일 <strong>${empty club.club_created ? '-' : club.club_created}</strong>
 						</p>
 					</div>
 				</div>
 				<div class="d-none d-md-flex gap-4 text-center border-start ps-4">
 					<div>
-						<div class="fs-4 fw-bold text-dark">18명</div>
+						<div class="fs-4 fw-bold text-dark">${empty record.totalPlayers ? 0 : record.totalPlayers}명</div>
 						<div class="extra-small text-muted">소속 선수</div>
 					</div>
 					<div>
 						<div class="fs-4 fw-bold">
-							<span class="text-primary">12승</span> <span class="text-danger">4패</span>
+							<span class="text-primary">${empty record.wins ? 0 : record.wins}승</span> 
+							<span class="text-danger">${empty record.losses ? 0 : record.losses}패</span>
 						</div>
 						<div class="extra-small text-muted">최근 전적</div>
 					</div>
 					<div>
-						<div class="fs-4 fw-bold text-warning">⭐ 4.8</div>
+						<div class="fs-4 fw-bold text-warning">⭐ ${empty record.avgRating ? '0.0' : record.avgRating}</div>
 						<div class="extra-small text-muted">구단 평점</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<!-- 2. 메인 대시보드 레이아웃 -->
+		<!-- 메인 대시보드 레이아웃 -->
 		<div class="row g-4">
 
 			<!-- 왼쪽 사이드바 (LNB) -->
@@ -61,7 +76,7 @@
 						</a>
 
 						<div class="sidebar-category">구단 관리</div>
-						<a href="#team-edit" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
+						<a href="#team-edit" class="list-group-item list-group-item-action rounded-3 mb-1 active" data-bs-toggle="list">
 							<i class="bi bi-shield-shaded me-2"></i>구단 등록 / 수정
 						</a>
 						<a href="#team-history" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
@@ -69,14 +84,14 @@
 						</a>
 
 						<div class="sidebar-category">선수 관리</div>
-						<a href="#player-approval" class="list-group-item list-group-item-action rounded-3 mb-1 active d-flex justify-content-between align-items-center" data-bs-toggle="list">
+						<a href="#player-approval" class="list-group-item list-group-item-action rounded-3 mb-1 d-flex justify-content-between align-items-center" data-bs-toggle="list">
 							<span><i class="bi bi-person-plus me-2"></i>입단 승인 관리</span>
 							<span class="badge bg-danger rounded-pill" id="approvalPendingBadge">2</span>
 						</a>
 						<a href="#player-list" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
 							<i class="bi bi-people me-2"></i>소속 선수 조회 / 제적
 						</a>
-						<!-- 🆕 [신규 추가] 선수 평점 & 경기 성적 관리 탭 -->
+
 						<a href="#player-rating-manage" class="list-group-item list-group-item-action rounded-3 mb-1" data-bs-toggle="list">
 							<i class="bi bi-star-half me-2"></i>선수 평점 / 성적 관리
 						</a>
@@ -101,7 +116,6 @@
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_team_history.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_approval.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_player_list.jsp" />
-					<!-- 🆕 [신규 추가] tab_player_rating.jsp Include -->
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_player_rating.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_match_apply.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_owner_transfer.jsp" />
@@ -111,7 +125,7 @@
 		</div>
 	</div>
 
-	<!-- 공통 모달. 입단 거절 모달 -->
+	<!-- 입단 거절 모달 -->
 	<div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content border-0 rounded-4 shadow">
@@ -128,7 +142,7 @@
 						<select class="form-select form-select-sm mb-2" id="rejectReasonSelect" onchange="changeRejectReason(this.value)">
 							<option value="정원 초과">포지션 정원이 초과되었습니다.</option>
 							<option value="가입 조건 미충족">우리 구단의 가입 조건과 맞지 않습니다.</option>
-							<option value="활동 시간 불일치">구단 정기전 활동 시간 참여가 어렵습니다.</option>
+							<option value="활동 시간 불일치">구단 정기전 활동 시간 참여가 어렵습니 다.</option>
 							<option value="custom">직접 입력</option>
 						</select>
 						<textarea class="form-control form-control-sm" id="rejectReasonText" rows="3" placeholder="신청자에게 전달될 거절 사유를 작성해 주세요.">포지션 정원이 초과되었습니다.</textarea>

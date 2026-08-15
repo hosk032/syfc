@@ -7,8 +7,8 @@
 	</select>
 	
 	<insert id="insertboard" parameterType="com.syfc.dto.BoardDTO">
-		INSERT INTO board(bNum, b_Subject, b_Content, b_HitCount, b_Reg_date, b_Block, b_Type, memberIdx)
-			VALUES (board_seq.NEXTVAL, #{b_Subject}, #{b_Content}, 0, SYSDATE, 0, 0, #{memberIdx})
+		INSERT INTO board(bnum, b_subject, b_content, b_hitCount, b_reg_date, b_block, b_type, memberIdx)
+			VALUES (board_seq.NEXTVAL, #{b_subject}, #{b_content}, 0, SYSDATE, 0, 0, #{memberIdx})
 	</insert>
 
 
@@ -16,8 +16,8 @@
 		<choose>
 			<when test="schType == 'all' ">
 				(
-					INSERT(subject, #{kwd}) &gt; 0
-						OR INSERT(content, #{kwd}) &gt; 0
+					INSTR(b_Subject, #{kwd}) &gt; 0
+						OR INSTR(b_Content, #{kwd}) &gt; 0
 				)
 			</when>
 			<otherwise>
@@ -37,10 +37,103 @@
  			</if>
  			AND b_Block = 0
  		</where>
- 		ORDER BY bNum DESC
  	</select>
 
+	<select id="listBoard" parameterType="map" resultType="com.syfc.dto.BoardDTO">
+		SELECT bnum, m.userName , b_subject, b_hitCount, TO_CHAR(b_reg_date, 'YYYY-MM-DD') b_reg_date
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+	  	<if test="kwd != null and kwd != '' ">
+				<include refid="where-list"/>
+		</if>
+		AND b_Block = 0
+	   </where>
+	   ORDER BY bnum DESC
+	   OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.BoardDTO">
+		SELECT b.bnum, b.memberIdx, m.username,  b_subject, b_content, b_hitCount, b_reg_date, b_hitCount, b_block,
+			NVL(boardLikeCount, 0) boardLikeCount
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		LEFT OUTER JOIN (
+			 SELECT bnum, COUNT(*) boardLikeCount
+			 FROM boardLike
+			 GROUP BY bnum
+		)	 bc ON b.bnum = bc.bnum
+		WHERE b.bnum = #{value} AND b_Block = 0
+	</select>
+	
+	<update id="updateHitCount" parameterType="Long">
+		UPDATE board SET b_hitCount = b_hitCount + 1
+		WHERE bnum = #{value}
+	</update>
+	
+	<select id="findByPrev" parameterType="map" resultType="com.syfc.dto.BoardDTO">
+		SELECT bnum, b_subject
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				<include refid="where-list"/>
+			</if>
+			AND bnum &gt; #{bnum}
+			AND b_block = 0
+		</where>
+		ORDER BY bnum ASC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<select id="findByNext" parameterType="map" resultType="com.syfc.dto.BoardDTO">
+		SELECT bnum, b_subject
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				<include refid="where-list"/>
+			</if>
+			AND bnum &lt; #{bnum}
+			AND b_block = 0
+		</where>
+		ORDER BY bnum DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
 
+	<!-- 게시글 좋아요 -->
+	<insert id="insertBoardLike" parameterType="map">
+		INSERT INTO boardLike(bnum, memberIdx)
+		VALUES (#{bnum}, #{memberIdx})
+	</insert>
+
+	<delete id="deleteBoardLike" parameterType="map">
+		DELETE FROM boardLike
+		WHERE bnum = #{bnum} AND memberIdx = #{memberIdx}
+	</delete>
+	
+	<select id="boardLikeCount" parameterType="Long" resultType="Integer">
+		SELECT COUNT(*)
+		FROM boardLike
+		WHERE bnum = #{bnum}
+	</select>
+	
+	<select id="hasUserBoardLiked" parameterType="map" resultType="com.syfc.dto.BoardDTO">
+		SELECT bnum, memberIdx
+		FROM boardLike
+		WHERE bnum = #{bnum} AND memberIdx = #{memberIdx}
+	</select>
+	
+	<!-- 글 수정 -->
+	<update id="upadteboard" parameterType="com.syfc.dto.BoardDTO">
+		UPDATE board SET b_subject = #{b_subject}, b_content = #{b_content}
+		WHERE bnum = #{bnum} AND memberIdx = #{memberIdx}
+	</update>
+	
+	
+	
+	
+	
 	
 	
 </mapper>

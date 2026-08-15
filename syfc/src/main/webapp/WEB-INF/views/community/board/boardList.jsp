@@ -23,14 +23,14 @@
 		<aside class="community-side-menu">
 			<div class="side-menu-title">커뮤니티</div>
 			<a href="${pageContext.request.contextPath}/community/notices/noticeList">공지사항</a> 
-			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">게시판</a> 
+			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">자유 게시판</a> 
 			<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
 		</aside>
 
 		<!-- 오른쪽 목록 본문 영역 -->
 		<section class="board-list-area">
 			<div class="board-top">
-				<h3>게시판</h3>
+				<h3>자유 게시판</h3>
 
 				<div class="board-category">
 					<span>전체</span> 
@@ -56,12 +56,12 @@
 	                <td>${dataCount - (page - 1) * size - status.index}</td>
 	                <td class="left">
 	                    <div class="text-wrap">
-	                        <a href="${boardDetailUrl}&num=${dto.bNum}" class="text-reset"> <c:out value="${dto.b_Subject}"/></a>
+	                        <a href="${boardDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/></a>
 	                    </div>
 	                </td>
 	                <td> ${dto.userName}</td>
-	                <td>${dto.b_Reg_date}</td>
-	                <td>${dto.b_HitCount}</td>
+	                <td>${dto.b_reg_date}</td>
+	                <td>${dto.b_hitCount}</td>
 	            </tr>
 	        </c:forEach>
 	    </tbody>
