@@ -20,6 +20,22 @@
 			addr2 = #{addr2}, gender = #{gender}, pref_position = #{pref_position}
 		WHERE memberIdx = #{memberIdx}
 	</update>
+	
+	<!-- 선수 정보조회: 선택사항 (키, 몸무게, 등번호) -->
+	<!-- if 정보가 있으면(null 포함) 입력필드 보여주기 + 받은값 넣기 -->
+	<!-- 정보가 없으면 입력필드 보여주지 않기 -->
+	<select id="selectProfile" parameterType="long" resultType="com.syfc.dto.PlayerMypageDTO">
+		SELECT p.uniform_no, p.height, p.weight, p.clubJoin_num
+		FROM clubJoin cj
+		JOIN player p ON p.clubJoin_num = cj.clubJoin_num
+		WHERE cj.memberIdx = #{memberIdx} AND p.leave_date IS null
+	</select>
+	
+	<!-- 내 프로필 선택사항 업데이트 -->
+	<update id="updateSelectProfile" parameterType="com.syfc.dto.PlayerMypageDTO">
+		UPDATE player SET uniform_no = #{uniform_no}, height = #{height}, weight = #{weight}
+		WHERE clubJoin_num = #{clubJoin_num}
+	</update>
 
 
 

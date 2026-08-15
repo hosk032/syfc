@@ -13,8 +13,43 @@ public class PlayerMypageDTO {
 	private String addr2;
 	private String gender;
 	private int pref_position;
-
+	private String name;
+	private int uniform_no;
+	private int height;
+	private int weight;
+	private long clubJoin_num;
 	
+	
+	public long getClubJoin_num() {
+		return clubJoin_num;
+	}
+	public void setClubJoin_num(long clubJoin_num) {
+		this.clubJoin_num = clubJoin_num;
+	}
+	public int getUniform_no() {
+		return uniform_no;
+	}
+	public void setUniform_no(int uniform_no) {
+		this.uniform_no = uniform_no;
+	}
+	public int getHeight() {
+		return height;
+	}
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public long getMemberIdx() {
 		return memberIdx;
 	}

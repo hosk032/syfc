@@ -73,11 +73,19 @@
 				<div class="profile-panel-heading">
 					<h4 class="profile-panel-title">프로필 등록 및 수정</h4>
 					<p class="profile-edit-notice">
-						※프로필 수정은 하단의 수정하기 버튼을 클릭해주세요※
+						비밀번호 확인 후 프로필을 수정할 수 있습니다.
 					</p>
 				</div>
 				
 					<form action="${pageContext.request.contextPath}/player/profile" method="post" class="profile-form" enctype="multipart/form-data">
+						<input type="hidden" name="clubJoin_num" value="${dto.clubJoin_num}">
+					
+						<c:set var="emailId" value="${fn:substringBefore(dto.email, '@')}" />
+						<c:set var="emailDomain" value="${fn:substringAfter(dto.email, '@')}" />
+						<c:set var="telFirst" value="${fn:substringBefore(dto.tel, '-')}" />
+						<c:set var="telLastTwo" value="${fn:substringAfter(dto.tel, '-')}" />
+						<c:set var="telMiddle" value="${fn:substringBefore(telLastTwo, '-')}" />
+						<c:set var="telLast" value="${fn:substringAfter(telLastTwo, '-')}" />
 						<div class="profile-primary">
 							<div class="profile-photo-area">
 									<div class="profile-image-box">
@@ -96,48 +104,53 @@
 										프로필 사진 
 									</label> 
 									
-									<input type="file" id="profilePhoto" class="profile-file-input" name="profilePhoto" accept="image/*" disabled>
+									<input type="file" id="profilePhoto" class="profile-file-input" name="profilePhoto" accept="image/*">
 							</div>
 
 							<div class="profile-info-area">
 								<div class="profile-info-top">
-									<div class="form-field email-area">
-										<label class="form-label" for="email1">이메일</label>
-										<div class="email-fields">
-											<input type="text" id="email1" class="form-control" name="email1" placeholder="이메일" readonly>
-											<span class="email-at">@</span>
-											<select id="email2" class="form-select" name="email2" disabled>
-												<option value="">도메인 선택</option>
-												<option value="naver.com">naver.com</option>
-												<option value="gmail.com">gmail.com</option>
-												<option value="daum.net">daum.net</option>
-												<option value="kakao.com">kakao.com</option>
-												<option value="nate.com">nate.com</option>
-											</select>
-										</div>
+									<div class="form-field name">
+										<label class="form-label" for="name">이름</label>
+										<input type="text" class="form-control" name="name" placeholder="이름" value="${name}">
 									</div>
+									
+										<div class="form-field email-area">
+											<label class="form-label" for="email1">이메일</label>
+											<div class="email-fields">
+												<input type="text" id="email1" class="form-control" name="email1" placeholder="이메일" value="${emailId}">
+												<span class="email-at">@</span>
+												<select id="email2" class="form-select" name="email2">
+													<option value="" <c:if test="${empty emailDomain}">selected</c:if>>도메인 선택</option>
+													<option value="naver.com" <c:if test="${emailDomain eq 'naver.com'}">selected</c:if>>naver.com</option>
+													<option value="gmail.com" <c:if test="${emailDomain eq 'gmail.com'}">selected</c:if>>gmail.com</option>
+													<option value="daum.net" <c:if test="${emailDomain eq 'daum.net'}">selected</c:if>>daum.net</option>
+													<option value="kakao.com" <c:if test="${emailDomain eq 'kakao.com'}">selected</c:if>>kakao.com</option>
+													<option value="nate.com" <c:if test="${emailDomain eq 'nate.com'}">selected</c:if>>nate.com</option>
+												</select>
+											</div>
+										</div>
 
 									<div class="form-field profile-birth-area">
 										<label class="form-label" for="birth">생년월일</label>
-										<input type="date" id="birth" class="form-control" name="birth" value="${dto.birth}" readonly>
+										<input type="date" id="birth" class="form-control" name="birth" value="${dto.birth}">
 									</div>
 								</div>
 
 								<div class="form-field tel-area">
 									<label class="form-label" for="tel">전화번호</label>
 									<div class="phone-fields">
-										<select id="tel1" class="form-select" name="tel1" disabled>
-											<option value="010">02</option>
-											<option value="010">010</option>
-											<option value="011">011</option>
-											<option value="011">031</option>
-											<option value="011">032</option>
+										<select id="tel1" class="form-select" name="tel1">
+											<option value="02" <c:if test="${telFirst eq '02'}">selected</c:if>>02</option>
+											<option value="010" <c:if test="${telFirst eq '010'}">selected</c:if>>010</option>
+											<option value="011" <c:if test="${telFirst eq '011'}">selected</c:if>>011</option>
+											<option value="031" <c:if test="${telFirst eq '031'}">selected</c:if>>031</option>
+											<option value="032" <c:if test="${telFirst eq '032'}">selected</c:if>>032</option>
 										</select> <span class="phone-separator">-</span> <input type="text"
-											class="form-control" name="tel2" maxlength="4" disabled
+											class="form-control" name="tel2" maxlength="4" value="${telMiddle}"
 											placeholder="5555"> <span class="phone-separator">-</span>
 
 										<input type="text" class="form-control" name="tel3"
-											maxlength="4" placeholder="6666" disabled>
+											maxlength="4" placeholder="6666" value="${telLast}">
 									</div>
 								</div>
 							</div>
@@ -147,28 +160,28 @@
 							<div class="form-field">
 								<label class="form-label" for="zip">우편번호</label>
 								<div class="zip-row">
-									<input type="text" id="zip" class="form-control" name="zip" maxlength="5" inputmode="numeric" placeholder="예: 07900" value="${dto.zip}" readonly>
+									<input type="text" id="zip" class="form-control" name="zip" maxlength="5" inputmode="numeric" placeholder="예: 07900" value="${dto.zip}">
 									<button type="button" class="postcode-btn"><i class="bi bi-search"></i> 주소 찾기</button>
 								</div>
 							</div>
 
 							<div class="form-field">
 								<label class="form-label" for="gender">성별</label>
-								<select id="gender" class="form-select" name="gender" disabled>
-									<option value="">선택하세요</option>
-									<option value="남">남</option>
-									<option value="여">여</option>
+								<select id="gender" class="form-select" name="gender">
+									<option value="" <c:if test="${empty dto.gender}">selected</c:if>>선택하세요</option>
+									<option value="남" <c:if test="${dto.gender eq '남'}">selected</c:if>>남</option>
+									<option value="여" <c:if test="${dto.gender eq '여'}">selected</c:if>>여</option>
 								</select>
 							</div>
 
 							<div class="form-field address-field">
 								<label class="form-label" for="addr1">주소</label>
-								<input type="text" id="addr1" class="form-control" name="addr1" placeholder="기본 주소" value="${dto.addr1}" readonly>
+								<input type="text" id="addr1" class="form-control" name="addr1" placeholder="기본 주소" value="${dto.addr1}">
 							</div>
 
 							<div class="form-field address-field">
 								<label class="form-label" for="addr2">상세주소</label>
-								<input type="text" id="addr2" class="form-control" name="addr2" placeholder="동, 호수 등 상세 주소" value="${dto.addr2}" readonly>
+								<input type="text" id="addr2" class="form-control" name="addr2" placeholder="동, 호수 등 상세 주소" value="${dto.addr2}">
 							</div>
 							
 							<div class="form-field preferred-position-field">
@@ -180,14 +193,46 @@
 									<button type="button" class="position-btn">MF</button>
 									<button type="button" class="position-btn">FW</button>
 								</div>
+
+								<div class="player-specs-section" aria-labelledby="playerSpecsLabel">
+									<p id="playerSpecsLabel" class="player-specs-title">선수 정보 <span>(선택)</span></p>
+
+									<div class="row g-3 player-specs-row">
+										<div class="col-12 col-md-4">
+											<label class="form-label" for="height">키</label>
+											<div class="input-group">
+												<input type="number" id="height" class="form-control" name="height"
+													min="50" max="300" step="1" inputmode="numeric" placeholder="예: 175" value="${dto.height}">
+												<span class="input-group-text">cm</span>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-4">
+											<label class="form-label" for="weight">몸무게</label>
+											<div class="input-group">
+												<input type="number" id="weight" class="form-control" name="weight"
+													min="20" max="300" step="1" inputmode="numeric" placeholder="예: 70" value="${dto.weight}">
+												<span class="input-group-text">kg</span>
+											</div>
+										</div>
+
+										<div class="col-12 col-md-4">
+											<label class="form-label" for="uniformNo">등번호</label>
+											<div class="input-group">
+												<input type="number" id="uniformNo" class="form-control" name="uniform_no"
+													min="1" max="99" step="1" inputmode="numeric" placeholder="예: 7" value="${dto.uniform_no}">
+												<span class="input-group-text">번</span>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 							
 						</div>
 
 						<div class="profile-form-actions">
 							<div class="profile-main-actions">
-								<button type="button" class="profile-edit-btn" id="editBtn"><i class="bi bi-check-lg"></i> 수정하기</button>
-								<button type="submit" class="profile-save-btn" id="saveBtn" style="display: none;"><i class="bi bi-check-lg"></i> 저장하기</button>
+								<button type="submit" class="profile-save-btn" id="saveBtn"><i class="bi bi-check-lg"></i> 저장하기</button>
 								<button type="reset" class="profile-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
 							</div>
 							<button type="button" class="profile-delete-btn" id="withdrawBtn"> 탈퇴하기</button>
@@ -203,74 +248,63 @@
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	
 		
-	<!-- 비밀번호 확인 모달창 -->
-	<div class="modal fade" id="passwordCheckModal" tabindex="-1" aria-labelledby="passwordCheckModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<form action="${pageContext.request.contextPath}/member/pwd" method="post">
-					<input type="hidden" name="mode" value="playerUpdate">
-					
-					<div class="modal-header">
-						<h5 class="modal-title" id="passwordCheckModalLabel">
-							비밀번호 확인
-						</h5>
-						
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-					
-					<div class="modal-body">
-						<p class="small text-muted">
-							개인정보 수정을 위해 비밀번호를 입력해주세요.
-						</p>
-						
-						<label for="checkPassword" class="form-label">
-							비밀번호
-						</label>
-						
-						<input type="password" id="checkPassword" name="userPwd" class="form-control" required>
-					
-						<div class="text-danger small mt-2" id="passwordError">
-						
+	<c:if test="${not playerUpdateVerified}">
+		<!-- 비밀번호 확인 모달창 -->
+		<div class="modal fade" id="passwordCheckModal" tabindex="-1" aria-labelledby="passwordCheckModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<form action="${pageContext.request.contextPath}/player/checkPassword" method="post">
+						<div class="modal-header">
+							<h5 class="modal-title" id="passwordCheckModalLabel">
+								비밀번호 확인
+							</h5>
 						</div>
-
-					</div>
-					
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">
-							확인
-						</button>
 						
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-							취소
-						</button>
+						<div class="modal-body">
+							<p class="small text-muted">
+								개인정보 수정을 위해 비밀번호를 입력해주세요.
+							</p>
+							
+							<label for="checkPassword" class="form-label">
+								비밀번호
+							</label>
+							
+							<input type="password" id="checkPassword" name="userPwd" class="form-control" required autofocus>
+							
+							<c:if test="${passwordError}">
+								<div class="text-danger small mt-2">
+									비밀번호가 일치하지 않습니다.
+								</div>
+							</c:if>
+						</div>
 						
-					</div>
-				
-				</form>
-	
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">
+								확인
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
-	</div>
-	<!-- 비밀번호 확인 모달창 끝 -->
+		<!-- 비밀번호 확인 모달창 끝 -->
+	</c:if>
 	
 	<!-- 3. 마이페이지 전용 JS 연결 (dist/js/member/mypage.js) -->
-	<script src="${pageContext.request.contextPath}/dist/js/member/mypage.js"></script>
 	
 	<script type="text/javascript">
-	// 수정 전에 읽기전용 -> 수정버튼 클릭 후 비밀번호 수정창으로 변경
-	// editBtn 버튼 찾기
-	const editBtn = document.getElementById("editBtn");
-	
-	// 부트스트랩 생성 + 아이디 호출
-	const passwordModal = new bootstrap.Modal(
-		document.getElementById("passwordCheckModal")
-	);
-	
-	// 버튼 클릭이벤트 , 모달창 보여주기
-	editBtn.addEventListener("click", function(){
-		passwordModal.show();
-	});
-	
+	<c:if test="${not playerUpdateVerified}">
+		document.addEventListener("DOMContentLoaded", function() {
+			const modalElement = document.getElementById("passwordCheckModal");
+			const passwordModal = new bootstrap.Modal(modalElement, {
+				backdrop: "static",
+				keyboard: false
+			});
+
+			passwordModal.show();
+		});
+	</c:if>
+
 	
 	// 버튼 클릭 이벤트
 	document.querySelectorAll(".position-btn").forEach(function(button) {
@@ -283,6 +317,8 @@
 			this.classList.add("active");
 		});
 	});
+	
+	
 	
 	// 프로필 사진 미리보기
 	document.getElementById("profilePhoto").addEventListener("change", function(){
