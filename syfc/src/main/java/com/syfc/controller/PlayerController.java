@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
+import com.syfc.dto.MemberDTO;
 import com.syfc.dto.PlayerMypageDTO;
 import com.syfc.dto.PlayerProfileDTO;
 import com.syfc.dto.SessionInfo;
@@ -18,6 +19,8 @@ import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
 import com.syfc.service.MatchRecordService;
 import com.syfc.service.MatchRecordServiceImpl;
+import com.syfc.service.MemberService;
+import com.syfc.service.MemberServiceImpl;
 import com.syfc.service.PlayerProfileService;
 import com.syfc.service.PlayerProfileServiceImpl;
 import com.syfc.service.PlayerService;
@@ -38,6 +41,7 @@ public class PlayerController {
 	private PlayerService playerService = new PlayerServiceImpl();
 	private MatchHistoryService matchHistoryService = new MatchHistoryImpl();	
 	private MatchRecordService matchRecordService = new MatchRecordServiceImpl();
+	private MemberService memberService = new MemberServiceImpl();
 
 	private FileManager fileManager = new FileManager();
 	
@@ -45,6 +49,14 @@ public class PlayerController {
 	public ModelAndView profile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		if(!Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"))) {
+			return new ModelAndView("redirect:/player/mypage");
+		}
 		
 		// 프로필 수정
 		try {
@@ -61,6 +73,10 @@ public class PlayerController {
 			dto.setAddr1(req.getParameter("addr1"));
 			dto.setAddr2(req.getParameter("addr2"));
 			dto.setGender(req.getParameter("gender"));
+			dto.setUniform_no(Integer.parseInt(req.getParameter("uniform_no")));
+			dto.setWeight(Integer.parseInt(req.getParameter("weight")));
+			dto.setHeight(Integer.parseInt(req.getParameter("height")));
+			dto.setClubJoin_num(Long.parseLong(req.getParameter("clubJoin_num")));
 			
 			// 사진 파일처리
 			String root = session.getServletContext().getRealPath("/");
@@ -85,6 +101,12 @@ public class PlayerController {
 			
 			service.updateProfile(dto);
 			
+			if(dto.getClubJoin_num() != 0) {
+				service.updateSelectProfile(dto);
+			}
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,19 +114,70 @@ public class PlayerController {
 		return new ModelAndView("redirect:/player/mypage");
 	}
 	
-	// 회원정보 등록 및 수정
+	// 마이페이지 수정 전 모달창 비밀번호 확인
+	@PostMapping("checkPassword")
+	public ModelAndView checkPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		// info 에 로그인 정보가 없으면 다시 로그인창으로 돌아가게
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		// 패스워드 가져오기
+		String userPwd = req.getParameter("userPwd");
+		
+		// 데이터 박스 DTO 회원정보 받아오기
+		MemberDTO dto = memberService.findById(info.getUserId());
+		
+		// null 또는 pwd 안맞을때
+		if(dto == null || userPwd == null || !userPwd.equals(dto.getUserPwd())) {
+			session.removeAttribute("playerUpdateVerified");
+			return new ModelAndView("redirect:/player/mypage?passwordError=true");
+		}
+		
+		// 회원이 비밀번호 확인을 통과했음. 
+		// playerUpdateVerified : 세션이름
+		// true : 저장값
+		session.setAttribute("playerUpdateVerified", true);
+		// 마이페이지 주소로 다시 이동
+		return new ModelAndView("redirect:/player/mypage");
+	}
+	
+	// 회원정보 조회
 	@GetMapping("mypage")
 	public ModelAndView mypage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
 		PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
+		PlayerMypageDTO tmp = service.selectProfile(info.getMemberIdx());
+		
+		
+		if(tmp != null) {
+			dto.setUniform_no(tmp.getUniform_no());
+			dto.setHeight(tmp.getHeight());
+			dto.setWeight(tmp.getWeight());
+			dto.setClubJoin_num(tmp.getClubJoin_num());
+		}
+		
+		boolean playerUpdateVerified = Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"));
+		boolean passwordError = "true".equals(req.getParameter("passwordError"));
 		
 		ModelAndView mav = new ModelAndView("player/mypage");
+		
+		mav.addObject("playerUpdateVerified", playerUpdateVerified);
+		mav.addObject("passwordError", passwordError);
 		mav.addObject("dto", dto);
 		
 		return mav;
 	}
+	
 	
 	// 투두리스트
 	@GetMapping("todo")

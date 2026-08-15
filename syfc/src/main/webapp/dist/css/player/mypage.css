@@ -77,7 +77,23 @@
 .profile-info-top {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 180px;
-    gap: 24px;
+    gap: 20px;
+}
+
+.profile-info-top .name {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.profile-info-top .email-area {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+}
+
+.profile-info-top .profile-birth-area {
+    grid-column: 2;
+    grid-row: 1;
 }
 
 .profile-form .form-label {
@@ -153,6 +169,47 @@
     background-color: #1976d2;
 }
 
+.player-specs-section {
+    width: min(100%, 560px);
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #dce5ed;
+    text-align: left;
+}
+
+.player-specs-title {
+    margin: 0 0 14px;
+    color: #2d4962;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.player-specs-title span {
+    color: #7a8b9a;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.player-specs-row .form-label {
+    margin-bottom: 7px;
+    color: #526a7f;
+    font-size: 13px;
+}
+
+.player-specs-row .input-group-text {
+    min-width: 42px;
+    justify-content: center;
+    border-color: #ccd6df;
+    color: #607588;
+    background: #f4f7fa;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.player-specs-row .form-control {
+    min-width: 0;
+}
+
 .profile-form .form-control::placeholder {
     color: #a6b2bd;
 }
@@ -197,6 +254,30 @@
     font-size: 17px;
     font-weight: 600;
     line-height: 1;
+}
+
+@media (max-width: 991.98px) {
+    .profile-info-top {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-info-top .profile-birth-area {
+        grid-column: auto;
+        grid-row: auto;
+        max-width: none;
+    }
+
+    .profile-info-top .name,
+    .profile-info-top .email-area {
+        grid-column: auto;
+        grid-row: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .player-specs-section {
+        width: 100%;
+    }
 }
 
 .tel-area {
