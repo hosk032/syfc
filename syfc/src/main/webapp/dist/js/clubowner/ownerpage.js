@@ -572,3 +572,39 @@ function deleteMatchRecord(recordId) {
         if (row) row.remove();
     }
 }
+/**
+ * 구단주 마이페이지 및 구단관리 스크립트
+ */
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 엠블럼 파일 입력창 이벤트를 등록합니다.
+    const logoInput = document.getElementById("uploadLogoInput");
+    if (logoInput) {
+        logoInput.addEventListener("change", function() {
+            previewImage(this);
+        });
+    }
+});
+
+/**
+ * 구단 엠블럼 이미지 실시간 미리보기
+ */
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('previewEmblem');
+            const defaultIcon = document.getElementById('defaultEmblemIcon');
+
+            if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            }
+
+            if (defaultIcon) {
+                defaultIcon.classList.add('d-none');
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}

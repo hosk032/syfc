@@ -69,26 +69,110 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public BoardDTO findById(long num) {
-		// TODO Auto-generated method stub
-		return null;
+	public BoardDTO findById(long bnum) {
+		BoardDTO dto = null;
+		
+		try {
+			dto = mapper.findById(bnum);
+			
+			if(dto != null) {
+				dto.setUserName(util.nameMasking(dto.getUserName()));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
 	}
 
 	@Override
 	public BoardDTO findByPrev(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		BoardDTO dto = null;
+		
+		try {
+			dto = mapper.findByPrev(map);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
 	}
 
 	@Override
 	public BoardDTO findByNext(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		BoardDTO dto = null;
+		
+		try {
+			dto = mapper.findByNext(map);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
+	}
+	
+	@Override
+	public boolean isUserBoardLiked(Map<String, Object> map) {
+		boolean result = false;
+		
+		try {
+			BoardDTO dto = mapper.hasUserBoardLiked(map);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 	@Override
-	public void updateHitCount(long num) throws Exception {
-		// TODO Auto-generated method stub
+	public void insertBoardLike(Map<String, Object> map) throws Exception {
+		try {
+			mapper.insertBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			throw e;
+		}
+		
+	}
+	
+	@Override
+	public void deleteBoardLike(Map<String, Object> map) throws Exception {
+		try {
+			mapper.deleteBoardLike(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Override
+	public int boardLikeCount(long bnum) {
+		int result = 0;
+		
+		try {
+			result = mapper.boardLikeCount(bnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	
+	@Override
+	public void updateHitCount(long bnum) throws Exception {
+		try {
+			mapper.updateHitCount(bnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 		
 	}
 
@@ -99,16 +183,19 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardDTO> listboardFile(long num) {
+	public List<BoardDTO> listboardFile(long bnum) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public BoardDTO findByFileId(long fileNum) {
+	public BoardDTO findByFileId(long filebnum) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	
 
 	
 

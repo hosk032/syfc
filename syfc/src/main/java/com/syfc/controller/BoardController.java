@@ -29,57 +29,13 @@ public class BoardController {
 	private MyUtil util = new MyUtil();
 	private PaginateUtil paginateUtil = new PaginateUtil();
 
-/*
-	@GetMapping("boardDetail")
-	public ModelAndView boardDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		ModelAndView mav = new ModelAndView("community/notices/noticeList");
-		String page = req.getParameter("page");
-		int current_page = 1;
-		
-		if(page != null) {
-			current_page = Integer.parseInt(page);
-		}
-		
-		String schType = req.getParameter("schType");
-		String kwd = req.getParameter("kwd");
-		if(schType == null) {
-			schType = "all";
-			kwd = "";
-		}
-		 
-		kwd = util.decodeUrl(kwd);
-		
-		int size = 10;
-		int total_page = 0;
-		int dataCount = 0;
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("schType", schType);
-		map.put("kwd", kwd);
-		
-		dataCount = service.dataCount(map);
-		
-		total_page = paginateUtil.pageCount(dataCount, size);
-		current_page = Math.min(current_page, total_page);
-		
-		int offset = (current_page - 1) * 10;
-		if(offset < 0)offset = 0;
-		
-		map.put("offset", offset);
-		map.put("size", size);
-		
-		// List<BoardDTO> list = service.listBoard(map);
-		
-		return mav;
-	}
-*/
 	@GetMapping("boardList")
 	public ModelAndView boardList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		ModelAndView mav = new ModelAndView("community/board/boardList");
 		
 		try {
+			// 페이지
 			String page = req.getParameter("page");
 			int current_page = 1;
 			
@@ -87,6 +43,7 @@ public class BoardController {
 				current_page = Integer.parseInt(page);
 			}
 			
+			// 검색
 			String schType = req.getParameter("schType");
 			String kwd = req.getParameter("kwd");
 			if(schType == null) {
@@ -94,6 +51,7 @@ public class BoardController {
 				kwd = "";
 			}
 			
+			// 디코딩
 			kwd = util.decodeUrl(kwd);
 			
 			int size = 10;
@@ -104,6 +62,7 @@ public class BoardController {
 			map.put("schType", schType);
 			map.put("kwd", kwd);
 			
+			// 전체 데이터 개수
 			dataCount = service.dataCount(map);
 			
 			total_page = paginateUtil.pageCount(dataCount, size);
@@ -120,7 +79,7 @@ public class BoardController {
 			String query;
 			String cp = req.getContextPath();
 			String listUrl = cp + "/community/board/boardList";
-			String boardDetailUrl = cp + "/community/board/boardDetail"; // 확인할것
+			String boardDetailUrl = cp + "/community/board/boardDetail?page=" + current_page;
 			
 			if(! kwd.isBlank()) {
 				query = "schType=" + schType + "&kwd=" +
@@ -152,10 +111,13 @@ public class BoardController {
 	@GetMapping("write")
 	public ModelAndView write(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
+		ModelAndView mav = new ModelAndView("community/board/write");
+		 
+		mav.addObject("mode", "write"); 
+		 
+		return mav;
 		
 		
-		
-		return new ModelAndView("community/board/write");
 	}
 	
 	@PostMapping("write")
@@ -169,8 +131,8 @@ public class BoardController {
 			
 			dto.setMemberIdx(info.getMemberIdx());
 			
-			dto.setB_Subject(req.getParameter("b_subject"));
-			dto.setB_Content(req.getParameter("b_content"));
+			dto.setB_subject(req.getParameter("b_subject"));
+			dto.setB_content(req.getParameter("b_content"));
 			
 			service.insertboard(dto);
 			
@@ -181,5 +143,114 @@ public class BoardController {
 		
 		return new ModelAndView("redirect:/community/board/boardList");
 	}
+	
+	@GetMapping("update")
+	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String page = req.getParameter("page");
+		
+		try {
+			long bnum = Long.parseLong(req.getParameter("bnum"));
+			BoardDTO dto = service.findById(bnum);
+			
+			// 게시글이 없으면
+			if(dto == null) {
+				return new ModelAndView("redirect:/community/board/boardList=" + page);
+			}
+			
+			/*
+			// 게시글을 올린 사람이 아닌 경우
+			if(! dto.getMemberIdx().equals(info.getMemberIdx())) {
+				return new ModelAndView("redirect:/community/board/boardList=" + page);
+			}
+			*/
+			
+			ModelAndView mav = new ModelAndView("community/board/write");
+			
+			mav.addObject("dto", dto);
+			mav.addObject("page", page);
+			mav.addObject("mode", "update");
+			
+			return mav;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return new ModelAndView("redirect:/community/board/boardList?page=" + page);
+	}
+	
+	
+	
+	@GetMapping("boardDetail")
+	public ModelAndView boardDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String page = req.getParameter("page");
+	
+		String query = "page=" + page;
+		
+		try {
+			long bnum = Long.parseLong(req.getParameter("bnum"));
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			
+			if(schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			kwd = util.decodeUrl(kwd);
+			
+			if(! kwd.isBlank()) {
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
+			}
+			
+			// 조회수 증가
+			service.updateHitCount(bnum);
+			
+			// 게시글 가져오기
+			BoardDTO dto = service.findById(bnum);
+			if(dto == null) {
+				return new ModelAndView("redirect:/community/board/boardList?" + query);
+			}
+			dto.setB_content(util.htmlSymbols(dto.getB_content()));
+			
+			// 이전글 / 다음글
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("bnum", bnum);
+			map.put("schType", schType);
+			map.put("kwd", kwd);
+			
+			BoardDTO prevDto = service.findByPrev(map);
+			BoardDTO nextDto = service.findByNext(map);
+			
+			// 로그인 유저의 게시글 공감 여부
+			map.put("memberIdx", info.getMemberIdx());
+			boolean isUserLiked = service.isUserBoardLiked(map);
+			
+			ModelAndView mav = new ModelAndView("community/board/boardDetail");
+			
+			mav.addObject("dto", dto);
+			mav.addObject("page", page);
+			mav.addObject("query", query);
+			mav.addObject("prevDto", prevDto);
+			mav.addObject("nextDto", nextDto);
+			
+			mav.addObject("isUserLiked", isUserLiked);
+			
+			return mav;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			return new ModelAndView("redirect:/community/board/boardList?" + query);
+	}
+	
 	
 }

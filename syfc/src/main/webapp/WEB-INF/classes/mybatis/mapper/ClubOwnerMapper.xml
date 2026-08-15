@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.syfc.mapper.ClubOwnerMapper">
 
-	<!-- 1. memberIdx 로 clubOwnerKey 조회 -->
+	<!-- 회원번호(memberIdx)로 구단주 키(clubOwnerKey) 조회 -->
 	<select id="findClubOwnerKeyByMemberIdx" parameterType="long" resultType="long">
 		SELECT clubOwner_key
 		FROM clubOwner
 		WHERE memberIdx = #{memberIdx}
 	</select>
 
-	<!-- 2. 내 구단 정보 조회 [탭-1 기능] -->
+	<!-- 1. 구단 정보 조회 (날짜 포맷 YYYY-MM-DD 유지) -->
 	<select id="selectClubInfo" parameterType="long" resultType="com.syfc.dto.ClubDTO">
-		SELECT
-			clubOwner_key AS clubOwnerKey,
-			club_name AS clubName,
-			club_logo AS clubLogo,
-			club_region AS clubRegion,
-			club_status AS clubStatus,
-			TO_CHAR(club_created, 'YYYY-MM-DD') AS clubCreated,
-			club_content AS clubContent
+		SELECT 
+			clubOwner_key,
+			club_name,
+			club_logo,
+			club_region,
+			club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') AS club_created,
+			club_content
 		FROM club
 		WHERE clubOwner_key = #{clubOwnerKey}
 	</select>
 
-	<!-- 3. 구단 정보 수정 -->
+	<!-- 2. 구단 정보 수정 -->
 	<update id="updateClubInfo" parameterType="com.syfc.dto.ClubDTO">
 		UPDATE club
-		SET
-			club_name = #{clubName},
-			club_logo = #{clubLogo},
-			club_region = #{clubRegion},
-			club_content = #{clubContent}
-		WHERE clubOwner_key = #{clubOwnerKey}
+		SET 
+			club_name = #{club_name},
+			club_region = #{club_region},
+			club_content = #{club_content}
+			<if test="club_created != null and club_created != ''">
+				, club_created = TO_DATE(#{club_created}, 'YYYY-MM-DD')
+			</if>
+			<if test="club_logo != null and club_logo != ''">
+				, club_logo = #{club_logo}
+			</if>
+		WHERE clubOwner_key = #{clubOwner_key}
 	</update>
-
-	<!-- 4. 구단 팀 성적 조회 -->
-	<select id="selectTeamRecord" parameterType="long" resultType="com.syfc.dto.TeamRecordDTO">
-		SELECT 
-			/* teamRecord 테이블 컬럼 작성 필요 */
-		FROM teamRecord
-		WHERE clubOwner_key = #{clubOwnerKey}
-	</select>
 
 </mapper>
