@@ -73,91 +73,44 @@
 				<div class="card p-4 profile-panel">
 					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">선수 프로필</h4>
 					<div class="player-profile-list">
-						<div class="player-profile-card">
-						    <div class="player-profile-header">
-						        <img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="player-profile-image">
-						
-						        <div>
-						            <h3>${member.userName}</h3>
-						            <span class="player-status">${player.status}</span>
-						        </div>
-						    </div>
-						
-							    <div class="player-profile-info">
-							        <div class="profile-item">
-							            <span class="profile-label">주 포지션</span>
-							            <span>MF</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">키</span>
-							            <span>162 cm</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">몸무게</span>
-							            <span>60 kg</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">소속 구단</span>
-							            <span>쌍용FC</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">등번호</span>
-							            <span>7번</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">가입일</span>
-							            <span>2026-08-13</span>
-							        </div>
-							    </div>
+						<c:forEach var="player" items="${players}">
+							<div class="player-profile-card">
+								<div class="player-profile-header">
+									<img src="${pageContext.request.contextPath}/uploads/member/${player.profile_photo}" alt="프로필 사진" class="player-profile-image">
+									<div>
+										<h3>${player.userName}</h3>
+										<span class="player-status">${player.status}</span>
+									</div>
+								</div>
+
+								<div class="player-profile-info">
+									<div class="profile-item">
+										<span class="profile-label">주 포지션</span>
+										<span>${player.position}</span>
+									</div>
+									<div class="profile-item">
+										<span class="profile-label">키</span>
+										<span>${player.height} cm</span>
+									</div>
+									<div class="profile-item">
+										<span class="profile-label">몸무게</span>
+										<span>${player.weight} kg</span>
+									</div>
+									<div class="profile-item">
+										<span class="profile-label">소속 구단</span>
+										<span>${player.clubName}</span>
+									</div>
+									<div class="profile-item">
+										<span class="profile-label">등번호</span>
+										<span>${player.uniformNo}번</span>
+									</div>
+									<div class="profile-item">
+										<span class="profile-label">가입일</span>
+										<span>${player.joinDate}</span>
+									</div>
+								</div>
 							</div>
-							
-						<div class="player-profile-card">
-						    <div class="player-profile-header">
-						        <img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="player-profile-image">
-						
-						        <div>
-						            <h3>${member.userName}</h3>
-						            <span class="player-status">${player.status}</span>
-						        </div>
-						    </div>
-						
-							    <div class="player-profile-info">
-							        <div class="profile-item">
-							            <span class="profile-label">주 포지션</span>
-							            <span>${player.position}</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">키</span>
-							            <span>${player.height} cm</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">몸무게</span>
-							            <span>${player.weight} kg</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">소속 구단</span>
-							            <span>${club.clubName}</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">등번호</span>
-							            <span>${player.uniformNo}번</span>
-							        </div>
-							
-							        <div class="profile-item">
-							            <span class="profile-label">가입일</span>
-							            <span>${player.joinDate}</span>
-							        </div>
-							   </div>
-						</div>
+						</c:forEach>
 				</div>
 					
 					

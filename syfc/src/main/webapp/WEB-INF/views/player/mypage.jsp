@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/mypage.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/mypage.css?v=20260816-password-overlay" />
 </head>
 <body>
 
@@ -70,12 +70,14 @@
 
 			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 			<div class="col-md-9">
-				<div class="profile-panel-heading">
+				<div class="profile-edit-area">
+					<div class="profile-edit-content"<c:if test="${not playerUpdateVerified}"> inert aria-hidden="true"</c:if>>
+						<div class="profile-panel-heading">
 					<h4 class="profile-panel-title">프로필 등록 및 수정</h4>
 					<p class="profile-edit-notice">
 						비밀번호 확인 후 프로필을 수정할 수 있습니다.
 					</p>
-				</div>
+						</div>
 				
 					<form action="${pageContext.request.contextPath}/player/profile" method="post" class="profile-form" enctype="multipart/form-data">
 						<input type="hidden" name="clubJoin_num" value="${dto.clubJoin_num}">
@@ -239,6 +241,27 @@
 						</div>
 					</form>
 
+					</div>
+
+					<c:if test="${not playerUpdateVerified}">
+						<section class="password-check-overlay" aria-labelledby="passwordCheckTitle">
+							<form class="password-check-form" action="${pageContext.request.contextPath}/player/checkPassword" method="post">
+								<h4 id="passwordCheckTitle">비밀번호 확인</h4>
+								<p class="password-check-guide">개인정보 수정을 위해 비밀번호를 입력해주세요.</p>
+
+								<div class="password-check-field">
+									<label for="checkPassword" class="form-label">비밀번호</label>
+									<input type="password" id="checkPassword" name="userPwd" class="form-control" required autofocus>
+								</div>
+
+								<c:if test="${passwordError}">
+									<div class="password-check-error">비밀번호가 일치하지 않습니다.</div>
+								</c:if>
+
+								<button type="submit" class="password-check-submit">확인</button>
+							</form>
+						</section>
+					</c:if>
 				</div>
 			</div>
 		</div>
@@ -248,64 +271,9 @@
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	
 		
-	<c:if test="${not playerUpdateVerified}">
-		<!-- 비밀번호 확인 모달창 -->
-		<div class="modal fade" id="passwordCheckModal" tabindex="-1" aria-labelledby="passwordCheckModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<form action="${pageContext.request.contextPath}/player/checkPassword" method="post">
-						<div class="modal-header">
-							<h5 class="modal-title" id="passwordCheckModalLabel">
-								비밀번호 확인
-							</h5>
-						</div>
-						
-						<div class="modal-body">
-							<p class="small text-muted">
-								개인정보 수정을 위해 비밀번호를 입력해주세요.
-							</p>
-							
-							<label for="checkPassword" class="form-label">
-								비밀번호
-							</label>
-							
-							<input type="password" id="checkPassword" name="userPwd" class="form-control" required autofocus>
-							
-							<c:if test="${passwordError}">
-								<div class="text-danger small mt-2">
-									비밀번호가 일치하지 않습니다.
-								</div>
-							</c:if>
-						</div>
-						
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary">
-								확인
-							</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<!-- 비밀번호 확인 모달창 끝 -->
-	</c:if>
-	
 	<!-- 3. 마이페이지 전용 JS 연결 (dist/js/member/mypage.js) -->
 	
 	<script type="text/javascript">
-	<c:if test="${not playerUpdateVerified}">
-		document.addEventListener("DOMContentLoaded", function() {
-			const modalElement = document.getElementById("passwordCheckModal");
-			const passwordModal = new bootstrap.Modal(modalElement, {
-				backdrop: "static",
-				keyboard: false
-			});
-
-			passwordModal.show();
-		});
-	</c:if>
-
-	
 	// 버튼 클릭 이벤트
 	document.querySelectorAll(".position-btn").forEach(function(button) {
 		button.addEventListener("click", function() {
