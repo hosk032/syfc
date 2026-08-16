@@ -15,7 +15,29 @@ public class PlayerProfileDTO {
 	private long clubOwnerKey;
 	private String reason;
 	private String leaveDate;
+	private String clubName;
+	private String userName;
+	private String profile_photo;
 	
+	public String getClubName() {
+		return clubName;
+	}
+	public void setClubName(String clubName) {
+		this.clubName = clubName;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getProfile_photo() {
+		return profile_photo;
+	}
+	public void setProfile_photo(String profile_photo) {
+		this.profile_photo = profile_photo;
+	}
 	public long getMemberIdx() {
 		return memberIdx;
 	}

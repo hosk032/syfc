@@ -191,10 +191,10 @@ public class PlayerController {
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		PlayerProfileDTO player = playerService.findPlayer(info.getMemberIdx());
+		List<PlayerProfileDTO> players = playerService.findPlayer(info.getMemberIdx());
 		
 		ModelAndView mav = new ModelAndView("player/playerProfile");
-		mav.addObject("player", player);
+		mav.addObject("players", players);
 		
 		return mav;
 	}

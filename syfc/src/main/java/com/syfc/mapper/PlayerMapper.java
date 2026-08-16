@@ -1,7 +1,9 @@
 package com.syfc.mapper;
 
+import java.util.List;
+
 import com.syfc.dto.PlayerProfileDTO;
 
 public interface PlayerMapper {
-	PlayerProfileDTO findPlayer(long memberIdx);
+	List<PlayerProfileDTO> findPlayer(long memberIdx);
 }
