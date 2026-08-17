@@ -1,0 +1,57 @@
+@charset "UTF-8";
+
+/* ======================================================
+   댓글 수정
+   ====================================================== */
+
+.reply-edit-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    margin: 0;
+
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    resize: vertical;
+
+    box-sizing: border-box;
+}
+
+.reply-edit-textarea:focus {
+    border-color: #86b7fe;
+    outline: none;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
+.reply-item.editing .reply-content {
+    margin-bottom: 10px;
+}
+
+.reply-item.editing .reply-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+
+.reply-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    padding-bottom: 10px;
+}
+
+.reply-more-btn {
+    min-width: 120px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #555;
+}
+
+.reply-more-btn:hover {
+    background-color: #f8f9fa;
+}

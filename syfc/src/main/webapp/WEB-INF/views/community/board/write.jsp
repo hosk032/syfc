@@ -30,7 +30,6 @@
         <div class="formInputWrap">
           <select id="boardCategory" name="category" class="formControl selectControl" required>
             <option value="" disabled selected>카테고리를 선택하세요</option>
-            <option value="notice">공지사항</option>
             <option value="free">자유게시판</option>
             <option value="inquiry">문의게시판</option>
           </select>
@@ -46,6 +45,7 @@
             id="boardTitle" 
             name="b_subject" 
             class="formControl" 
+            value="${dto.b_subject}"
             placeholder="제목을 입력해 주세요." 
             required 
           />
@@ -60,8 +60,8 @@
             type="text" 
             id="boardAuthor" 
             name="auther" 
+            value="${sessionScope.member.userName}"
             class="formControl authorControl" 
-            value="admin" 
             readonly 
           />
         </div>
@@ -77,7 +77,7 @@
             class="formControl textareaControl" 
             placeholder="내용을 작성해 주세요. (매치 신청 시 일시, 장소, 실력대를 적어주시면 좋습니다)" 
             required
-          ></textarea>
+          >${dto.b_content}</textarea>
         </div>
       </div>
 
@@ -93,7 +93,11 @@
       <div class="formActions">
         <button type="button" class="btn btnSubmit" onclick="sendOk();">${mode=="update" ? "수정완료" : "등록완료"}&nbsp;</button>
         <button type="reset" class="btn btnReset">다시입력</button>
-        <button type="button" class="btn btnCancel" onclick="history.back()">등록취소</button>
+        <button type="button" class="btn btnCancel" onclick="location.href='${pageContext.request.contextPath}/community/board/boardList';">${mode=="update" ? "수정취소" : "등록취소"}&nbsp;</button>
+        <c:if test="${mode == 'update' }">
+			<input type="hidden" name="bnum" value="${dto.bnum}">
+			<input type="hidden" name="page" value="${page}">
+		</c:if>
       </div>
     </form>
   </main>
@@ -119,7 +123,7 @@ function sendOk() {
 	}
 	
 	
-	f.action = '${pageContext.request.contextPath}/community/board/write';
+	f.action = '${pageContext.request.contextPath}/community/board/${mode}';
 	f.submit();
 }
 </script>

@@ -24,14 +24,14 @@
         <aside class="community-side-menu">
             <div class="side-menu-title">커뮤니티</div>
             <a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a>
-            <a href="${pageContext.request.contextPath}/community/board/boardList" class="active">게시판</a>
+            <a href="${pageContext.request.contextPath}/community/board/boardList" class="active">자유 게시판</a>
             <a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
         </aside>
 
         <!-- 오른쪽 상세 본문 영역 -->
         <section class="board-detail-area">
             <div class="detail-top">
-                <h3>게시판</h3>
+                <h3>자유 게시판</h3>
                 <a href="${pageContext.request.contextPath}/community/board/boardList" class="list-btn">목록</a>
             </div>
 
@@ -118,23 +118,40 @@
 						</tr>
 					</table>
                 	
-                	
-                	
             </div>
+            <!-- 댓글 -->
+            <div id="replyArea"
+		    	data-bnum="${dto.bnum}">
+			</div>
             
             
         </section>
     </div>
 
-<script type="text/javascript">
-
-
-</script>
+<c:if test="${sessionScope.member.memberIdx == dto.memberIdx || sessionScope.member.userLevel >= 51}">
+	<script type="text/javascript">
+		function deleteOk() {
+			if(confirm('게시글을 삭제 하시겠습니까?')) {
+				const params = 'bnum=${dto.bnum}&${query}';
+				const url = '${pageContext.request.contextPath}/community/board/delete?' + params;
+				location.href = url;
+			}
+		}
+	</script>
+</c:if>
 
     <!-- 하단 푸터 조립 -->
     <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
     <!-- 3. 게시글 상세 전용 JS 연결 (dist/js/community/boardDetail.js) -->
+    <!-- 
     <script src="${pageContext.request.contextPath}/dist/js/community/boardDetail.js"></script>
+     -->
+<script>
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+
+<script src="${pageContext.request.contextPath}/dist/js/community/reply.js"></script>
+     
 </body>
 </html>

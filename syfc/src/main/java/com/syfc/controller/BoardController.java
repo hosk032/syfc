@@ -29,6 +29,7 @@ public class BoardController {
 	private MyUtil util = new MyUtil();
 	private PaginateUtil paginateUtil = new PaginateUtil();
 
+	// 게시판
 	@GetMapping("boardList")
 	public ModelAndView boardList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
@@ -108,6 +109,7 @@ public class BoardController {
 
 	}
 	
+	// 글 작성 보기
 	@GetMapping("write")
 	public ModelAndView write(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
@@ -120,6 +122,7 @@ public class BoardController {
 		
 	}
 	
+	// 글 작성완료
 	@PostMapping("write")
 	public ModelAndView writeSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
@@ -143,48 +146,6 @@ public class BoardController {
 		
 		return new ModelAndView("redirect:/community/board/boardList");
 	}
-	
-	@GetMapping("update")
-	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		
-		String page = req.getParameter("page");
-		
-		try {
-			long bnum = Long.parseLong(req.getParameter("bnum"));
-			BoardDTO dto = service.findById(bnum);
-			
-			// 게시글이 없으면
-			if(dto == null) {
-				return new ModelAndView("redirect:/community/board/boardList=" + page);
-			}
-			
-			/*
-			// 게시글을 올린 사람이 아닌 경우
-			if(! dto.getMemberIdx().equals(info.getMemberIdx())) {
-				return new ModelAndView("redirect:/community/board/boardList=" + page);
-			}
-			*/
-			
-			ModelAndView mav = new ModelAndView("community/board/write");
-			
-			mav.addObject("dto", dto);
-			mav.addObject("page", page);
-			mav.addObject("mode", "update");
-			
-			return mav;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		return new ModelAndView("redirect:/community/board/boardList?page=" + page);
-	}
-	
-	
 	
 	@GetMapping("boardDetail")
 	public ModelAndView boardDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -252,5 +213,116 @@ public class BoardController {
 			return new ModelAndView("redirect:/community/board/boardList?" + query);
 	}
 	
+	
+	// 글 수정
+	@GetMapping("update")
+	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String page = req.getParameter("page");
+		
+		try {
+			long bnum = Long.parseLong(req.getParameter("bnum"));
+			BoardDTO dto = service.findById(bnum);
+			
+			// 게시글이 없으면
+			if(dto == null) {
+				return new ModelAndView("redirect:/community/board/boardList=" + page);
+			}
+			
+			
+			// 게시글을 올린 사람이 아닌 경우
+			if(dto.getMemberIdx() != info.getMemberIdx()) {
+				return new ModelAndView("redirect:/community/board/boardList=" + page);
+			}
+			
+			ModelAndView mav = new ModelAndView("community/board/write");
+			
+			mav.addObject("dto", dto);
+			mav.addObject("page", page);
+			mav.addObject("mode", "update");
+			
+			return mav;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return new ModelAndView("redirect:/community/board/boardList?page=" + page);
+	}
+	
+	// 글 수정완료
+	@PostMapping("update")
+	public ModelAndView updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String page = req.getParameter("page");
+		try {
+			BoardDTO dto = new BoardDTO();
+			
+			dto.setBnum(Long.parseLong(req.getParameter("bnum")));
+			dto.setB_subject(req.getParameter("b_subject"));
+			dto.setB_content(req.getParameter("b_content"));
+			
+			// 개발자 도구에서 수정하지 못하게 회원번호 막기
+			dto.setMemberIdx(info.getMemberIdx());
+			
+			service.upadteboard(dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return new ModelAndView("redirect:/community/board/boardList?page=" + page);
+	}
+	
+	// 글 삭제
+	@GetMapping("delete")
+	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		String page = req.getParameter("page");
+		String query = "page=" + page;
+		
+		try {
+			long bnum = Long.parseLong(req.getParameter("bnum"));
+			
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			
+			if(schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			
+			kwd = util.decodeUrl(kwd);
+			
+			if(! kwd.isBlank()) {
+				query += "&schType=" + schType + "&kwd=" 
+						+ util.encodeUrl(kwd);
+			}
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("bnum", bnum);
+			map.put("memberIdx", info.getMemberIdx());
+			map.put("userLevel", info.getUserLevel());
+			
+			service.deleteboard(map);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ModelAndView("redirect:/community/board/boardList?" + query);
+	}
+		
 	
 }
