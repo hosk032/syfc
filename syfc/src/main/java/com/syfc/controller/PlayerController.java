@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.syfc.dto.ClubInfoDTO;
+import com.syfc.dto.ClubOwnerHistoryDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
 import com.syfc.dto.MemberDTO;
@@ -16,6 +17,8 @@ import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
+import com.syfc.service.ClubOwnerHistoryService;
+import com.syfc.service.ClubOwnerHistoryServiceImpl;
 import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
 import com.syfc.service.MatchRecordService;
@@ -46,6 +49,7 @@ public class PlayerController {
 	private MatchRecordService matchRecordService = new MatchRecordServiceImpl();
 	private MemberService memberService = new MemberServiceImpl();
 	private MyClubInfoService myClubInfoService = new MyClubInfoServiceImpl();
+	private ClubOwnerHistoryService historyService = new ClubOwnerHistoryServiceImpl();
 	
 	private FileManager fileManager = new FileManager();
 	
@@ -253,10 +257,24 @@ public class PlayerController {
 		return mav;
 	}
 	
-	// 입단 신청
+	// 입단 신청 + 신청 결과 조회
 	@GetMapping("clubJoin")
 	public ModelAndView clubJoin(HttpServletRequest req, HttpServletResponse resp) {
-	    return new ModelAndView("player/clubJoin");
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+	    // 로그인 하지 않은 사용자는 로그인 페이지로 이동
+	    if(info == null) {
+	    		return new ModelAndView("redirect:/member/login");
+	    }
+	    
+	    List<ClubOwnerHistoryDTO> list = historyService.clubOwnerRequestHistory(info.getMemberIdx());
+		
+		ModelAndView mav = new ModelAndView("player/clubJoin");
+		
+		mav.addObject("list", list);
+		
+		return mav;
 	}
 	
 	@GetMapping("clubOwnerRequest")
@@ -264,8 +282,11 @@ public class PlayerController {
 	    return new ModelAndView("player/clubOwnerRequest");
 	}
 	
+	// 입단신청 결과조회/취소
 	@GetMapping("clubOwnerRequestHistory")
 	public ModelAndView clubOwnerRequestHistory(HttpServletRequest req, HttpServletResponse resp) {
-	    return new ModelAndView("player/clubOwnerRequestHistory");
+	  
+		return new ModelAndView("redirect:/player/clubJoin");
+
 	}
 }

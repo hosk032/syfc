@@ -265,7 +265,7 @@
 				</div>
 			</div>
 		</div>
-
+</div>
 
 	<!-- 하단 푸터 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />

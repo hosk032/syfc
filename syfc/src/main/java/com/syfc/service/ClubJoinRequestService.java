@@ -1,7 +1,7 @@
-package com.syfc.mapper;
+package com.syfc.service;
 
 import com.syfc.dto.ClubJoinDTO;
 
-public interface ClubJoinMapper {
+public interface ClubJoinRequestService {
 	public int clubJoinRequest(ClubJoinDTO clubJoinDTO);
 }

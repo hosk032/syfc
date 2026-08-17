@@ -5,7 +5,18 @@
 
 <mapper namespace="com.syfc.mapper.ClubJoinMapper">
 	<!-- 입단 신청 -->
-
+	<insert id="clubJoinRequest" parameterType="com.syfc.dto.ClubJoinDTO">
+		INSERT INTO clubJoin(
+			clubJoin_num, memberIdx, clubOwner_key, clubJoin_content, 
+	   		clubJoin_date, clubJoin_result, clubJoin_intro, 
+	   		clubJoin_position, clubJoin_reason
+	   	)
+		VALUES(
+		  clubJoin_seq.NEXTVAL, #{memberIdx}, #{clubOwner_key},
+		  #{clubJoin_content}, TO_DATE(#{clubJoin_date}, 'YYYY-MM-DD'),
+		  #{clubJoin_result}, #{clubJoin_intro}, 
+		  #{clubJoin_position}, #{clubJoin_reason})
+	</insert>
 
 
 </mapper>

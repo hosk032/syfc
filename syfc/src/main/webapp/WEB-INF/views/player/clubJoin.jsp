@@ -80,21 +80,21 @@
 
 								<select id="preferredPosition" class="form-select" name="position">
 									<option value="">선택하세요</option>
-									<option>GK</option>
-									<option>DF</option>
-									<option>MF</option>
-									<option>FW</option>
+									<option value="GK" ${dto.clubJoinPosition eq 'GK' ? 'selected' : ''}>GK</option>
+									<option value="DF" ${dto.clubJoinPosition eq 'DF' ? 'selected' : ''}>DF</option>
+									<option value="MF" ${dto.clubJoinPosition eq 'MF' ? 'selected' : ''}>MF</option>
+									<option value="FW" ${dto.clubJoinPosition eq 'FW' ? 'selected' : ''}>FW</option>
 								</select>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-label">신청일</label> 
-								<input type="date" class="form-control" name="clubJoin-date">
+								<input type="date" class="form-control" name="clubJoin-date" value="${dto.clubJoinDate}">
 							</div>
 
 							<div class="clubJoin-introduction">
 								<span>자기소개</span> 
-								<textarea class="form-control" rows="5" name="clubJoin-info" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요."></textarea>
+								<textarea class="form-control" rows="5" name="clubJoin-info" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요.">${dto.clubJoinIntro}</textarea>
 							</div>
 
 						</div>
@@ -106,7 +106,6 @@
 						<button type="button" class="clubJoin-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
 						<button type="reset" class="clubJoin-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
 					</div>
-
 				<div class="card p-4">
 				<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
 
@@ -123,30 +122,50 @@
 							</thead>
 
 							<tbody>
-								<tr>
-									<td>쌍용 동교1팀</td>
-									<td>2026-08-01</td>
-									<td><span class="clubJoin-result result-pending">승인</span></td>
-									<td>승인</td>
-								</tr>
-								<tr>
-									<td>양천 신정2팀</td>
-									<td>2026-08-09</td>
-									<td><span class="clubJoin-result result-pending">반려</span></td>
-									<td>폭우예정</td>
-								</tr>
-								<tr>
-									<td>양천 목동3팀</td>
-									<td>2026-08-08</td>
-									<td><span class="clubJoin-result result-pending">대기</span></td>
-									<td>-</td>
-								</tr>
+								<c:forEach var="history" items="${list}">
+								    <tr>
+								        <td>${history.club_name}</td>
+								        <td>${history.clubJoin_date}</td>
+								        <td>${history.clubJoin_result}</td>
+								        <td>${history.clubJoin_reason}</td>
+								    </tr>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
 				</form>
 
 				</div>
+					
+					<!-- 반려사유 모달 창 -->
+					<div class="modal fade reject-reason-modal" id="rejectReasonModal" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+					
+								<div class="modal-header">
+									<h5 class="modal-title">${history.clubJoin_reason}</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+								</div>
+					
+								<div class="modal-body">
+									신청하신 포지션과 구단에서 모집 중인 포지션이 일치하지 않습니다.
+									모집 공고를 확인한 뒤 다시 신청해 주세요.
+								</div>
+					
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary"
+										data-bs-dismiss="modal">닫기</button>
+								</div>
+					
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</div>
+			</div>
 
 			</div>
 		</div>
