@@ -78,29 +78,34 @@
 
 					<div class="club-info">
 						<div class="club-title-row">
-							<h4>FC 쌍용</h4>
-							<span class="club-status">운영중</span>
+							<h4>${dto.club_name}</h4>
+							
+							<c:choose>
+								<c:when test="${dto.club_status eq 1}">
+									<span id="club-status" class="club-status">운영중</span>
+								</c:when>
+								<c:when test="${dto.club_status eq 0}">
+									<span id="club-status" class="club-status">해체</span>
+								</c:when>
+							</c:choose>
+							
 						</div>
 						<div>
 							<div class="club-grid">
-								<span>서울특별시</span> 
-								<span>양천구 신정3동팀</span>
+								<span>${dto.club_region}</span>
 							</div>
 
 							<div class="club-date">
 								<span>창단일</span> 
-								<span>2026-08-10</span>
+								<span>${dto.club_created}</span>
 							</div>
 
 							<div class="club-introduction">
 								<span>구단소개</span> 
-								<span>12년 경력의 저희 구단 소개해용^-^</span>
+								<span>${dto.club_content}</span>
 							</div>
 
 						</div>
-
-
-
 
 					</div>
 

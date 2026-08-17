@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import com.syfc.dto.ClubInfoDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
 import com.syfc.dto.MemberDTO;
@@ -21,6 +22,8 @@ import com.syfc.service.MatchRecordService;
 import com.syfc.service.MatchRecordServiceImpl;
 import com.syfc.service.MemberService;
 import com.syfc.service.MemberServiceImpl;
+import com.syfc.service.MyClubInfoService;
+import com.syfc.service.MyClubInfoServiceImpl;
 import com.syfc.service.PlayerProfileService;
 import com.syfc.service.PlayerProfileServiceImpl;
 import com.syfc.service.PlayerService;
@@ -42,7 +45,8 @@ public class PlayerController {
 	private MatchHistoryService matchHistoryService = new MatchHistoryImpl();	
 	private MatchRecordService matchRecordService = new MatchRecordServiceImpl();
 	private MemberService memberService = new MemberServiceImpl();
-
+	private MyClubInfoService myClubInfoService = new MyClubInfoServiceImpl();
+	
 	private FileManager fileManager = new FileManager();
 	
 	@PostMapping("profile")
@@ -234,9 +238,19 @@ public class PlayerController {
 	    return new ModelAndView("player/matchApply");
 	}
 	
+	// 내 구단팀 조회
 	@GetMapping("club")
 	public ModelAndView club(HttpServletRequest req, HttpServletResponse resp) {
-	    return new ModelAndView("player/club");
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+	    ClubInfoDTO dto = myClubInfoService.MyClubInfo(info.getMemberIdx());
+	    
+	    ModelAndView mav = new ModelAndView("player/club");
+	    
+	    mav.addObject("dto", dto);
+		
+		return mav;
 	}
 	
 	// 입단 신청
