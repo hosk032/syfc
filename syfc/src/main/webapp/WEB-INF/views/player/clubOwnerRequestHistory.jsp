@@ -76,7 +76,7 @@
 						<table class="table table-hover text-center align-middle">
 							<thead class="table-light">
 								<tr>
-									<th>구단주명</th>
+									<th>구단명</th>
 									<th>신청일</th>
 									<th>신청결과</th>
 									<th>반려사유</th>
@@ -85,46 +85,20 @@
 
 							<tbody>
 								<tr>
-									<td>쌍용구단주</td>
-									<td>2026-08-10</td>
-									<td><span class="clubOwnerRequestHistory-status status-pending">반려</span></td>
+									<td>${dto.club_name}</td>
+									<td>${dto.clubJoin_date}</td>
+									<td><span class="clubOwnerRequestHistory-status status-pending">${dto.clubJoin_result}</span></td>
 									<td>
 										<button type="button" class="btn btn-link p-0 text-danger text-decoration-underline"
-									          data-bs-toggle="modal" data-bs-target="#rejectReasonModal">포지션 불일치
+									          data-bs-toggle="modal" data-bs-target="#rejectReasonModal">${dto.clubJoin_reason}
 									    </button>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-					<!-- 반려사유 모달 창 -->
-					<div class="modal fade reject-reason-modal" id="rejectReasonModal" tabindex="-1">
-						<div class="modal-dialog modal-dialog-centered">
-							<div class="modal-content">
 					
-								<div class="modal-header">
-									<h5 class="modal-title">반려 사유</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-								</div>
 					
-								<div class="modal-body">
-									신청하신 포지션과 구단에서 모집 중인 포지션이 일치하지 않습니다.
-									모집 공고를 확인한 뒤 다시 신청해 주세요.
-								</div>
-					
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">닫기</button>
-								</div>
-					
-							</div>
-						</div>
-					</div>
 
-
-
-
-				</div>
-			</div>
 		</div>
 	</div>
