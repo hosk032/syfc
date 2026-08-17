@@ -11,14 +11,8 @@ public class BoardDTO {
 	
 	private long memberIdx;
 	
-	private long reply_num;
-	private String r_content;
-	private String r_reg_date;
-	private int r_block;
-	
 	private String userName;
 	
-	private int replyCount;
 	private int boardLikeCount;
 	
 	public long getBnum() {
@@ -69,48 +63,21 @@ public class BoardDTO {
 	public void setMemberIdx(long memberIdx) {
 		this.memberIdx = memberIdx;
 	}
-	public long getReply_num() {
-		return reply_num;
-	}
-	public void setReply_num(long reply_num) {
-		this.reply_num = reply_num;
-	}
-	public String getR_content() {
-		return r_content;
-	}
-	public void setR_content(String r_content) {
-		this.r_content = r_content;
-	}
-	public String getR_reg_date() {
-		return r_reg_date;
-	}
-	public void setR_reg_date(String r_reg_date) {
-		this.r_reg_date = r_reg_date;
-	}
-	public int getR_block() {
-		return r_block;
-	}
-	public void setR_block(int r_block) {
-		this.r_block = r_block;
-	}
 	public String getUserName() {
 		return userName;
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	public int getReplyCount() {
-		return replyCount;
-	}
-	public void setReplyCount(int replyCount) {
-		this.replyCount = replyCount;
-	}
+	
 	public int getBoardLikeCount() {
 		return boardLikeCount;
 	}
 	public void setBoardLikeCount(int boardLikeCount) {
 		this.boardLikeCount = boardLikeCount;
 	}
+	
+	
 	
 	
 	

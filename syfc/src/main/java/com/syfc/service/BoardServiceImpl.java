@@ -26,13 +26,25 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void upadteboard(BoardDTO dto) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			mapper.upadteboard(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 		
 	}
 
 	@Override
-	public void deleteboard(BoardDTO dto) throws Exception {
-		// TODO Auto-generated method stub
+	public void deleteboard(Map<String, Object> map) throws Exception {
+		try {
+			mapper.deleteboard(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 		
 	}
 

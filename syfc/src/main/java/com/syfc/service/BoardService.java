@@ -8,7 +8,7 @@ import com.syfc.dto.BoardDTO;
 public interface BoardService {
 	public void insertboard(BoardDTO dto) throws Exception;
 	public void upadteboard(BoardDTO dto) throws Exception;
-	public void deleteboard(BoardDTO dto) throws Exception;
+	public void deleteboard(Map<String, Object> map) throws Exception;
 	public void deleteListboard(List<Long> list) throws Exception;
 	
 	public int dataCount(Map<String, Object> map);

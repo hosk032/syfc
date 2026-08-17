@@ -15,10 +15,8 @@
 	<sql id="where-list">
 		<choose>
 			<when test="schType == 'all' ">
-				(
-					INSTR(b_Subject, #{kwd}) &gt; 0
-						OR INSTR(b_Content, #{kwd}) &gt; 0
-				)
+				(INSTR(b_Subject, #{kwd}) &gt; 0
+						OR INSTR(b_Content, #{kwd}) &gt; 0)
 			</when>
 			<otherwise>
 				INSTR(${schType}, #{kwd}) &gt; 0
@@ -130,7 +128,19 @@
 		WHERE bnum = #{bnum} AND memberIdx = #{memberIdx}
 	</update>
 	
-	
+	<delete id="deleteboard" parameterType="map">
+		DELETE FROM board 
+		<where>
+			<choose>
+				<when test="userLevel >= 51">
+					bnum = #{bnum}
+				</when>
+				<otherwise>
+					bnum = #{bnum} AND memberIdx = #{memberIdx}
+				</otherwise>
+			</choose>
+		</where>
+	</delete>
 	
 	
 	
