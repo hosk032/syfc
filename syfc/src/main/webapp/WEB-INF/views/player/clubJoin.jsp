@@ -109,7 +109,7 @@
 				<div class="card p-4">
 				<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
 
-					<h4 class="border-bottom pb-2 mb-4">경기 참가 신청 결과</h4>
+					<h4 class="border-bottom pb-2 mb-4">입단 신청 결과</h4>
 					<div class="clubJoin-responsive">
 						<table class="table table-hover text-center align-middle">
 							<thead class="table-light">
@@ -118,17 +118,38 @@
 									<th>신청일</th>
 									<th>신청결과</th>
 									<th>반려사유</th>
+									<th>관리</th>
 								</tr>
 							</thead>
 
 							<tbody>
 								<c:forEach var="history" items="${list}">
-								    <tr>
-								        <td>${history.club_name}</td>
-								        <td>${history.clubJoin_date}</td>
-								        <td>${history.clubJoin_result}</td>
-								        <td>${history.clubJoin_reason}</td>
-								    </tr>
+									<tr>
+										<td>${history.club_name}</td>
+										<td>${history.clubJoin_date}</td>
+										  
+										   <td>
+												<c:choose>
+													<c:when test="${history.clubJoin_result eq 1}">승인</c:when>
+													<c:when test="${history.clubJoin_result eq 0}">반려</c:when>
+													<c:when test="${history.clubJoin_result eq 2}">대기</c:when>
+													<c:otherwise>알 수 없음</c:otherwise>       
+												</c:choose>
+										   </td>
+									
+										   <td>${history.clubJoin_reason}</td>
+									
+										   <td>
+												<c:if test="${history.clubJoin_result eq 2}">
+													<button type="button" class="btn btn-sm btn-outline-danger">
+														신청 취소
+													</button>
+												</c:if>
+												
+												<c:if test="${history.clubJoin_result ne 2}">-</c:if>
+										   </td>
+									
+									 </tr>
 								</c:forEach>
 							</tbody>
 						</table>

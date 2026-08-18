@@ -282,10 +282,29 @@ public class PlayerController {
 	    return new ModelAndView("player/clubOwnerRequest");
 	}
 	
-	// 입단신청 결과조회/취소
+	// 입단신청 결과조회
 	@GetMapping("clubOwnerRequestHistory")
 	public ModelAndView clubOwnerRequestHistory(HttpServletRequest req, HttpServletResponse resp) {
 	  
+		return new ModelAndView("redirect:/player/clubJoin");
+
+	}
+	
+	// 입단신청 취소
+	@PostMapping("cancelClubOwnerRequest")
+	public ModelAndView cancelClubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		// 로그인 정보가 없으면
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		Long clubJoin_Num = Long.parseLong(req.getParameter("clubJoin_Num"));
+		
+		int result = historyService.cancelClubOwnerRequest(clubJoin_Num, info.getMemberIdx());
+		
 		return new ModelAndView("redirect:/player/clubJoin");
 
 	}

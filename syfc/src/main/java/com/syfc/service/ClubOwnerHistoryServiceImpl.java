@@ -9,10 +9,17 @@ import com.syfc.mybatis.support.MapperContainer;
 public class ClubOwnerHistoryServiceImpl implements ClubOwnerHistoryService{
 	private ClubOwnerHistoryMapper mapper = MapperContainer.get(ClubOwnerHistoryMapper.class);
 	
+	
 	@Override
 	public List<ClubOwnerHistoryDTO> clubOwnerRequestHistory(long memberIdx) {
-		
+		   
 		return mapper.listClubOwnerHistory(memberIdx);
+	}
+
+	@Override
+	public int cancelClubOwnerRequest(long clubJoin_num, long memberIdx) {
+		
+		return mapper.cancelClubOwnerRequest(clubJoin_num, memberIdx);
 	}
 
 }

@@ -13,5 +13,13 @@
 		WHERE cj.memberIdx = #{memberIdx} AND c.club_status = 1
 	</select>
 
+	<!-- 입단신청 취소 -->
+	<delete id="cancelClubOwnerRequest" parameterType="com.syfc.dto.ClubOwnerHistoryDTO">
+		DELETE 
+		FROM clubJoin
+		WHERE clubJoin_num = #{clubJoin_num}
+		    AND memberIdx = #{memberIdx}
+		    AND clubJoin_result = 2;
+	</delete>
 
 </mapper>
