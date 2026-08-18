@@ -71,37 +71,59 @@
 			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 			<!-- 신청사유, 신청할 구단주명, 신청일, 신청상태(대기,승인,반려) -->
 			<div class="col-md-9">
-				<div class="card p-4 profile-panel">
-					<h4 class="border-bottom pb-2 mb-4 profile-panel-title">구단주 신청</h4>
+				<form id="clubOwnerRequestForm" action="${pageContext.request.contextPath}/player/clubOwnerRequest" method="post">
+					<div class="card p-4 profile-panel">
+						<h4 class="border-bottom pb-2 mb-4 profile-panel-title">구단주 신청</h4>
 					
-					<div class="clubOwnerRequest-form">
-						<div class="row g-3">
-							<div class="col-md-6">
-								<label class="form-label" for="구단주명별명">구단주명</label>
-
-								<input class="구단주이름넣는곳" type="text">
-							</div>
-
-							<div class="col-md-6">
-								<label class="form-label">신청일</label> 
-								<input type="date" class="form-control" name="clubOwnerRequest-date">
+						<div class="clubOwnerRequest-form">
+							<div class="row g-3">
+	
+								<div class="col-md-6">
+									<label class="form-label">신청일</label> 
+									<p class="form-control-plaintext text-muted mb-0">
+										<fmt:formatDate value="${today}" pattern="yyyy-MM-dd"/>
+									</p>
+								</div>
+								
+								<div class="clubOwnerRequest-reason">
+									<span>신청사유</span> 
+									<textarea class="form-control" rows="5" name="cor_content" required
+										placeholder="해당 구단에 구단주로 신청하게된 사유를 간단히 작성해주세요.">
+									</textarea>
+								</div>
+	
 							</div>
 							
-							<div class="clubOwnerRequest-reason">
-								<span>신청사유</span> 
-								<textarea class="form-control" rows="5" name="clubOwnerRequest-info" placeholder="해당 구단에 구단주로 신청하게된 사유를 간단히 작성해주세요."></textarea>
-							</div>
-
 						</div>
-						
-					</div>
-				
-				</div>
 					
 					<div class="clubOwnerRequest-actions">
-						<button type="button" class="clubOwnerRequest-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
+						<button type="submit" class="clubOwnerRequest-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
 						<button type="reset" class="clubOwnerRequest-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
 					</div>
+				
+					</div>
+			
+			   </form>	
+			   
+			   
 			</div>
 		</div>
 	</div>
+
+<c:if test="${clubOwnerRequestSuccess}">
+	<script type="text/javascript">
+		alert('구단주 신청이 완료되었습니다.');
+	</script>
+</c:if>
+
+<script type="text/javascript">
+	document.getElementById("clubOwnerRequestForm").addEventListener("submit", function(event){
+			if(!confirm("구단주 신청을 완료하시겠습니까 ? ")){
+				event.preventDefault();
+			}
+		});
+		
+</script>
+
+</body>
+</html>	

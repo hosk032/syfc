@@ -76,28 +76,52 @@
 						<table class="table table-hover text-center align-middle">
 							<thead class="table-light">
 								<tr>
-									<th>구단명</th>
 									<th>신청일</th>
 									<th>신청결과</th>
-									<th>반려사유</th>
+									<th>관리</th>
 								</tr>
 							</thead>
 
 							<tbody>
-								<tr>
-									<td>${dto.club_name}</td>
-									<td>${dto.clubJoin_date}</td>
-									<td><span class="clubOwnerRequestHistory-status status-pending">${dto.clubJoin_result}</span></td>
-									<td>
-										<button type="button" class="btn btn-link p-0 text-danger text-decoration-underline"
-									          data-bs-toggle="modal" data-bs-target="#rejectReasonModal">${dto.clubJoin_reason}
-									    </button>
-									</td>
-								</tr>
+								<c:forEach var="history" items="${list}">
+									<tr>
+										<td>${history.cor_requestdate}</td>
+										<td>
+											<c:choose>
+												<c:when test="${history.cor_status eq 2}">대기</c:when>
+												<c:when test="${history.cor_status eq 1}">승인</c:when>
+												<c:when test="${history.cor_status eq 0}">반려</c:when>
+												<c:otherwise>알 수 없음</c:otherwise>  
+											</c:choose>
+										</td>
+										
+										<td>	
+											<c:if test="${history.cor_status eq 2}">
+												<form action="${pageContext.request.contextPath}/player/deleteClubOwnerRequest" method="post" class="d-inline">
+													<input type="hidden" name="cor_request_num" value="${history.cor_request_num}">
+													
+													<button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('구단주 신청을 취소하시겠습니까?');">
+														신청 취소
+													</button>
+												</form>
+											</c:if>
+											<c:if test="${history.cor_status ne 2}">-</c:if>
+
+										</td>
+									</tr>
+
+								</c:forEach>
 							</tbody>
+							
 						</table>
+						
 					</div>
 				</div>	
 			</div>
+			
+			
+			
 		</div>
 	</div>
+</body>
+</html>
