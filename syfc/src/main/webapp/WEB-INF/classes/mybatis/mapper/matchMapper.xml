@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.MatchMapper">
+	<!-- 지역목록 띄우기 -->
+   <select id="selectRegions" resultType="string">
+        SELECT DISTINCT region FROM Stadium
+        WHERE region IS NOT NULL ORDER BY region
+    </select>
+
+    <!-- 이용 가능한 경기장 조회 (지역+ 이용가능(stadium status 1)+ issue날짜아님+ 
+    	같은날&같은 시간대에 match_apply status 1(매칭)/3(매칭대기중) 아님) -->
+    <select id="selectAvailableStadiums" parameterType="map" 
+    	resultType="com.syfc.dto.StadiumDTO">
+        SELECT s.stadium_id, s.stadium_name, s.region, s.capacity,
+            s.status, s.latitude, s.longitude, s.addr1, s.addr2,
+            s.zip, s.stadium_cost, s.stadium_img
+        FROM Stadium s
+        WHERE s.region = #{region}
+          AND s.status = 1
+          
+          AND NOT EXISTS (
+              SELECT 1 FROM Stadium_Issue si
+              WHERE si.stadium_id = s.stadium_id
+                AND TO_DATE(#{applyDate}, 'YYYY-MM-DD')
+                BETWEEN TRUNC(si.start_date) AND TRUNC(si.end_date)
+          )
+          
+          AND NOT EXISTS (
+              SELECT 1 FROM Match_Apply ma
+              WHERE ma.stadium_id = s.stadium_id
+                AND TRUNC(ma.apply_date)
+                    = TO_DATE( #{applyDate},'YYYY-MM-DD' )
+                AND ma.apply_time = #{applyTime}
+                AND ma.status IN (1, 3)
+          )
+        ORDER BY s.stadium_name
+    </select>
+
+
+    <select id="findClubOwnerKey" parameterType="Integer" resultType="long">
+        SELECT co.clubOwner_key FROM member1 m
+        JOIN clubOwner co ON m.memberIdx = co.memberIdx
+        WHERE m.memberIdx = #{memberIdx}
+    </select>
+		
+		<!-- 밑 두 개 insert는 하나의 트랜젝션으로 묶어야함 -->
+    <insert id="insertClubMatchBoard"
+            parameterType="com.syfc.dto.ClubMatchBoardDTO">
+        <selectKey keyProperty="cmb_num" resultType="long" order="BEFORE">
+            SELECT cmb_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO clubMatchBoard
+        (cmb_num, cmb_Subject, cmb_Content, cmb_HitCount, cmb_Reg_date, clubOwner_key)
+        VALUES
+        (#{cmb_num}, #{cmb_Subject}, #{cmb_Content}, 0, SYSDATE, #{clubOwner_key})
+    </insert>
+
+    <insert id="insertMatchApply"
+            parameterType="com.syfc.dto.ClubMatchBoardDTO">
+
+        INSERT INTO Match_Apply
+        ( apply_id, apply_date, apply_time, status, cancel_reason, stadium_id, clubOwner_key, 
+        	match_type1, match_type2, clubOwner_key2, stadium_fee, cmb_num)
+        VALUES
+        (apply_id_seq.NEXTVAL, #{apply_date}, #{apply_time}, 3, NULL, #{stadium_id}, #{clubOwner_key},
+            #{match_type1}, #{match_type2}, NULL, #{stadium_fee, jdbcType=INTEGER}, #{cmb_num})
+    </insert> <!-- 대관료 사용 여부는 미정. 아마 사용 안 할 듯 -->
+
+
+		<!-- 1. 경기 참가 선수 모집 게시판 목록 -->
+    <select id="listMatchBoard" parameterType="map"
+            resultType="com.syfc.dto.ClubMatchBoardDTO">
+        SELECT 
+        	b.cmb_num, b.cmb_Subject, b.cmb_Content, b.cmb_HitCount,
+            b.cmb_Reg_date, b.clubOwner_key,
+            
+            a.apply_id, a.apply_date, a.apply_time, a.status AS match_status,
+			 a.stadium_id,
+			 
+            s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.latitude,
+            s.longitude, s.capacity, s.stadium_cost,
+
+            a.clubOwner_key AS home_clubOwner_key,
+            a.match_type1, a.match_type2, a.clubOwner_key2 AS away_clubOwner_key,
+
+            (SELECT COUNT(*) FROM clubMatchRequest r
+                WHERE r.cmb_num = b.cmb_num AND r.request_state IN (1, 2)
+            ) AS applicantCount,
+
+            CASE
+                WHEN a.match_type1 = '11' THEN 11
+                WHEN a.match_type1 = '6' THEN 6
+                ELSE 0
+            END AS targetCount
+
+        FROM clubMatchBoard b
+        INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
+        INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
+
+        WHERE a.status = 3
+        ORDER BY b.cmb_Reg_date DESC
+
+    </select>
+
+    	<!-- 2. 게시글 상세 + Match_Apply + Stadium -->
+	<select id="findMatchBoardDetail" parameterType="long"
+	        resultType="com.syfc.dto.ClubMatchBoardDTO">
+	
+	    SELECT
+	        b.cmb_num, b.cmb_Subject, b.cmb_Content, b.cmb_HitCount,
+	        b.cmb_Reg_date, b.clubOwner_key,
+	
+	        a.apply_id, a.apply_date, a.apply_time,
+	        a.status AS match_status, a.cancel_reason, a.stadium_id,
+	
+	        s.stadium_name, s.region, s.addr1, s.addr2, s.zip,
+	        s.latitude, s.longitude, s.capacity, s.stadium_cost,
+	
+	        a.clubOwner_key AS home_clubOwner_key,
+	        a.match_type1, a.match_type2,
+	        a.clubOwner_key2 AS away_clubOwner_key,
+	
+	        home.club_name AS home_clubName,
+	        away.club_name AS away_clubName
+	
+	    FROM clubMatchBoard b
+	
+	    INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
+	
+	    INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
+	
+	    INNER JOIN Club home ON a.clubOwner_key = home.clubOwner_key
+	
+	    LEFT JOIN Club away ON a.clubOwner_key2 = away.clubOwner_key
+	
+	    WHERE b.cmb_num = #{cmb_num}
+	
+	      AND a.apply_id = (
+	          SELECT apply_id
+	          FROM (
+	              SELECT ma.apply_id
+	              FROM Match_Apply ma
+	              WHERE ma.cmb_num = b.cmb_num
+	                AND ma.status IN (1, 3)
+	              ORDER BY
+	                  CASE
+	                      WHEN ma.status = 1 THEN 1
+	                      WHEN ma.status = 3 THEN 2
+	                  END,
+	                  ma.apply_id DESC
+	          )
+	          WHERE ROWNUM = 1
+	      )
+	
+	</select>
+
+
+    <!-- 3. 조회수 증가 -->
+    <update id="updateHitCount" parameterType="long">
+        UPDATE clubMatchBoard
+        SET cmb_HitCount = NVL(cmb_HitCount, 0) + 1
+        WHERE cmb_num = #{cmb_num}
+    </update>
+
+
+    <!-- 4. 신청 선수 목록 -->
+    <select id="listApplicants" parameterType="long"
+            resultType="com.syfc.dto.ClubMatchBoardDTO">
+        SELECT
+            r.cmb_num, r.clubJoin_num, r.request_date,
+            r.request_state, r.request_intro, r.reject_reason,
+
+            m.userName AS playerName
+
+        FROM clubMatchRequest r
+
+        INNER JOIN clubJoin cj ON r.clubJoin_num = cj.clubJoin_num
+        INNER JOIN member1 m ON cj.memberIdx = m.memberIdx
+
+        WHERE r.cmb_num = #{cmb_num}
+        ORDER BY r.request_date ASC
+
+    </select>
+
+    <!-- 5. 신청 인원 -->
+    <select id="countApplicants" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM clubMatchRequest
+        WHERE cmb_num = #{cmb_num} AND request_state IN (1, 2)
+    </select>
+
+
+    <!-- 6. 현재 로그인한 선수의 신청정보 -->
+    <select id="findMyRequest" parameterType="map"
+            resultType="com.syfc.dto.ClubMatchBoardDTO">
+        SELECT r.cmb_num, r.clubJoin_num, r.request_date,
+            r.request_state, r.request_intro, r.reject_reason
+        FROM clubMatchRequest r
+        
+        INNER JOIN clubJoin cj ON r.clubJoin_num = cj.clubJoin_num
+        WHERE r.cmb_num = #{cmb_num}
+        AND cj.memberIdx = #{memberIdx} 
+
+    </select>
+
+
+    <!-- 7. memberIdx -> clubOwner_key -->
+
+    <select id="findClubOwnerByMemberIdx"
+            parameterType="Integer" resultType="long">
+        SELECT clubOwner_key FROM clubOwner
+        WHERE memberIdx = #{memberIdx}
+    </select>
+
+    <!-- 8. memberIdx -> clubJoin_num-->
+    <select id="findClubJoinNumByMemberIdx"
+            parameterType="Integer" resultType="long">
+        SELECT clubJoin_num FROM clubJoin
+        WHERE memberIdx = #{memberIdx}
+    </select>
+
+    <!-- 9. 게시글 작성자의 구단주 번호 -->
+    <select id="findBoardOwner" parameterType="long" resultType="long">
+        SELECT clubOwner_key FROM clubMatchBoard
+        WHERE cmb_num = #{cmb_num}
+    </select>
+
+    <!-- 10. 선수 참가 신청-->
+    <insert id="insertMatchRequest" parameterType="map">
+        INSERT INTO clubMatchRequest (
+            cmb_num, clubJoin_num, request_date, request_state,
+            request_intro, reject_reason)
+        VALUES (#{cmb_num}, #{clubJoin_num}, SYSDATE, 2, #{request_intro}, NULL)
+    </insert>
+
+    <!-- 11. 선수 참가 신청 취소================ -->
+    <update id="deleteMatchRequest" parameterType="map">
+    	UPDATE clubMatchRequest
+    	SET request_state = -1, request_cancel = #{request_cancel}
+        WHERE cmb_num = #{cmb_num} AND clubJoin_num = #{clubJoin_num}
+    </update>
+
+    <!-- 12. 구단주 승인 - 반드시 게시글의 구단주인지 확인한다. -->
+    <update id="approveMatchRequest" parameterType="map">
+        UPDATE clubMatchRequest r
+        SET r.request_state = 1, r.reject_reason = NULL
+
+        WHERE r.cmb_num = #{cmb_num}
+        AND r.clubJoin_num = #{clubJoin_num}
+
+        AND EXISTS (
+            SELECT 1
+            FROM clubMatchBoard b
+            INNER JOIN clubOwner o
+                ON b.clubOwner_key = o.clubOwner_key
+            WHERE b.cmb_num = r.cmb_num
+            AND o.memberIdx = #{memberIdx}
+        )
+
+    </update>
+
+
+    <!-- 13. 구단주 반려 -->
+    <update id="rejectMatchRequest" parameterType="map">
+        UPDATE clubMatchRequest r
+        SET
+            r.request_state = 0,
+            r.reject_reason = #{reject_reason}
+        WHERE r.cmb_num = #{cmb_num}
+        AND r.clubJoin_num = #{clubJoin_num}
+
+        AND EXISTS (
+            SELECT 1
+            FROM clubMatchBoard b
+            INNER JOIN clubOwner o
+                ON b.clubOwner_key = o.clubOwner_key
+            WHERE b.cmb_num = r.cmb_num
+            AND o.memberIdx = #{memberIdx}
+        )
+
+    </update>
+
+    <!-- 14. 구단주 모집글/매칭 취소 -->
+    <update id="cancelMatchByOwner" parameterType="map">
+        UPDATE Match_Apply a
+        SET
+            a.status = 0,
+            a.cancel_reason = #{cancel_reason}
+
+        WHERE a.cmb_num = #{cmb_num}
+
+        AND EXISTS (
+            SELECT 1
+            FROM clubMatchBoard b
+            INNER JOIN clubOwner o
+                ON b.clubOwner_key = o.clubOwner_key
+            WHERE b.cmb_num = a.cmb_num
+            AND o.memberIdx = #{memberIdx}
+        )
+
+    </update>
+    
+       <!-- 선수 본인의 경기 출전신청 이력 조회 -->
+   <select id="listMyMatchRequest" parameterType="map"
+           resultType="com.syfc.dto.ClubMatchBoardDTO">
+      SELECT cmr.cmb_num, cmr.clubJoin_num, cmr.request_date, cmr.request_state,
+            cmr.request_intro, cmr.request_cancel, cmb.cmb_subject,
+            cmb.cmb_content, cmb.cmb_hitCount, cmb.cmb_reg_date, cmb.clubOwner_key,
+
+            ma.apply_id, ma.apply_date, ma.apply_time, ma.status, ma.cancel_reason, 
+            ma.stadium_id, ma.clubOwner_key AS home_clubOwner_key,
+            ma.match_type1, ma.match_type2, ma.clubOwner_key2 AS away_clubOwner_key,
+
+            s.stadium_name, s.region, s.addr1, s.addr2, s.latitude, s.longitude,
+
+            c1.club_name AS home_clubName,
+            c2.club_name AS away_clubName
+
+      FROM clubMatchRequest cmr
+
+      INNER JOIN clubMatchBoard cmb ON cmr.cmb_num = cmb.cmb_num
+
+      INNER JOIN Match_Apply ma ON cmb.cmb_num = ma.cmb_num
+
+      INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+
+      INNER JOIN Club c1 ON ma.clubOwner_key = c1.clubOwner_key
+
+      LEFT JOIN Club c2 ON ma.clubOwner_key2 = c2.clubOwner_key
+
+      WHERE cmr.clubJoin_num = #{clubJoin_num}
+
+      ORDER BY cmr.request_date DESC, cmr.cmb_num DESC
+   </select>
+
+
+
+</mapper>
