@@ -38,7 +38,8 @@
  	</select>
 
 	<select id="listBoard" parameterType="map" resultType="com.syfc.dto.BoardDTO">
-		SELECT bnum, m.userName , b_subject, b_hitCount, TO_CHAR(b_reg_date, 'YYYY-MM-DD') b_reg_date
+		SELECT bnum, m.userName , b_subject, b_hitCount, TO_CHAR(b_reg_date, 'YYYY-MM-DD') b_reg_date,
+			(SELECT COUNT(*) FROM boardReply r WHERE r.bnum = b.bnum) AS replyCount
 		FROM board b
 		JOIN member1 m ON b.memberIdx = m.memberIdx
 		<where>

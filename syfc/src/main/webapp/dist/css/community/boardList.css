@@ -137,6 +137,12 @@ nav.main-nav a.active {
   text-decoration: none;
 }
 
+.board-list a,
+.board-list a:hover,
+.board-list a:focus {
+    text-decoration: none;
+}
+
 .board-list-area {
   flex: 1;
 }
@@ -173,12 +179,35 @@ nav.main-nav a.active {
 .memo-row span:nth-child(2) {
   text-align: left;
 }
+/*
 .board-number {
   display: flex;
   justify-content: center;
-  align-content: center;
-  padding: 5px 0;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
 }
+*/
+
+.board-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.board-number a {
+    display: inline-block;
+    margin: 0 10px;
+    text-decoration: none;
+    color: #555;
+}
+
+.board-number a:hover {
+    color: #6f42c1;
+}
+
+
 
 .board-list-footer {
     margin-top: 20px;

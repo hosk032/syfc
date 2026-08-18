@@ -15,6 +15,15 @@ public class BoardDTO {
 	
 	private int boardLikeCount;
 	
+	private int replyCount;
+	
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	
 	public long getBnum() {
 		return bnum;
 	}
