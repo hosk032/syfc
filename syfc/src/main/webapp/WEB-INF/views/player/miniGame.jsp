@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/rating.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/miniGame.css" />
 </head>
 <body>
 
@@ -43,8 +43,8 @@
 
 					<!-- 대분류 1 -->
 					<div class="list-group-item bg-light fw-bold">내 프로필</div>
-					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4 active">프로필 등록/수정</a> 
-					<a href="${pageContext.request.contextPath}/player/todo" class="list-group-item list-group-item-action ps-4">투두리스트</a>
+					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4">프로필 등록/수정</a> 
+					<a href="${pageContext.request.contextPath}/player/miniGame" class="list-group-item list-group-item-action ps-4 active">미니게임</a>
 
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
@@ -68,19 +68,50 @@
 			</div>
 		
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
-		<div class="col-md-9">
-			<div class="card p-4 rating-panel">
-				<h4 class="border-bottom pb-2 mb-4">📝투두리스트</h4>
+		<div class="col-md-9 mb-4">
+			<div class="mini-game-page">
 				
-			<div class="table-responsive">
-				<p>오늘 할일</p>
-				<span>1. 워밍업 달리기 10km</span>
-				<span>2. 골 차기 연습 10분</span>
-				<span>3. 헤딩 연습 10분</span>
-
+				<div class="mini-game-header">
+					<div class="mini-game-title">
+						<span class="daily-label">DAILY LUCKY DRAW</span>
+						<h2>⚽ 오늘의 랜덤 축구공 뽑기 ⚽</h2>
+						<p>🥳하루에 단 한번! 축구공을 뽑아보세요!🥳</p>
+					</div>
+					
+					<button type="button" id="ballCollectionBtn" class="ball-collection-btn" data-bs-toggle="modal" data-bs-target="#ballCollectionModal">
+						⚽ 축구공 도감 ⚽
+					</button>
+				</div>
+					
+				<div class="game-notice">
+					<p>⚽ 축구공을 뽑아서 내 프로필을 꾸며보자! ⚽</p>
+					<p>🎉경기 참가 횟수가 3회 이상이면 히든 축구공 획득 확률UP!🎉</p>
+				</div>	
+				
+				<c:url value="/dist/images/minigame/football-lucky-draw-celebration.png" var="drawImage"/>
+				<c:url value="/dist/images/minigame/football-neon-rotating.png" var="rotatingBallImage"/>
+					<div class="draw-stage">
+						<img alt="축구공 뽑기 배경" src="${drawImage}" class="draw-background">
+						
+						<div class="confetti-layer" aria-hidden="true">
+							<div class="confetti-layer" aria-hidden="true">
+							    <span class="confetti" style="--x: 5%;  --delay: -1s;   --duration: 4s;   --color: #8c4dff;"></span>
+							    <span class="confetti" style="--x: 14%; --delay: -3s;   --duration: 5s;   --color: #1bbcff;"></span>
+							    <span class="confetti" style="--x: 23%; --delay: -2s;   --duration: 3.8s; --color: #ffcf42;"></span>
+							    <span class="confetti" style="--x: 34%; --delay: -4s;   --duration: 4.6s; --color: #ff5c9a;"></span>
+							    <span class="confetti" style="--x: 46%; --delay: -1.5s; --duration: 3.6s; --color: #8c4dff;"></span>
+							    <span class="confetti" style="--x: 57%; --delay: -2.5s; --duration: 5.2s; --color: #1bbcff;"></span>
+							    <span class="confetti" style="--x: 68%; --delay: -3.5s; --duration: 4.2s; --color: #ffcf42;"></span>
+							    <span class="confetti" style="--x: 79%; --delay: -0.5s; --duration: 4.8s; --color: #ff5c9a;"></span>
+							    <span class="confetti" style="--x: 90%; --delay: -4.5s; --duration: 3.9s; --color: #8c4dff;"></span>
+							</div>
+						</div>
+						<img alt="회전하는 축구공" src="${rotatingBallImage}" class="rotating-ball">
+						
+						<button type="button" id="drawBallBtn" class="draw-ball-btn">⚽공 뽑기</button>
+					</div>
 			</div>
-			</div>
-
+			
 		</div>
 	</div>
 </div>
