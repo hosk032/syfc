@@ -1,0 +1,156 @@
+/* =========================================================
+   구단 관리 전체 영역
+   관리자 메인 / 상단 메뉴와 동일한 폭으로 맞춤
+   ========================================================= */
+.clubManageContainer {
+	width: 1024px;
+	max-width: calc(100% - 40px);
+
+	margin: 40px auto 60px;
+
+	box-sizing: border-box;
+}
+
+.clubManageHeader {
+	margin-bottom: 25px;
+}
+
+.clubManageTitle {
+	margin-bottom: 8px;
+	font-size: 28px;
+	font-weight: 700;
+}
+
+.clubManageDesc {
+	margin: 0;
+	color: #777;
+	font-size: 14px;
+}
+
+
+/* 탭 */
+.clubManageTab {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 25px;
+	padding: 8px;
+	background: #f5f6f8;
+	border-radius: 10px;
+}
+
+.clubTabButton {
+	flex: 1;
+	padding: 12px;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: #666;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.clubTabButton.active {
+	background: #fff;
+	color: #212529;
+	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+}
+
+
+/* 관리 영역 */
+.manageBox {
+	padding: 25px;
+	border: 1px solid #e3e5e8;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.manageBoxHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.manageBoxHeader h4 {
+	margin: 0 0 5px;
+	font-size: 19px;
+	font-weight: 700;
+}
+
+.manageBoxHeader p {
+	margin: 0;
+	color: #777;
+	font-size: 13px;
+}
+
+.requestCount {
+	color: #666;
+	font-size: 14px;
+}
+
+.requestCount strong {
+	margin-left: 5px;
+	color: #212529;
+}
+
+
+/* 검색 */
+.clubSearch {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 20px;
+}
+
+.clubSearchInput {
+	width: 300px;
+	padding: 9px 12px;
+	border: 1px solid #ced4da;
+	border-radius: 6px;
+}
+
+.clubSearchButton {
+	padding: 9px 20px;
+	border: 0;
+	border-radius: 6px;
+	background: #212529;
+	color: #fff;
+	cursor: pointer;
+}
+
+
+/* 테이블 */
+.tableWrap {
+	overflow: hidden;
+	border: 1px solid #e3e5e8;
+	border-radius: 8px;
+}
+
+.clubTable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.clubTable th {
+	padding: 13px 10px;
+	background: #f8f9fa;
+	border-bottom: 1px solid #e3e5e8;
+	font-size: 13px;
+	text-align: center;
+}
+
+.clubTable td {
+	padding: 13px 10px;
+	border-bottom: 1px solid #eee;
+	font-size: 13px;
+	text-align: center;
+}
+
+.clubTable tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.emptyClub {
+	padding: 40px !important;
+	color: #999;
+	text-align: center;
+}
