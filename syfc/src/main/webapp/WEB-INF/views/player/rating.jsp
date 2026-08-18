@@ -43,14 +43,14 @@
 
 					<!-- 대분류 1 -->
 					<div class="list-group-item bg-light fw-bold">내 프로필</div>
-					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4 active">프로필 등록/수정</a> 
+					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4">프로필 등록/수정</a> 
 					<a href="${pageContext.request.contextPath}/player/todo" class="list-group-item list-group-item-action ps-4">투두리스트</a>
 
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
 					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
 					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
-					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
+					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4 active">내 경기 성적</a>
 
 					<!-- 대분류 3 -->
 					<div class="list-group-item bg-light fw-bold">내 구단정보</div>
