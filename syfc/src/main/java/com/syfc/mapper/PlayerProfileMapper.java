@@ -11,5 +11,7 @@ public interface PlayerProfileMapper {
 	PlayerMypageDTO selectProfile(long memberIdx);
 	
 	public void updateSelectProfile(PlayerMypageDTO dto);
+
+	public void updateName(PlayerMypageDTO dto);
 }
 
