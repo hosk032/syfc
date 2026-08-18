@@ -59,7 +59,7 @@
 	<div class="container">
 		<nav class="main-nav">
 			<div class="nav-container">
-				<ul class="nav-menu">
+				<ul class="nav-menu" onclick="return false;">
 					<li><a href="${pageContext.request.contextPath}/community/boardList" class="active">커뮤니티</a></li>
 					<li><a href="${pageContext.request.contextPath}/community/stadium_info">경기장 정보</a></li>
 					<li><a href="#">경기 일정</a></li>
@@ -69,12 +69,12 @@
 				<!-- 드롭다운 슬라이드 패널 -->
 				<div class="dropdown-panel">
 					<div class="dropdown-column">
-						<a href="${pageContext.request.contextPath}/community/notices/noticeList">공지사항</a> 
-						<a href="${pageContext.request.contextPath}/community/board/boardList">게시판</a> 
+						<a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a> 
+						<a href="${pageContext.request.contextPath}/community/board/boardList">자유게시판</a> 
 						<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고</a>
 					</div>
 					<div class="dropdown-column">
-						<a href="${pageContext.request.contextPath}/community/stadium_info">경기장 정보 검색</a>
+						<a href="${pageContext.request.contextPath}/stadium/stadium_info">경기장 정보 검색</a>
 					</div>
 					<div class="dropdown-column">
 						<a href="#">캘린더</a> 

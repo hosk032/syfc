@@ -22,7 +22,7 @@
 		<!-- 왼쪽 서브 메뉴 (사이드바) -->
 		<aside class="community-side-menu">
 			<div class="side-menu-title">커뮤니티</div>
-			<a href="${pageContext.request.contextPath}/community/notices/noticeList">공지사항</a> 
+			<a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a> 
 			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">자유 게시판</a> 
 			<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
 		</aside>
@@ -31,12 +31,6 @@
 		<section class="board-list-area">
 			<div class="board-top">
 				<h3>자유 게시판</h3>
-
-				<div class="board-category">
-					<span>전체</span> 
-					<span>자유글</span> 
-					<span>경기후기</span>
-				</div>
 			</div>
 
 	<table class="table table-hover board-list">
