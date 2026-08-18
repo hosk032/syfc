@@ -2,15 +2,21 @@ package com.syfc.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.syfc.dto.ClubDTO;
+import com.syfc.dto.ClubOwnerMatchDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.mvc.annotation.Controller;
 import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
+import com.syfc.service.ClubOwnerMatchService;
+import com.syfc.service.ClubOwnerMatchServiceImpl;
 import com.syfc.service.ClubOwnerService;
 import com.syfc.service.ClubOwnerServiceImpl;
 
@@ -25,30 +31,72 @@ import jakarta.servlet.http.Part;
 public class ClubOwnerController {
 
 	private ClubOwnerService service = new ClubOwnerServiceImpl();
+	private ClubOwnerMatchService matchService = new ClubOwnerMatchServiceImpl();
 
-	// 1. 구단주 마이페이지 이동 (GET: /clubowner/ownerpage)
+	// 구단주 메인 페이지
 	@GetMapping("ownerpage")
 	public ModelAndView ownerPage(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
+	        throws ServletException, IOException {
 
-		if (info == null) {
-			return new ModelAndView("redirect:/member/login");
-		}
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo) session.getAttribute("member");
 
-		try {
-			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-			req.setAttribute("club", clubDto);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	    if (info == null) {
+	        return new ModelAndView("redirect:/member/login");
+	    }
 
-		return new ModelAndView("clubowner/ownerpage");
+	    try {
+	        ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+	        req.setAttribute("club", clubDto);
+
+	        if (clubDto != null) {
+	            List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
+	            req.setAttribute("matchList", matchList);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return new ModelAndView("clubowner/ownerpage");
 	}
 
-	// 2. 구단 정보 수정 처리 (POST: /clubowner/update)
+	// 경기 이력 검색 (AJAX)
+	@GetMapping("searchMatchHistory")
+	public ModelAndView searchMatchHistory(HttpServletRequest req, HttpServletResponse resp) 
+	        throws ServletException, IOException {
+
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+	    if (info == null) {
+	        return new ModelAndView("redirect:/member/login");
+	    }
+
+	    try {
+	        ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+	        
+	        if (clubDto != null) {
+	            String year = req.getParameter("year");
+	            String month = req.getParameter("month");
+	            String result = req.getParameter("result");
+
+	            Map<String, Object> map = new HashMap<>();
+	            map.put("clubOwnerKey", clubDto.getClubOwner_key());
+	            map.put("year", year);
+	            map.put("month", month);
+	            map.put("result", result);
+
+	            List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchListByMap(map);
+	            req.setAttribute("matchList", matchList);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return new ModelAndView("clubowner/tab/matchHistoryTable");
+	}
+
+	// 구단 정보 수정
 	@PostMapping("update")
 	public ModelAndView updateClubInfo(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -61,7 +109,6 @@ public class ClubOwnerController {
 		}
 
 		try {
-			// request에서 텍스트 파라미터 수집 (Servlet 표준 Part 방식 처리 시 general parameter 사용 가능)
 			ClubDTO dto = new ClubDTO();
 			dto.setClubOwner_key(Long.parseLong(req.getParameter("clubOwner_key")));
 			dto.setClub_name(req.getParameter("club_name"));
@@ -69,14 +116,11 @@ public class ClubOwnerController {
 			dto.setClub_created(req.getParameter("club_created"));
 			dto.setClub_content(req.getParameter("club_content"));
 
-			// 파일 업로드 처리 (Part 객체 추출)
 			Part filePart = req.getPart("uploadLogo");
 			if (filePart != null && filePart.getSize() > 0) {
-				// 원본 파일명 추출
 				String originalFilename = getOriginalFilename(filePart);
 				
 				if (originalFilename != null && !originalFilename.isEmpty()) {
-					// 저장 폴더 생성 (webapp/uploads/club)
 					String root = session.getServletContext().getRealPath("/");
 					String pathname = root + "uploads" + File.separator + "club";
 					
@@ -85,19 +129,15 @@ public class ClubOwnerController {
 						dir.mkdirs();
 					}
 
-					// 파일명 중복 방지 (UUID 적용)
 					String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
 					String saveFilename = UUID.randomUUID().toString() + ext;
 
-					// 파일 저장
 					filePart.write(pathname + File.separator + saveFilename);
 
-					// DTO에 파일명 세팅
 					dto.setClub_logo(saveFilename);
 				}
 			}
 
-			// DB 수정 처리
 			service.updateClubInfo(dto);
 
 		} catch (Exception e) {
@@ -107,7 +147,6 @@ public class ClubOwnerController {
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 
-	// Part에서 원본 파일명을 추출하는 헬퍼 메서드
 	private String getOriginalFilename(Part part) {
 		String contentDisp = part.getHeader("content-disposition");
 		for (String token : contentDisp.split(";")) {
@@ -117,5 +156,4 @@ public class ClubOwnerController {
 		}
 		return null;
 	}
-
 }

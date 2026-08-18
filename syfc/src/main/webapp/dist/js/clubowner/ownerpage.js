@@ -1,17 +1,25 @@
 /* ==========================================================================
-   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 함수 스크립트 (v2.4)
+   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 함수 스크립트 (v2.5)
    ========================================================================== */
 
 // 전역 변수: 선택된 경기장 이름 및 타임슬롯 참가 선수 수
 let selectedStadiumName = "쌍용 주 경기장";
 let currentSelectedPlayerCount = 0;
 
-// 페이지 로드 시 부트스트랩 툴팁 활성화
+// 페이지 로드 시 부트스트랩 툴팁 및 미리보기 이벤트 활성화
 document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    // 엠블럼 파일 입력창 이벤트를 등록
+    const logoInput = document.getElementById("uploadLogoInput");
+    if (logoInput) {
+        logoInput.addEventListener("change", function() {
+            previewImage(this);
+        });
+    }
 });
 
 // 라디오 버튼 선택 시 선택된 타임의 인원수를 세팅
@@ -24,17 +32,27 @@ function checkPlayerCount(count) {
    [탭 1] 구단 정보 등록 및 수정 전용
    ========================================================================== */
 
-// 구단 엠블럼 이미지 파일 미리보기
+// 구단 엠블럼 이미지 실시간 미리보기
 function previewImage(input) {
     if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = function(e) {
+            const preview = document.getElementById('previewEmblem');
+            const defaultIcon = document.getElementById('defaultEmblemIcon');
             const emblemPreview = document.getElementById('emblemPreview');
+
+            if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            }
+            if (defaultIcon) {
+                defaultIcon.classList.add('d-none');
+            }
             if (emblemPreview) {
                 emblemPreview.innerHTML =
                     '<img src="' + e.target.result + '" class="w-100 h-100" style="object-fit: cover;">';
             }
-        }
+        };
         reader.readAsDataURL(input.files[0]);
     }
 }
@@ -49,9 +67,7 @@ function saveTeamInfo() {
     }
 
     if (confirm("구단 정보를 수정하시겠습니까?")) {
-        alert("구단 정보가 성공적으로 수정되었습니다.");
-        // 백엔드 연동 시 주석 해제
-        // if (form) form.submit();
+        if (form) form.submit();
     }
 }
 
@@ -60,89 +76,39 @@ function saveTeamInfo() {
    [탭 2] 구단 경기 이력 / 성적 조회 전용
    ========================================================================== */
 
-// 연도/월별 경기 성적 이력 조회 함수 (Empty State 처리 포함)
+// 연도/월/결과별 경기 성적 이력 검색 함수
+// 경기 이력 검색 (AJAX)
 function loadTeamHistory() {
-    const yearSelect = document.getElementById('searchYear');
-    if (!yearSelect) return;
+    var year = $('#searchYear').val();
+    var month = $('#searchMonth').val();
+    var result = $('#searchResult').val();
 
-    const year = yearSelect.value;
-    const summaryTotal = document.getElementById('summaryTotal');
-    const summaryRecord = document.getElementById('summaryRecord');
-    const summaryWinRate = document.getElementById('summaryWinRate');
-    const summaryGoals = document.getElementById('summaryGoals');
-    const totalCount = document.getElementById('searchTotalCount');
-    const matchHistoryList = document.getElementById('matchHistoryList');
+    var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/searchMatchHistory';
 
-    if (year === '2025') {
-        if (summaryTotal) summaryTotal.innerText = '24전';
-        if (summaryRecord) summaryRecord.innerText = '18승 2무 4패';
-        if (summaryWinRate) summaryWinRate.innerText = '75.0%';
-        if (summaryGoals) summaryGoals.innerText = '60 / 25';
-        if (totalCount) totalCount.innerText = '24';
+    $.ajax({
+        url: reqUrl,
+        type: 'GET',
+        data: {
+            year: year,
+            month: month,
+            result: result
+        },
+        dataType: 'html',
+        success: function(data) {
+            $('#matchHistoryList').html(data);
 
-        if (matchHistoryList) {
-            matchHistoryList.innerHTML = `
-                <tr>
-                    <td class="text-muted">2025-11-15 19:00</td>
-                    <td class="fw-semibold">상암 보조경기장</td>
-                    <td><span class="badge bg-light text-dark border me-1">홈</span><strong class="text-dark">FC 쌍용</strong> vs 불꽃 FC</td>
-                    <td class="fw-bold fs-6 text-primary">3 : 1</td>
-                    <td><span class="badge bg-primary px-3 py-1">승리</span></td>
-                </tr>
-                <tr>
-                    <td class="text-muted">2025-10-10 18:00</td>
-                    <td class="fw-semibold">잠실 풋살파크</td>
-                    <td><span class="badge bg-light text-dark border me-1">원정</span>번개 FC vs <strong class="text-dark">FC 쌍용</strong></td>
-                    <td class="fw-bold fs-6 text-danger">1 : 2</td>
-                    <td><span class="badge bg-danger px-3 py-1">패배</span></td>
-                </tr>
-            `;
+            var isNoData = $('#matchHistoryList').find('.empty-row').length > 0;
+            var realCount = isNoData ? 0 : $('#matchHistoryList').children('tr').length;
+
+            $('#searchTotalCount').text(realCount);
+            $('#team-history #summaryTotal').text(realCount + '전');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', error);
+            alert('경기 이력을 불러오는 중 오류가 발생했습니다.');
         }
-    } else if (year === '2024') {
-        if (summaryTotal) summaryTotal.innerText = '0전';
-        if (summaryRecord) summaryRecord.innerText = '0승 0패';
-        if (summaryWinRate) summaryWinRate.innerText = '0.0%';
-        if (summaryGoals) summaryGoals.innerText = '0 / 0';
-        if (totalCount) totalCount.innerText = '0';
-
-        if (matchHistoryList) {
-            matchHistoryList.innerHTML = `
-                <tr>
-                    <td colspan="5" class="py-5 text-center text-muted">
-                        <i class="bi bi-journal-x fs-1 d-block mb-2 text-secondary opacity-50"></i>
-                        조회된 경기 이력이 없습니다.
-                    </td>
-                </tr>
-            `;
-        }
-    } else {
-        if (summaryTotal) summaryTotal.innerText = '16전';
-        if (summaryRecord) summaryRecord.innerText = '12승 4패';
-        if (summaryWinRate) summaryWinRate.innerText = '75.0%';
-        if (summaryGoals) summaryGoals.innerText = '42 / 18';
-        if (totalCount) totalCount.innerText = '16';
-
-        if (matchHistoryList) {
-            matchHistoryList.innerHTML = `
-                <tr>
-                    <td class="text-muted">2026-08-01 20:00</td>
-                    <td class="fw-semibold">쌍용 주 경기장</td>
-                    <td><span class="badge bg-light text-dark border me-1">홈</span><strong class="text-dark">FC 쌍용</strong> vs 드림 FC</td>
-                    <td class="fw-bold fs-6 text-primary">4 : 2</td>
-                    <td><span class="badge bg-primary px-3 py-1">승리</span></td>
-                </tr>
-                <tr>
-                    <td class="text-muted">2026-07-25 18:00</td>
-                    <td class="fw-semibold">마포 구민 체육센터</td>
-                    <td><span class="badge bg-light text-dark border me-1">홈</span><strong class="text-dark">FC 쌍용</strong> vs 마포 풋살 클럽</td>
-                    <td class="fw-bold fs-6 text-secondary">2 : 2</td>
-                    <td><span class="badge bg-secondary px-3 py-1">무승부</span></td>
-                </tr>
-            `;
-        }
-    }
+    });
 }
-
 
 /* ==========================================================================
    [탭 3] 입단 승인 관리 전용
@@ -477,6 +443,7 @@ function submitOwnerTransfer() {
     }
 }
 
+
 /* ==========================================================================
    [신규 탭] 선수 평점 & 경기 성적 관리 전용 (등록, 수정, 삭제)
    ========================================================================== */
@@ -508,11 +475,7 @@ function saveMatchRecord() {
 
     if (confirm(confirmMsg)) {
         alert(isEdit ? "성적이 성공적으로 수정되었습니다." : "성적이 성공적으로 등록되었습니다.");
-
-        // 프론트엔드 입력 폼 리셋
         resetRatingForm();
-
-        // 백엔드 연결 시: AJAX 호출 또는 form.submit() 진행
     }
 }
 
@@ -521,7 +484,6 @@ function editMatchRecord(recordId) {
     const row = document.getElementById(`record-row-${recordId}`);
     if (!row) return;
 
-    // dataset에서 기존 기록 추출
     const date = row.getAttribute('data-date');
     const playerId = row.getAttribute('data-player-id');
     const score = row.getAttribute('data-score');
@@ -532,7 +494,6 @@ function editMatchRecord(recordId) {
     const red = row.getAttribute('data-red') === 'true';
     const comment = row.getAttribute('data-comment');
 
-    // 입력 폼에 값 채우기
     document.getElementById('recordIdx').value = recordId;
     document.getElementById('matchDate').value = date;
     document.getElementById('ratingPlayerSelect').value = playerId;
@@ -544,12 +505,10 @@ function editMatchRecord(recordId) {
     document.getElementById('statRedCard').checked = red;
     document.getElementById('statComment').value = comment;
 
-    // 폼 UI를 [수정 모드]로 전환
     document.getElementById('ratingFormTitle').innerText = "경기 성적 수정";
     document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-pencil-square me-1"></i>성적 수정 완료`;
     document.getElementById('btnCancelEdit').classList.remove('d-none');
 
-    // 입력 폼 위치로 상단 스크롤
     document.getElementById('playerRatingForm').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -570,41 +529,5 @@ function deleteMatchRecord(recordId) {
 
         const row = document.getElementById(`record-row-${recordId}`);
         if (row) row.remove();
-    }
-}
-/**
- * 구단주 마이페이지 및 구단관리 스크립트
- */
-
-document.addEventListener("DOMContentLoaded", function() {
-    // 엠블럼 파일 입력창 이벤트를 등록합니다.
-    const logoInput = document.getElementById("uploadLogoInput");
-    if (logoInput) {
-        logoInput.addEventListener("change", function() {
-            previewImage(this);
-        });
-    }
-});
-
-/**
- * 구단 엠블럼 이미지 실시간 미리보기
- */
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('previewEmblem');
-            const defaultIcon = document.getElementById('defaultEmblemIcon');
-
-            if (preview) {
-                preview.src = e.target.result;
-                preview.classList.remove('d-none');
-            }
-
-            if (defaultIcon) {
-                defaultIcon.classList.add('d-none');
-            }
-        };
-        reader.readAsDataURL(input.files[0]);
     }
 }

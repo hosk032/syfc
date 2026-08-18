@@ -38,10 +38,12 @@
 			</div>
 		</div>
 
+		<!-- 검색 필터 영역 -->
 		<div class="d-flex flex-wrap gap-2 mb-3 align-items-center justify-content-between">
 			<div class="d-flex align-items-center gap-2">
 				<select class="form-select form-select-sm fw-bold select-year-width" id="searchYear" style="width: 110px;">
-					<option value="2026" selected>2026년</option>
+					<option value="" selected>전체 년도</option>
+					<option value="2026">2026년</option>
 					<option value="2025">2025년</option>
 					<option value="2024">2024년</option>
 				</select> 
@@ -62,6 +64,7 @@
 			<span class="text-muted small">총 <strong id="searchTotalCount" class="text-primary">${empty matchList ? 0 : matchList.size()}</strong>건</span>
 		</div>
 
+		<!-- 테이블 영역 -->
 		<div class="table-responsive">
 			<table class="table table-hover align-middle text-center border-top mb-0">
 				<thead class="table-light extra-small text-muted">
@@ -74,15 +77,12 @@
 					</tr>
 				</thead>
 				<tbody class="small" id="matchHistoryList">
-					<!-- JSTL을 통한 실제 DB 데이터 출력 -->
+					<!-- include 제거 후 직접 JSTL 루프 처리 -->
 					<c:forEach var="dto" items="${matchList}">
 						<tr>
 							<td class="text-muted">
-								<!-- 1. 날짜문자열 YYYY-MM-DD 만 잘라서 출력 -->
 								<c:set var="mDate" value="${dto.matchDate}" />
 								${mDate.substring(0, 10)} 
-								
-								<!-- 2. matchTime 값에 따른 오전/오후 분기 처리 -->
 								<c:choose>
 									<c:when test="${dto.matchTime == 1}">
 										<span class="badge bg-light text-dark border ms-1">오전 (09:00 ~ 12:00)</span>
@@ -101,7 +101,6 @@
 							</td>
 							<td class="fw-bold fs-6 text-primary">${dto.homeScore} : ${dto.awayScore}</td>
 							<td>
-								<!-- 승/무/패 판정 배지 -->
 								<c:choose>
 									<c:when test="${dto.homeScore > dto.awayScore}">
 										<span class="badge bg-primary px-3 py-1">승리</span>
