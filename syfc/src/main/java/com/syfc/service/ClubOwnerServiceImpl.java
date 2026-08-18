@@ -15,8 +15,8 @@ public class ClubOwnerServiceImpl implements ClubOwnerService {
 			// 1. 회원 PK로 구단주 PK 조회
 			Long clubOwnerKey = mapper.findClubOwnerKeyByMemberIdx(memberIdx);
 			
+			// 2. 구단주 PK로 구단 상세 정보 조회
 			if (clubOwnerKey != null) {
-				// 2. 구단주 PK로 구단 상세 정보 조회
 				dto = mapper.selectClubInfo(clubOwnerKey);
 			}
 		} catch (Exception e) {
