@@ -43,7 +43,7 @@
 			<ul class="nav nav-pills nav-fill gap-2" id="adminBoardTab" role="tablist">
 
 				<li class="nav-item" role="presentation">
-					<button class="nav-link ${activeTab == 'freeboard' ? '' : 'active'}"
+					<button class="nav-link ${activeTab == 'freeboard' || activeTab == 'qna' ? '' : 'active'}"
 						id="notice-tab"
 						data-bs-toggle="pill"
 						data-bs-target="#notice-pane"
@@ -67,12 +67,13 @@
 				</li>
 
 				<li class="nav-item" role="presentation">
-					<button class="nav-link"
+					<button class="nav-link ${activeTab == 'qna' ? 'active' : ''}"
 						id="report-tab"
 						data-bs-toggle="pill"
 						data-bs-target="#report-pane"
 						type="button"
-						role="tab">
+						role="tab"
+						onclick="location.href='${pageContext.request.contextPath}/admin/qna/list';">
 						🚨 문의 / 신고 게시판
 					</button>
 				</li>
@@ -84,7 +85,7 @@
 		<div class="tab-content" id="adminBoardTabContent">
 
 			<!-- ================= [메뉴 1] 공지사항 등록 / 삭제 ================= -->
-			<div class="tab-pane fade ${activeTab == 'freeboard' ? '' : 'show active'}"
+			<div class="tab-pane fade ${activeTab == 'freeboard' || activeTab == 'qna' ? '' : 'show active'}"
 				id="notice-pane" role="tabpanel">
 
 				<div class="card border-0 shadow-sm rounded-4 p-4">
@@ -410,7 +411,8 @@
 
 
 			<!-- ================= [메뉴 3] 문의/신고 게시판 ================= -->
-			<div class="tab-pane fade" id="report-pane" role="tabpanel">
+			<div class="tab-pane fade ${activeTab == 'qna' ? 'show active' : ''}"
+				id="report-pane" role="tabpanel">
 
 				<div class="card border-0 shadow-sm rounded-4 p-4">
 
@@ -418,12 +420,63 @@
 						<div>
 							<h5 class="fw-bold mb-1">문의 / 신고 접수 처리</h5>
 							<p class="text-muted small mb-0">
-								사용자들의 1:1 문의 및 비매너/욕설 신고 접수를 확인하고 답변 및 제재를 진행합니다.
+								사용자의 문의 및 신고 내용을 확인하고 관리자 답변을 등록합니다.
 							</p>
 						</div>
-						<span class="badge bg-warning text-dark px-3 py-2">미처리: 2건</span>
+
+						<span class="text-muted small">
+							총 <strong>${qnaDataCount}</strong>건
+						</span>
 					</div>
 
+
+					<!-- 문의/신고 검색 -->
+					<form class="d-flex gap-2 mb-3"
+						action="${pageContext.request.contextPath}/admin/qna/list"
+						method="get">
+
+						<select name="schType"
+							class="form-select form-select-sm"
+							style="width: 130px;">
+
+							<option value="all"
+								${qnaSchType == 'all' ? 'selected' : ''}>
+								제목 + 내용
+							</option>
+
+							<option value="title"
+								${qnaSchType == 'title' ? 'selected' : ''}>
+								제목
+							</option>
+
+							<option value="question"
+								${qnaSchType == 'question' ? 'selected' : ''}>
+								내용
+							</option>
+
+							<option value="userName"
+								${qnaSchType == 'userName' ? 'selected' : ''}>
+								작성자
+							</option>
+
+						</select>
+
+						<input type="text"
+							name="kwd"
+							value="${qnaKwd}"
+							class="form-control form-control-sm"
+							placeholder="검색어를 입력하세요"
+							style="max-width: 250px;">
+
+						<button type="submit"
+							class="btn btn-sm btn-dark px-3">
+							검색
+						</button>
+
+					</form>
+
+
+					<!-- 문의/신고 목록 -->
 					<div class="table-responsive">
 						<table class="table table-hover align-middle mb-0 text-center">
 
@@ -431,73 +484,109 @@
 								<tr>
 									<th style="width: 80px;">분류</th>
 									<th class="text-start">문의/신고 제목</th>
-									<th style="width: 110px;">신고자/문의자</th>
-									<th style="width: 110px;">접수일</th>
+									<th style="width: 120px;">작성자</th>
+									<th style="width: 120px;">접수일</th>
 									<th style="width: 100px;">처리상태</th>
-									<th style="width: 110px;">상세보기</th>
+									<th style="width: 120px;">상세보기</th>
 								</tr>
 							</thead>
 
 							<tbody class="small">
 
-								<tr>
-									<td>
-										<span class="badge bg-danger-subtle text-danger">
-											신고
-										</span>
-									</td>
+								<c:forEach var="dto" items="${qnaList}" varStatus="status">
+									<tr>
 
-									<td class="text-start">
-										8월 1일 경기 중 욕설 및 상대 선수 폭언 신고건
-									</td>
+										<!-- 분류 -->
+										<td>
+											<c:choose>
+												<c:when test="${dto.type == 1}">
+													<span class="badge bg-danger-subtle text-danger">
+														신고
+													</span>
+												</c:when>
 
-									<td>박지성</td>
-									<td class="text-muted">2026-08-02</td>
+												<c:otherwise>
+													<span class="badge bg-info-subtle text-info">
+														문의
+													</span>
+												</c:otherwise>
+											</c:choose>
+										</td>
 
-									<td>
-										<span class="badge bg-warning text-dark">
-											접수대기
-										</span>
-									</td>
+										<!-- 제목 -->
+										<td class="text-start">
+											<c:out value="${dto.title}"/>
+										</td>
 
-									<td>
-										<button class="btn btn-sm btn-primary px-3"
-											onclick="openReportDetail('신고-01', '8월 1일 경기 욕설건', '박지성', '상대팀 7번 선수가 지속적인 폭언을 행사했습니다.')">
-											처리하기
-										</button>
-									</td>
-								</tr>
+										<!-- 작성자 -->
+										<td>
+											<c:out value="${dto.userName}"/>
+										</td>
 
-								<tr>
-									<td>
-										<span class="badge bg-info-subtle text-info">
-											1:1문의
-										</span>
-									</td>
+										<!-- 접수일 -->
+										<td class="text-muted">
+											${dto.regDate}
+										</td>
 
-									<td class="text-start">
-										구단주 권한 위임 신청 처리 기간 문의
-									</td>
+										<!-- 처리 상태 -->
+										<td>
+											<c:choose>
+												<c:when test="${empty dto.answer}">
+													<span class="badge bg-warning text-dark">
+														답변대기
+													</span>
+												</c:when>
 
-									<td>손흥민</td>
-									<td class="text-muted">2026-08-01</td>
+												<c:otherwise>
+													<span class="badge bg-success">
+														답변완료
+													</span>
+												</c:otherwise>
+											</c:choose>
+										</td>
 
-									<td>
-										<span class="badge bg-success">
-											답변완료
-										</span>
-									</td>
+										<!-- 상세보기 -->
+										<td>
+											<button type="button"
+												class="btn btn-sm ${empty dto.answer ? 'btn-primary' : 'btn-outline-secondary'} px-3"
+												onclick="openQnaDetail(
+													'${dto.qnaNum}',
+													'${fn:escapeXml(dto.title)}',
+													'${fn:escapeXml(dto.userName)}',
+													'${fn:escapeXml(dto.question)}',
+													'${fn:escapeXml(dto.answer)}'
+												);">
+												<c:choose>
+													<c:when test="${empty dto.answer}">
+														답변하기
+													</c:when>
+													<c:otherwise>
+														내역보기
+													</c:otherwise>
+												</c:choose>
+											</button>
+										</td>
 
-									<td>
-										<button class="btn btn-sm btn-outline-secondary px-3"
-											onclick="openReportDetail('문의-02', '권한 위임 기간 문의', '손흥민', '구단주 변경 시 승인은 얼마나 걸리나요?')">
-											내역보기
-										</button>
-									</td>
-								</tr>
+									</tr>
+								</c:forEach>
+
+
+								<c:if test="${empty qnaList}">
+									<tr>
+										<td colspan="6" class="text-center text-muted py-4">
+											등록된 문의/신고 글이 없습니다.
+										</td>
+									</tr>
+								</c:if>
 
 							</tbody>
 						</table>
+					</div>
+
+
+					<!-- 문의/신고 페이징 -->
+					<div class="text-center mt-4">
+						${qnaPaging}
 					</div>
 
 				</div>
@@ -580,7 +669,7 @@
 	</div>
 
 
-	<!-- ★ 신고 / 문의 상세보기 및 답변 모달 ★ -->
+	<!-- ★ 문의 / 신고 상세보기 및 답변 모달 ★ -->
 	<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content border-0 rounded-4 shadow">
@@ -598,56 +687,69 @@
 					</button>
 				</div>
 
-				<div class="modal-body py-3">
+				<form id="qnaAnswerForm"
+					action="${pageContext.request.contextPath}/admin/qna/answer"
+					method="post">
 
-					<div class="p-3 bg-light rounded-3 mb-3 small">
-						<div class="mb-1">
-							<strong class="text-muted">작성자:</strong>
-							<span id="modalReportUser"></span>
+					<input type="hidden" id="modalQnaNum" name="qnaNum">
+
+					<div class="modal-body py-3">
+
+						<div class="p-3 bg-light rounded-3 mb-3 small">
+
+							<div class="mb-1">
+								<strong class="text-muted">작성자:</strong>
+								<span id="modalReportUser"></span>
+							</div>
+
+							<div class="mb-1">
+								<strong class="text-muted">제목:</strong>
+								<span id="modalReportTitle" class="fw-bold"></span>
+							</div>
+
+							<hr class="my-2">
+
+							<div>
+								<strong class="text-muted">접수 내용:</strong>
+							</div>
+
+							<div id="modalReportContent"
+								class="mt-1 text-dark">
+							</div>
+
 						</div>
 
-						<div class="mb-1">
-							<strong class="text-muted">제목:</strong>
-							<span id="modalReportTitle" class="fw-bold"></span>
+						<div class="mb-2">
+							<label class="form-label fw-bold small text-muted mb-1">
+								관리자 답변
+							</label>
+
+							<textarea class="form-control form-control-sm"
+								id="adminReplyText"
+								name="answer"
+								rows="4"
+								placeholder="답변 내용을 입력하세요."></textarea>
 						</div>
 
-						<hr class="my-2">
-
-						<div>
-							<strong class="text-muted">접수 내용:</strong>
-						</div>
-
-						<div id="modalReportContent"
-							class="mt-1 text-dark">
-						</div>
 					</div>
 
-					<div class="mb-2">
-						<label class="form-label fw-bold small text-muted mb-1">
-							관리자 답변 / 제재 처리 조치 내용
-						</label>
+					<div class="modal-footer border-top pt-2">
 
-						<textarea class="form-control form-control-sm"
-							id="adminReplyText"
-							rows="4"
-							placeholder="사용자에게 전달될 답변 또는 조치 내용을 입력하세요."></textarea>
+						<button type="button"
+							class="btn btn-light border btn-sm px-3"
+							data-bs-dismiss="modal">
+							취소
+						</button>
+
+						<button type="button"
+							class="btn btn-primary btn-sm px-4 fw-bold"
+							onclick="submitQnaAnswer()">
+							답변 저장
+						</button>
+
 					</div>
 
-				</div>
-
-				<div class="modal-footer border-top pt-2">
-					<button type="button"
-						class="btn btn-light border btn-sm px-3"
-						data-bs-dismiss="modal">
-						취소
-					</button>
-
-					<button type="button"
-						class="btn btn-primary btn-sm px-4 fw-bold"
-						onclick="submitReportReply()">
-						처리 완료 저장
-					</button>
-				</div>
+				</form>
 
 			</div>
 		</div>

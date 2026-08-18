@@ -1,9 +1,19 @@
 @charset "UTF-8";
 
+
+/* =========================================================
+   관리자 메인 전체 영역
+   ========================================================= */
+
 .adminContainer {
 	width: 1024px;
 	margin: 40px auto 60px;
 }
+
+
+/* =========================================================
+   관리자 메인 제목
+   ========================================================= */
 
 .adminHeader {
 	margin-bottom: 30px;
@@ -13,6 +23,7 @@
 
 .adminTitle {
 	margin: 0 0 8px;
+
 	font-size: 26px;
 	font-weight: 700;
 	color: #333;
@@ -20,75 +31,243 @@
 
 .adminDesc {
 	margin: 0;
+
 	font-size: 14px;
 	color: #777;
 }
 
+
+/* =========================================================
+   관리자 메뉴
+   게시판 / 회원 / 구단 / 경기장
+   2 x 2 형태로 출력
+   ========================================================= */
+
 .adminMenuGrid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 20px;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 22px;
 }
 
+
+/* =========================================================
+   관리자 메뉴 카드
+   ========================================================= */
+
 .adminCard {
-	min-height: 230px;
-	padding: 24px;
-	border: 1px solid #e5e5e5;
-	border-radius: 10px;
+	min-height: 285px;
+	padding: 28px;
+
+	border: 1px solid #e8e3ed;
+	border-radius: 20px;
+
 	background: #fff;
 	box-sizing: border-box;
+
 	display: flex;
 	flex-direction: column;
+
 	transition: 0.2s;
 }
 
+
+/* 카드에 마우스를 올렸을 때 */
 .adminCard:hover {
-	border-color: #b9a8d4;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
-	transform: translateY(-2px);
+	border-color: #cbbddd;
+
+	box-shadow: 0 8px 20px
+		rgba(80, 55, 110, 0.08);
+
+	transform: translateY(-3px);
 }
 
+
+/* =========================================================
+   카드 상단 아이콘
+   ========================================================= */
+
 .cardIcon {
-	width: 48px;
-	height: 48px;
+	width: 54px;
+	height: 54px;
+
 	margin-bottom: 18px;
-	border-radius: 10px;
+
+	border-radius: 16px;
+
 	background: #f3eef8;
 	color: #6b4ba1;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 24px;
+
+	font-size: 23px;
 }
+
+
+/* =========================================================
+   카드 내용
+   ========================================================= */
 
 .cardContent {
 	flex: 1;
+
+	display: flex;
+	flex-direction: column;
 }
 
+
+/* 카드 제목 */
 .cardContent h3 {
-	margin: 0 0 10px;
-	font-size: 18px;
+	margin: 0 0 8px;
+
+	font-size: 19px;
 	font-weight: 700;
 	color: #333;
 }
 
+
+/* 카드 설명 */
 .cardContent p {
 	margin: 0;
-	font-size: 14px;
+
+	font-size: 13px;
 	line-height: 1.6;
 	color: #777;
 }
 
+
+/* =========================================================
+   카드 내부 세부 관리 메뉴
+   ========================================================= */
+
+.subMenu {
+	margin-top: auto;
+	padding-top: 22px;
+
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px;
+}
+
+
+/* 관리 버튼 */
+.subMenuButton {
+	position: relative;
+
+	width: 100%;
+	height: 62px;
+	padding: 8px 12px;
+
+	border: 1px solid #7B3F68;
+	border-radius: 14px;
+
+	/* 연보라색 UI와 어울리는 와인색 */
+	background: #7B3F68;
+	color: #fff;
+
+	font-size: 17px;
+	font-weight: 600;
+	text-align: center;
+
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+
+/* 마우스를 올렸을 때 */
+.subMenuButton:hover {
+	background: #673457;
+	border-color: #673457;
+	color: #fff;
+
+	box-shadow: 0 5px 12px rgba(90, 45, 80, 0.18);
+	transform: translateY(-2px);
+}
+
+/* =========================================================
+   버튼이 하나뿐인 카드
+
+   게시판 관리처럼 버튼이 하나인 경우
+   너무 길어지지 않도록 가운데 배치
+   ========================================================= */
+
+.subMenuButton:only-child {
+	grid-column: 1 / -1;
+
+	width: 48%;
+	min-width: 150px;
+
+	margin: 0 auto;
+}
+
+
+/* =========================================================
+   아직 구현하지 않은 메뉴
+   ========================================================= */
+
+.disabledSubButton {
+	position: relative;
+
+	background: #eee8f3;
+	border-color: #e0d5e8;
+	color: #9b8ca5;
+
+	cursor: default;
+}
+
+
+/* 준비중 표시 */
+.disabledSubButton::after {
+	content: "준비중";
+
+	position: absolute;
+	top: 5px;
+	right: 7px;
+
+	padding: 2px 6px;
+
+	border-radius: 8px;
+
+	background: #ddd2e6;
+	color: #8e7b9c;
+
+	font-size: 9px;
+	font-weight: 400;
+}
+
+
+/* 비활성 버튼은 마우스를 올려도 변화 없음 */
+.disabledSubButton:hover {
+	background: #eee8f3;
+	border-color: #e0d5e8;
+	color: #9b8ca5;
+
+	box-shadow: none;
+	transform: none;
+}
+
+
+/* =========================================================
+   예전에 사용했던 카드 버튼
+   혹시 다른 JSP에서 사용 중일 수 있어서 유지
+   ========================================================= */
+
 .cardButton {
 	width: 100%;
 	height: 40px;
+
 	margin-top: 20px;
+
 	border: 1px solid #6b4ba1;
 	border-radius: 6px;
+
 	background: #fff;
 	color: #6b4ba1;
+
 	font-size: 14px;
 	font-weight: 600;
+
 	cursor: pointer;
 }
 
@@ -97,12 +276,18 @@
 	color: #fff;
 }
 
+
+/* =========================================================
+   비활성 카드
+   ========================================================= */
+
 .disabledCard {
 	background: #fafafa;
 }
 
 .disabledCard:hover {
 	border-color: #e5e5e5;
+
 	box-shadow: none;
 	transform: none;
 }
@@ -119,8 +304,10 @@
 
 .disabledButton {
 	border-color: #ddd;
+
 	background: #f5f5f5;
 	color: #aaa;
+
 	cursor: default;
 }
 
@@ -129,114 +316,31 @@
 	color: #aaa;
 }
 
+
+/* =========================================================
+   반응형
+   ========================================================= */
+
+/* 화면이 조금 좁아질 경우 */
 @media (max-width: 1050px) {
+
 	.adminContainer {
 		width: auto;
 		margin: 30px 20px 50px;
 	}
+
 }
 
+
+/* 모바일 화면 */
 @media (max-width: 800px) {
-	.adminMenuGrid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
 
-@media (max-width: 550px) {
 	.adminMenuGrid {
 		grid-template-columns: 1fr;
 	}
-}
 
-/* =========================================================
-   관리자 메인 - 카드 내부 세부 메뉴
-   ========================================================= */
+	.adminCard {
+		min-height: 260px;
+	}
 
-.subMenu {
-	margin-top: 18px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-/* 세부 메뉴 버튼 */
-.subMenuButton {
-	position: relative;
-	display: block;
-	width: 100%;
-	height: 44px;
-	padding: 0 42px 0 16px;
-
-	border: 1px solid #e5e0eb;
-	border-radius: 10px;
-
-	background: #faf9fc;
-	color: #555;
-
-	font-size: 14px;
-	font-weight: 500;
-	text-align: left;
-
-	cursor: pointer;
-	transition: 0.2s;
-}
-
-/* 오른쪽 화살표 */
-.subMenuButton::after {
-	content: "›";
-	position: absolute;
-	right: 16px;
-	top: 50%;
-	transform: translateY(-52%);
-
-	font-size: 22px;
-	font-weight: 300;
-	color: #aaa;
-}
-
-/* 마우스를 올렸을 때 */
-.subMenuButton:hover {
-	background: #f5f0fa;
-	border-color: #bba8d3;
-	color: #6f4aa1;
-}
-
-/* 화살표도 보라색 */
-.subMenuButton:hover::after {
-	color: #6f4aa1;
-}
-
-
-/* =========================================================
-   아직 구현하지 않은 메뉴
-   ========================================================= */
-
-.disabledSubButton {
-	background: #f8f8f8;
-	border-color: #eeeeee;
-	color: #bbb;
-
-	cursor: default;
-}
-
-/* 비활성화 메뉴 오른쪽에 준비중 표시 */
-.disabledSubButton::after {
-	content: "준비중";
-	right: 14px;
-
-	padding: 3px 8px;
-	border-radius: 10px;
-
-	background: #eeeeee;
-	color: #aaa;
-
-	font-size: 11px;
-	font-weight: 400;
-}
-
-/* 비활성화 메뉴는 마우스를 올려도 변화 없음 */
-.disabledSubButton:hover {
-	background: #f8f8f8;
-	border-color: #eeeeee;
-	color: #bbb;
 }

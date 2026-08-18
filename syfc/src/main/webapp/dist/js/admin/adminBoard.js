@@ -67,7 +67,7 @@ function deleteNotice(num) {
    ========================================================= */
 
 // 자유게시판 게시글 강제 삭제 / 블라인드
-// 아직 화면 디자인용 함수이며 다음 단계에서 DB 기능과 연결한다.
+// 현재 자유게시판은 JSP form으로 실제 기능을 처리한다.
 function deleteFreeBoard(num) {
 	if (confirm(num + '번 게시글을 강제 삭제(블라인드) 처리하시겠습니까?')) {
 		alert('삭제 처리되었습니다.');
@@ -80,26 +80,33 @@ function deleteFreeBoard(num) {
    ========================================================= */
 
 // 문의 / 신고 상세 모달 열기
-function openReportDetail(id, title, user, content) {
+function openQnaDetail(qnaNum, title, user, content, answer) {
+	document.getElementById('modalQnaNum').value = qnaNum;
 	document.getElementById('modalReportTitle').innerText = title;
 	document.getElementById('modalReportUser').innerText = user;
 	document.getElementById('modalReportContent').innerText = content;
+	document.getElementById('adminReplyText').value = answer == null ? '' : answer;
 
-	const modal = new bootstrap.Modal(document.getElementById('reportDetailModal'));
+	const modal = new bootstrap.Modal(
+		document.getElementById('reportDetailModal')
+	);
+
 	modal.show();
 }
 
-// 문의 / 신고 답변 및 처리
-function submitReportReply() {
-	const text = document.getElementById('adminReplyText').value.trim();
+// 문의 / 신고 답변 저장
+function submitQnaAnswer() {
+	const answer = document.getElementById('adminReplyText').value.trim();
 
-	if (!text) {
+	if (!answer) {
 		alert('답변 내용을 입력해 주세요.');
+		document.getElementById('adminReplyText').focus();
 		return;
 	}
 
-	if (confirm('답변 및 처리 조치를 저장하시겠습니까?')) {
-		alert('처리가 완료되었습니다.');
-		location.reload();
+	if (!confirm('답변을 저장하시겠습니까?')) {
+		return;
 	}
+
+	document.getElementById('qnaAnswerForm').submit();
 }
