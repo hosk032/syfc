@@ -20,64 +20,35 @@
 <main class="writeContainer">
     <div class="writeHeader">
       <h2 class="writeTitle"><i class="bi bi-pencil-square me-2"></i>게시글 작성</h2>
-      <p class="writeDesc">구단 모집 및 자유로운 축구 이야기를 작성해 보세요.</p>
     </div>
 
     <form class="writeForm" name="writeForm" method="post" enctype="multipart/form-data">
-      <!-- 카테고리 -->
       <div class="formGroup">
         <label for="boardCategory" class="formLabel">카테고리</label>
         <div class="formInputWrap">
-          <select id="boardCategory" name="category" class="formControl selectControl" required>
-            <option value="" disabled selected>카테고리를 선택하세요</option>
-            <option value="free">자유게시판</option>
-            <option value="inquiry">문의게시판</option>
-          </select>
+          <input type="text" id="boardCategory" name="category" class="formControl selectControl" value="자유게시판" readonly/>
         </div>
       </div>
 
-      <!-- 제목 -->
       <div class="formGroup">
         <label for="boardTitle" class="formLabel">제 목</label>
         <div class="formInputWrap">
-          <input 
-            type="text" 
-            id="boardTitle" 
-            name="b_subject" 
-            class="formControl" 
-            value="${dto.b_subject}"
-            placeholder="제목을 입력해 주세요." 
-            required 
-          />
+          <input type="text" id="boardTitle" name="b_subject" class="formControl" value="${dto.b_subject}" placeholder="제목을 입력해 주세요." required/>
         </div>
       </div>
 
-      <!-- 작성자명 (읽기 전용) -->
+
       <div class="formGroup">
         <label for="boardAuthor" class="formLabel">작성자명</label>
         <div class="formInputWrap">
-          <input 
-            type="text" 
-            id="boardAuthor" 
-            name="auther" 
-            value="${sessionScope.member.userName}"
-            class="formControl authorControl" 
-            readonly 
-          />
+          <input type="text" id="boardAuthor" name="auther" value="${sessionScope.member.userName}" class="formControl authorControl" readonly/>
         </div>
       </div>
 
-      <!-- 내용 -->
       <div class="formGroup alignTop">
         <label for="boardContent" class="formLabel">내 용</label>
         <div class="formInputWrap">
-          <textarea 
-            id="boardContent" 
-            name="b_content" 
-            class="formControl textareaControl" 
-            placeholder="내용을 작성해 주세요. (매치 신청 시 일시, 장소, 실력대를 적어주시면 좋습니다)" 
-            required
-          >${dto.b_content}</textarea>
+          <textarea id="boardContent" name="b_content" class="formControl textareaControl" placeholder="내용을 작성해 주세요." required>${dto.b_content}</textarea>
         </div>
       </div>
 
@@ -89,7 +60,6 @@
         </div>
       </div>
 
-      <!-- 하단 버튼 -->
       <div class="formActions">
         <button type="button" class="btn btnSubmit" onclick="sendOk();">${mode=="update" ? "수정완료" : "등록완료"}&nbsp;</button>
         <button type="reset" class="btn btnReset">다시입력</button>
@@ -101,7 +71,6 @@
       </div>
     </form>
   </main>
-
 
 <script type="text/javascript">
 function sendOk() {
@@ -121,7 +90,6 @@ function sendOk() {
 		f.b_content.focus();
 		return;
 	}
-	
 	
 	f.action = '${pageContext.request.contextPath}/community/board/${mode}';
 	f.submit();

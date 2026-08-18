@@ -8,7 +8,7 @@
 	
 	<insert id="insertboard" parameterType="com.syfc.dto.BoardDTO">
 		INSERT INTO board(bnum, b_subject, b_content, b_hitCount, b_reg_date, b_block, b_type, memberIdx)
-			VALUES (board_seq.NEXTVAL, #{b_subject}, #{b_content}, 0, SYSDATE, 0, 0, #{memberIdx})
+			VALUES (board_seq.NEXTVAL, #{b_subject}, #{b_content}, 0, SYSDATE, 0, #{b_type}, #{memberIdx})
 	</insert>
 
 
@@ -33,7 +33,7 @@
  			<if test="kwd != null and kwd != '' ">
  				<include refid="where-list"/>
  			</if>
- 			AND b_Block = 0
+ 			AND b_Block = 0 AND b_type = #{b_type}
  		</where>
  	</select>
 
@@ -45,7 +45,7 @@
 	  	<if test="kwd != null and kwd != '' ">
 				<include refid="where-list"/>
 		</if>
-		AND b_Block = 0
+		AND b_Block = 0 AND b_type = #{b_type}
 	   </where>
 	   ORDER BY bnum DESC
 	   OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
@@ -79,6 +79,7 @@
 			</if>
 			AND bnum &gt; #{bnum}
 			AND b_block = 0
+			AND b_type = #{b_type}
 		</where>
 		ORDER BY bnum ASC
 		FETCH FIRST 1 ROWS ONLY
@@ -94,6 +95,7 @@
 			</if>
 			AND bnum &lt; #{bnum}
 			AND b_block = 0
+			AND b_type = #{b_type}
 		</where>
 		ORDER BY bnum DESC
 		FETCH FIRST 1 ROWS ONLY

@@ -31,7 +31,7 @@
                 공지사항
             </a>
 
-            <a href="${pageContext.request.contextPath}/community/board/boardList" class="active">
+            <a href="${pageContext.request.contextPath}/community/board/noticeList" class="active">
                 자유 게시판
             </a>
 
@@ -45,7 +45,7 @@
 
             <div class="detail-top">
                 <h3>자유 게시판</h3>
-                <a href="${pageContext.request.contextPath}/community/board/boardList"
+                <a href="${pageContext.request.contextPath}/community/board/noticeList"
                    class="list-btn">
                     목록
                 </a>
@@ -98,57 +98,36 @@
                         <span class="navigation-label">
                             이전글
                         </span>
-
                         <c:choose>
-
                             <c:when test="${not empty prevDto}">
-
-                                <a href="${pageContext.request.contextPath}/community/board/boardDetail?${query}&bnum=${prevDto.bnum}" class="navigation-link">
+                                <a href="${pageContext.request.contextPath}/community/notify/noticeDetail?${query}&bnum=${prevDto.bnum}" class="navigation-link">
                                     <c:out value="${prevDto.b_subject}" />
                                 </a>
-
                             </c:when>
-
                             <c:otherwise>
-
                                 <span class="navigation-empty">
                                     이전글이 없습니다.
                                 </span>
-
                             </c:otherwise>
-
                         </c:choose>
-
                     </div>
 
                     <div class="detail-navigation-row">
-
                         <span class="navigation-label">
                             다음글
                         </span>
-
                         <c:choose>
-
                             <c:when test="${not empty nextDto}">
-
-                                <a href="${pageContext.request.contextPath}/community/board/boardDetail?${query}&bnum=${nextDto.bnum}" class="navigation-link">
-
+                                <a href="${pageContext.request.contextPath}/community/notify/noticeDetail?${query}&bnum=${nextDto.bnum}" class="navigation-link">
                                     <c:out value="${nextDto.b_subject}" />
-
                                 </a>
-
                             </c:when>
-
                             <c:otherwise>
-
                                 <span class="navigation-empty">
                                     다음글이 없습니다.
                                 </span>
-
                             </c:otherwise>
-
                         </c:choose>
-
                     </div>
 
                 </div>
@@ -168,7 +147,7 @@
                     <div class="detail-actions-right">
                         <button type="button"
                                 class="btn btn-light"
-                                onclick="location.href='${pageContext.request.contextPath}/community/board/boardList?${query}';">
+                                onclick="location.href='${pageContext.request.contextPath}/community/board/noticeList?${query}';">
                             리스트
                         </button>
 

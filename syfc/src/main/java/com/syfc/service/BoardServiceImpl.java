@@ -132,7 +132,9 @@ public class BoardServiceImpl implements BoardService {
 		
 		try {
 			BoardDTO dto = mapper.hasUserBoardLiked(map);
-			
+			if(dto != null) {
+				result = true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
