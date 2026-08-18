@@ -12,6 +12,7 @@
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/mypage.css?v=20260816-password-overlay" />
+	<script src="https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 
@@ -25,7 +26,7 @@
 				<img src="${pageContext.request.contextPath}/dist/images/user.png" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
 				<div>
 					<h5 class="mb-1">
-						<strong>홍길동</strong> 님 환영합니다!
+						<strong>${sessionScope.member.userName}</strong> 님 환영합니다!
 					</h5>
 					<span class="badge bg-primary">구단주</span>
 					<!-- 등급 표시 -->
@@ -113,7 +114,7 @@
 								<div class="profile-info-top">
 									<div class="form-field name">
 										<label class="form-label" for="name">이름</label>
-										<input type="text" class="form-control" name="name" placeholder="이름" value="${name}">
+										<input type="text" class="form-control" name="name" placeholder="이름" value="${sessionScope.member.userName}">
 									</div>
 									
 										<div class="form-field email-area">
@@ -163,7 +164,7 @@
 								<label class="form-label" for="zip">우편번호</label>
 								<div class="zip-row">
 									<input type="text" id="zip" class="form-control" name="zip" maxlength="5" inputmode="numeric" placeholder="예: 07900" value="${dto.zip}">
-									<button type="button" class="postcode-btn"><i class="bi bi-search"></i> 주소 찾기</button>
+									<button type="button" id="postcodeBtn" class="postcode-btn"><i class="bi bi-search"></i> 주소 찾기</button>
 								</div>
 							</div>
 
@@ -326,12 +327,33 @@
 		location.href = '${pageContext.request.contextPath}/member/pwd?mode=delete';
 	});
 	
-
+	document.getElementById("postcodeBtn").addEventListener("click", function(){
+		// 앞에 카카오 스크립트를 사용하겠다
+		new kakao.Postcode({
+			// 사용자가 검색 결과에서 주소를 하나 클릭하면 실행함
+			oncomplete: function(data){
+				// 기본주소를 address 에 저장.
+				// data.roadAddress : 도로명 주소가 있으면 사용하고 
+				// data.jibunAddress : 없으면 지번주소를 사용
+				const address = data.roadAddress || data.jibunAddress;				
+			
+				// 카카오가 알려준 우편번호를 jsp에 zip 에 넣겠다
+				document.getElementById("zip").value = data.zonecode;
+				document.getElementById("addr1").value = address;
+				// 주소 선택 끝나면, 상세주소 입력칸으로 자동으로 이동하게
+				document.getElementById("addr2").focus();
+			}
+		// 카카오 주소 팝업을 실제로 열어줌 
+		}).open();
+	});
 	
 	
 	</script>
 
-	
-	
+	<c:if test="${profileUpdateSuccess}">
+		<script type="text/javascript">
+			alert("회원정보 수정이 완료되었습니다.");
+		</script>
+	</c:if>
 </body>
 </html>

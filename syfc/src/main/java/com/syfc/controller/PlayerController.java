@@ -79,6 +79,7 @@ public class PlayerController {
 			// memberIdx, email, birth, profile_photo, tel,
 			// zip, addr1, addr2, gender, pref_position
 			dto.setMemberIdx(info.getMemberIdx());
+			dto.setName(req.getParameter("name"));
 			dto.setEmail(req.getParameter("email1") + "@" + req.getParameter("email2"));
 			dto.setBirth(req.getParameter("birth"));
 			dto.setTel(req.getParameter("tel1") + "-" + req.getParameter("tel2") + "-" + req.getParameter("tel3"));
@@ -118,7 +119,9 @@ public class PlayerController {
 				service.updateSelectProfile(dto);
 			}
 			
-			
+			// DB 수정 성공 후 이름도 변경 적용 
+			info.setUserName(dto.getName());
+			session.setAttribute("profileUpdateSuccess", true);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -181,12 +184,16 @@ public class PlayerController {
 		
 		boolean playerUpdateVerified = Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"));
 		boolean passwordError = "true".equals(req.getParameter("passwordError"));
+		boolean profileUpdateSuccess = Boolean.TRUE.equals(session.getAttribute("profileUpdateSuccess"));
+
+		session.removeAttribute("profileUpdateSuccess");
 		
 		ModelAndView mav = new ModelAndView("player/mypage");
 		
 		mav.addObject("playerUpdateVerified", playerUpdateVerified);
 		mav.addObject("passwordError", passwordError);
 		mav.addObject("dto", dto);
+		mav.addObject("profileUpdateSuccess", profileUpdateSuccess);
 		
 		return mav;
 	}

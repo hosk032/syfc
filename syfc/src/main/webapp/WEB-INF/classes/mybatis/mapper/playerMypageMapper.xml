@@ -37,6 +37,10 @@
 		WHERE clubJoin_num = #{clubJoin_num}
 	</update>
 
-
+	<!-- 이름 수정 -->
+	<update id="updateName" parameterType="com.syfc.dto.PlayerMypageDTO">
+		UPDATE member1 SET userName = #{name}
+		WHERE memberIdx = #{memberIdx}
+	</update>
 
 </mapper>

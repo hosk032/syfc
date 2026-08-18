@@ -18,6 +18,8 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
 	public void updateProfile(PlayerMypageDTO dto) throws Exception {
 		try {
 			mapper.updateProfile(dto);
+			mapper.updateName(dto);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			
@@ -36,6 +38,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
 	public void updateSelectProfile(PlayerMypageDTO dto) throws Exception {
 		try {
 			mapper.updateSelectProfile(dto);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			
