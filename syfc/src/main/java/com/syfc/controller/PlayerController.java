@@ -199,10 +199,11 @@ public class PlayerController {
 	}
 	
 	
-	// 투두리스트
-	@GetMapping("todo")
+	// 미니게임
+	@GetMapping("miniGame")
 	public ModelAndView todo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		return new ModelAndView("player/todo");
+		
+		return new ModelAndView("player/miniGame");
 	}
 	
 	// 내 선수 프로필 조회

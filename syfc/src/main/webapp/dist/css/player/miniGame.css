@@ -1,0 +1,167 @@
+.mini-game-page {
+    max-width: none;
+    margin: 0;
+    padding: 26px 30px 32px;
+    background: linear-gradient(145deg, #ffffff, #f3f8ff);
+    border: 1px solid #dbe8fa;
+    border-radius: 22px;
+    box-shadow: 0 12px 30px rgba(34, 84, 150, 0.12);
+}
+.draw-background {
+    display: block;
+    width: 100%;
+    min-height: 430px;
+    object-fit: cover;
+}
+.draw-ball-btn {
+	position: absolute;
+	left: 50%;
+	bottom: 28px;
+	transform: translateX(-50%);
+}
+.mini-game-header {
+	position: relative;
+    text-align: center;
+    min-height: 90px;
+}
+.mini-game-title h2 {
+    margin: 5px 0 8px;
+    color: #163d70;
+    font-size: 30px;
+    font-weight: 800;
+}
+.mini-game-title p {
+    margin: 0;
+    color: #5c6f87;
+    font-size: 16px;
+}
+.daily-label {
+    color: #2581e7;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.ball-collection-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 11px 15px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2689f5, #2257c8);
+    border: 0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.ball-collection-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #1678e3, #1646ac);
+}
+
+.game-notice {
+    margin: 20px 0;
+    padding: 14px 18px;
+    text-align: center;
+    color: #314966;
+    background: #edf6ff;
+    border-radius: 12px;
+}
+
+.game-notice p {
+    margin: 4px 0;
+}
+
+.draw-stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.draw-background {
+    display: block;
+    width: 100%;
+    min-height: 430px;
+    object-fit: cover;
+}
+
+.draw-ball-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    padding: 14px 42px;
+    color: #17365f;
+    background: linear-gradient(135deg, #ffe56c, #ffb52d);
+    border: 2px solid #ffffff;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    transition: 0.2s ease;
+}
+
+.draw-ball-btn:hover {
+    transform: translateX(-50%) translateY(-3px);
+    background: linear-gradient(135deg, #fff08c, #ff9f1f);
+}
+.rotating-ball {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    z-index: 1;
+    width: clamp(230px, 34%, 310px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: drop-shadow(0 10px 16px rgba(3, 15, 55, 0.55));
+    animation: ball-spin 4s linear infinite;
+}
+
+@keyframes ball-spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+.confetti-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti {
+    position: absolute;
+    top: -24px;
+    left: var(--x);
+    width: 9px;
+    height: 16px;
+    background: var(--color);
+    animation: confetti-fall var(--duration) linear var(--delay) infinite;
+}
+
+.draw-ball-btn {
+    z-index: 3;
+}
+
+@keyframes confetti-fall {
+    from {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(500px) rotate(480deg);
+        opacity: 0;
+    }
+}
