@@ -50,7 +50,7 @@
 	                <td>${dataCount - (page - 1) * size - status.index}</td>
 	                <td class="left">
 	                    <div class="text-wrap">
-	                        <a href="${boardDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/></a>
+	                        <a href="${noticeDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/><c:if test="${dto.replyCount > 0}">(${dto.replyCount})</c:if></a>
 	                    </div>
 	                </td>
 	                <td> ${dto.userName}</td>
@@ -63,7 +63,7 @@
 			
 			<div class="row board-list-footer">
 				<div class="col">
-					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/boardList';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/boardList';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
 				</div>
 				<div class="col-6 d-flex justify-content-center">
 					<form class="row" name="searchForm">
@@ -71,8 +71,8 @@
 							<select name="schType" class="form-select">
 								<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
 								<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
-								<option value="subject" ${schType=="b_Subject"?"selected":""}>제목</option>
-								<option value="content" ${schType=="b_Content"?"selected":""}>내용</option>
+								<option value="b_subject" ${schType=="b_subject"?"selected":""}>제목</option>
+								<option value="b_content" ${schType=="b_content"?"selected":""}>내용</option>
 							</select>
 						</div>
 						<div class="col-auto p-1">
@@ -93,6 +93,34 @@
 			</div>
 		</section>
 	</div>
+
+<script type="text/javascript">
+// 검색 키워드 입력란에서 엔터를 누른 경우 서버 전송 막기 
+document.addEventListener('DOMContentLoaded', () => {
+	const inputEL = document.querySelector('form input[name=kwd]'); 
+	inputEL.addEventListener('keydown', function (evt) {
+		if(evt.key === 'Enter') {
+			evt.preventDefault();
+	    	
+			searchList();
+		}
+	});
+});
+
+function searchList() {
+	const f = document.searchForm;
+	if(! f.kwd.value.trim()) {
+		return;
+	}
+	
+	const formData = new FormData(f);
+	let params = new URLSearchParams(formData).toString();
+	
+	let url = '${pageContext.request.contextPath}/community/board/boardList';
+	location.href = url + '?' + params;
+}
+</script>
+
 
 	<!-- 하단 푸터 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
