@@ -323,6 +323,7 @@
 		}
 		
 		// 회원탈퇴 POST 요청 보내기
+		location.href = '${pageContext.request.contextPath}/member/pwd?mode=delete';
 	});
 	
 
