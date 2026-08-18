@@ -6,4 +6,5 @@ import com.syfc.dto.ClubOwnerHistoryDTO;
 
 public interface ClubOwnerHistoryService {
 	public List<ClubOwnerHistoryDTO> clubOwnerRequestHistory(long memberIdx);
+	public int cancelClubOwnerRequest(long clubJoin_num, long memberIdx);
 }
