@@ -2,10 +2,12 @@ package com.syfc.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import com.syfc.dto.ClubInfoDTO;
 import com.syfc.dto.ClubOwnerHistoryDTO;
+import com.syfc.dto.ClubOwnerRequestDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
 import com.syfc.dto.MemberDTO;
@@ -19,6 +21,8 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.ClubOwnerHistoryService;
 import com.syfc.service.ClubOwnerHistoryServiceImpl;
+import com.syfc.service.ClubOwnerRequestService;
+import com.syfc.service.ClubOwnerRequestServiceImpl;
 import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
 import com.syfc.service.MatchRecordService;
@@ -50,6 +54,7 @@ public class PlayerController {
 	private MemberService memberService = new MemberServiceImpl();
 	private MyClubInfoService myClubInfoService = new MyClubInfoServiceImpl();
 	private ClubOwnerHistoryService historyService = new ClubOwnerHistoryServiceImpl();
+	private ClubOwnerRequestService clubOwnerRequestService = new ClubOwnerRequestServiceImpl();
 	
 	private FileManager fileManager = new FileManager();
 	
@@ -277,16 +282,102 @@ public class PlayerController {
 		return mav;
 	}
 	
+	// 구단주 신청
 	@GetMapping("clubOwnerRequest")
 	public ModelAndView clubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
-	    return new ModelAndView("player/clubOwnerRequest");
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member");
+	    
+	    if(info == null) {
+	    		return new ModelAndView("redirect:/member/login");
+	    }
+	    
+	    // 신청 값 전달한 뒤 바로 제거해야 함
+	    // 그래야 새로고침 했을때 신청이 완료되었습니다 같은 문구 재로딩x
+	    boolean clubOwnerRequestSuccess = Boolean.TRUE.equals(session.getAttribute("clubOwnerRequestSuccess"));
+	    
+	    // 전달 후 바로 제거
+	    session.removeAttribute("clubOwnerRequestSuccess");
+	 
+	    ModelAndView mav = new ModelAndView("player/clubOwnerRequest");
+	    mav.addObject("clubOwnerRequestSuccess", clubOwnerRequestSuccess);
+		mav.addObject("today", new Date());
+	    
+		return mav;
+	}
+	// 구단주 신청 저장
+	@PostMapping("clubOwnerRequest")
+	public ModelAndView clubOwnerRequestSubmit(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+    			return new ModelAndView("redirect:/member/login");
+		}
+		
+		// 사용자가 요청값을 바꿔서 다른 사람 회원번호로 신청할 수 있으니
+		// 로그인 세션값의 아이디로 사용
+		long memberIdx = info.getMemberIdx();
+		
+		// 신청일, 신청사유
+		// 초기 설정상태 = 신청 시 대기 
+		String cor_content = req.getParameter("cor_content");
+		
+		ClubOwnerRequestDTO dto = new ClubOwnerRequestDTO();
+		dto.setMemberIdx(memberIdx);
+		dto.setCor_content(cor_content);
+		dto.setCor_status(2);
+		
+		// dto 다 보여주고, 신청 완료 실행해야 함
+		int result = clubOwnerRequestService.insertClubOwnerRequest(dto);
+		
+		// result 가 0보다 크면
+		if(result > 0) {
+			session.setAttribute("clubOwnerRequestSuccess", true);
+		}
+		
+		return new ModelAndView("redirect:/player/clubOwnerRequest");
+	}
+	
+	// 구단주 신청 취소
+	@PostMapping("deleteClubOwnerRequest")
+	public ModelAndView deleteClubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		long cor_request_num = Long.parseLong(req.getParameter("cor_request_num"));
+		
+		// dto 에 있는 구단주 신청번호, 회원번호
+		ClubOwnerRequestDTO dto = new ClubOwnerRequestDTO();
+		dto.setCor_request_num(cor_request_num);
+		dto.setMemberIdx(info.getMemberIdx());
+		
+		int result = clubOwnerRequestService.deleteClubOwnerRequest(dto);
+		
+		return new ModelAndView("redirect:/player/clubOwnerRequestHistory");
 	}
 	
 	// 입단신청 결과조회
 	@GetMapping("clubOwnerRequestHistory")
 	public ModelAndView clubOwnerRequestHistory(HttpServletRequest req, HttpServletResponse resp) {
-	  
-		return new ModelAndView("redirect:/player/clubJoin");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		List<ClubOwnerRequestDTO> list = clubOwnerRequestService.listClubOwnerRequest(info.getMemberIdx());
+		
+		ModelAndView mav = new ModelAndView("player/clubOwnerRequestHistory");
+		
+		mav.addObject("list", list);
+		
+		return mav;
 
 	}
 	
