@@ -1,0 +1,24 @@
+package com.syfc.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import com.syfc.dto.AdminStadiumDTO;
+
+public interface AdminStadiumMapper {
+
+	// 경기장 전체 개수
+	public int dataCount(Map<String, Object> map);
+
+	// 경기장 목록
+	public List<AdminStadiumDTO> listStadium(Map<String, Object> map);
+
+	// 경기장 한 건 조회
+	public AdminStadiumDTO findById(long stadiumId);
+
+	// 경기장 등록
+	public int insertStadium(AdminStadiumDTO dto);
+
+	// 경기장 수정
+	public int updateStadium(AdminStadiumDTO dto);
+}
