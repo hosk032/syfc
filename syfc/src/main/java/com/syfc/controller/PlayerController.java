@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import com.syfc.dto.BallDTO;
 import com.syfc.dto.ClubInfoDTO;
 import com.syfc.dto.ClubOwnerHistoryDTO;
 import com.syfc.dto.ClubOwnerRequestDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
+import com.syfc.dto.MemberBallpickDTO;
 import com.syfc.dto.MemberDTO;
 import com.syfc.dto.PlayerMypageDTO;
 import com.syfc.dto.PlayerProfileDTO;
@@ -19,6 +21,8 @@ import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
+import com.syfc.service.BallService;
+import com.syfc.service.BallServiceImpl;
 import com.syfc.service.ClubOwnerHistoryService;
 import com.syfc.service.ClubOwnerHistoryServiceImpl;
 import com.syfc.service.ClubOwnerRequestService;
@@ -27,6 +31,8 @@ import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
 import com.syfc.service.MatchRecordService;
 import com.syfc.service.MatchRecordServiceImpl;
+import com.syfc.service.MemberBallpickService;
+import com.syfc.service.MemberBallpickServiceImpl;
 import com.syfc.service.MemberService;
 import com.syfc.service.MemberServiceImpl;
 import com.syfc.service.MyClubInfoService;
@@ -55,6 +61,8 @@ public class PlayerController {
 	private MyClubInfoService myClubInfoService = new MyClubInfoServiceImpl();
 	private ClubOwnerHistoryService historyService = new ClubOwnerHistoryServiceImpl();
 	private ClubOwnerRequestService clubOwnerRequestService = new ClubOwnerRequestServiceImpl();
+	private BallService ballService = new BallServiceImpl();
+	private MemberBallpickService memberBallPickService = new MemberBallpickServiceImpl();
 	
 	private FileManager fileManager = new FileManager();
 	
@@ -199,11 +207,84 @@ public class PlayerController {
 	}
 	
 	
-	// 미니게임
+	// 미니게임 실행 + 대표 공 1개 조회
 	@GetMapping("miniGame")
 	public ModelAndView todo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
-		return new ModelAndView("player/miniGame");
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		// 회원정보 info 에서 가져오기
+		long memberIdx = info.getMemberIdx();
+		
+		BallDTO dto = ballService.findMainBall(memberIdx);
+		// 사용자 화면에 보여줄 컬럼: 공 이름, 공 이미지, 공 등급
+		//	ball_name, ball_image, ball_grade(NORMAL or RARE)
+		
+		// DB 에 저장된 공 정보를 조회하는 곳
+		ModelAndView mav = new ModelAndView("player/miniGame");
+		
+		// POST 세션에 넣어둔 뽑은 공 정보를 가져온다
+		BallDTO pickedBall = (BallDTO) session.getAttribute("pickedBall");
+		// 세션에서 그 정보를 바로 삭제한다
+		// 삭제하지 않으면 사용자가 새로고침할때마다 모달 계속 열림
+		session.removeAttribute("pickedBall");
+		
+		// 공 뽑은 이력 여부 확인
+		Boolean alreadyPicked = (Boolean)session.getAttribute("alreadyPicked");
+		session.removeAttribute("alreadyPicked");
+		
+		// 뽑은 공 도감 목록 확인
+		List<BallDTO> memberBallCollection = memberBallPickService.findMemberBallCollection(memberIdx);
+
+		mav.addObject("pickedBall", pickedBall);
+		mav.addObject("alreadyPicked", alreadyPicked);
+		mav.addObject("memberBallCollection", memberBallCollection);
+		
+		mav.addObject("ball", dto);
+		
+		return mav;
+	}
+	
+	// 미니게임 실행 + 공 뽑기
+	@PostMapping("miniGame")
+	public ModelAndView pickBall(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		// 회원 정보 가져오기
+		long memberIdx = info.getMemberIdx();
+		
+		MemberBallpickDTO dto = new MemberBallpickDTO();
+		
+		dto.setMemberIdx(memberIdx);
+		
+		// 테스트용 블루공번호
+		dto.setBall_idx(5);
+		
+		// 오늘 뽑기 횟수 확인하기
+		int todayPickCount = memberBallPickService.countTodayPick(memberIdx);
+		
+		if(todayPickCount > 0) {
+			session.setAttribute("alreadyPicked", true);
+			return new ModelAndView("redirect:/player/miniGame");
+		}
+
+		memberBallPickService.insertMemberBallPick(dto);
+		
+		// 뽑은 공 조회하기
+		BallDTO pickedBall = ballService.findBallByIdx(dto.getBall_idx());
+		
+		session.setAttribute("pickedBall", pickedBall);
+		
+		return new ModelAndView("redirect:/player/miniGame");
 	}
 	
 	// 내 선수 프로필 조회

@@ -7,18 +7,6 @@
     border-radius: 22px;
     box-shadow: 0 12px 30px rgba(34, 84, 150, 0.12);
 }
-.draw-background {
-    display: block;
-    width: 100%;
-    min-height: 430px;
-    object-fit: cover;
-}
-.draw-ball-btn {
-	position: absolute;
-	left: 50%;
-	bottom: 28px;
-	transform: translateX(-50%);
-}
 .mini-game-header {
 	position: relative;
     text-align: center;
@@ -91,6 +79,7 @@
     position: absolute;
     left: 50%;
     bottom: 32px;
+    z-index: 3;
     transform: translateX(-50%);
     padding: 14px 42px;
     color: #17365f;
@@ -146,10 +135,6 @@
     animation: confetti-fall var(--duration) linear var(--delay) infinite;
 }
 
-.draw-ball-btn {
-    z-index: 3;
-}
-
 @keyframes confetti-fall {
     from {
         transform: translateY(0) rotate(0deg);
@@ -164,4 +149,172 @@
         transform: translateY(500px) rotate(480deg);
         opacity: 0;
     }
+}
+.ball-close-btn {
+    min-width: 92px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2f80ed, #2563c9);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ball-close-btn:hover {
+    background: linear-gradient(135deg, #3d8cff, #1e55b5);
+    transform: translateY(-2px);
+}
+
+.ball-close-btn:active {
+    box-shadow: none;
+    transform: translateY(0);
+}
+
+.ball-close-btn:focus-visible {
+    outline: 3px solid rgba(47, 128, 237, 0.35);
+    outline-offset: 3px;
+}
+
+#drawBallModal .modal-dialog {
+    max-width: 420px;
+}
+
+#drawBallModal .modal-body {
+    text-align: center;
+    padding: 28px 20px;
+}
+
+#drawBallModal .pickBallImage {
+    display: block;
+    width: min(100%, 220px);
+    max-height: 220px;
+    object-fit: contain;
+    margin: 0 auto 20px;
+}
+
+#drawBallModal .modal-body p {
+    margin-bottom: 8px;
+    font-size: 1.05rem;
+}
+
+#alreadyPickModal .modal-dialog {
+    width: calc(100% - 32px);
+    max-width: 360px;
+    margin: 1rem auto;
+}
+
+#alreadyPickModal .modal-content {
+    overflow: hidden;
+    border: 0;
+    border-radius: 22px;
+}
+
+#alreadyPickModal .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 20px 16px;
+    overflow: hidden;
+    text-align: center;
+}
+
+#alreadyPickModal .already-pick-mascot {
+    display: block;
+    width: 140px !important;
+    height: 140px !important;
+    max-width: 100%;
+    max-height: 140px;
+    margin: 0 auto 14px;
+    flex: 0 0 auto;
+    object-fit: contain;
+}
+
+#alreadyPickModal .modal-body h5 {
+    width: 100%;
+    margin: 0 0 7px;
+    color: #26364d;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+#alreadyPickModal .modal-footer {
+    justify-content: center;
+    padding: 0 20px 20px;
+    border-top: 0;
+}
+
+#ballCollectionModal .modal-dialog {
+    max-width: 540px;
+}
+
+#ballCollectionModal .modal-content {
+    overflow: hidden;
+    border: 1px solid #dce9f8;
+    border-radius: 18px;
+}
+
+#ballCollectionModal .modal-header {
+    justify-content: center;
+    padding: 18px 20px;
+    color: #1d4f91;
+    background: #f4f9ff;
+    border-bottom: 1px solid #dce9f8;
+}
+
+#ballCollectionModal .modal-body {
+    padding: 18px;
+}
+
+#ballCollectionModal .ballCollectionImage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-height: 390px;
+    overflow-y: auto;
+}
+
+#ballCollectionModal .collection-ball-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 165px;
+    padding: 12px 8px;
+    text-align: center;
+    background: #f8fbff;
+    border: 1px solid #dbe8f8;
+    border-radius: 14px;
+}
+
+#ballCollectionModal .pickBallImage {
+    width: 72px;
+    height: 72px;
+    margin: 0 0 8px;
+    object-fit: contain;
+}
+
+#ballCollectionModal .collection-ball-card p {
+    margin: 0;
+    line-height: 1.35;
+}
+
+#ballCollectionModal .collection-ball-card p:first-of-type {
+    color: #26364d;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+#ballCollectionModal .collection-ball-card p:last-of-type {
+    margin-top: 4px;
+    color: #5f7590;
+    font-size: 0.75rem;
+}
+
+#ballCollectionModal .modal-footer {
+    justify-content: center;
+    padding: 14px 20px 18px;
+    border-top: 1px solid #edf3fa;
 }
