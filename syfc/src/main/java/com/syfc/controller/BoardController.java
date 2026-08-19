@@ -158,7 +158,6 @@ public class BoardController {
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		
 		String page = req.getParameter("page");
-	
 		String query = "page=" + page;
 		
 		try {
@@ -330,47 +329,47 @@ public class BoardController {
 	}
 		
 	// 게시글 공감 저장 - AJAX : JSON
-		@ResponseBody // Map 타입의 리턴값을 JSON 형식으로 변환하여 반환
-		@PostMapping("insertBoardLike")
-		public Map<String, Object> insertBoardLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-			Map<String, Object> model = new HashMap<>();
+	@ResponseBody // Map 타입의 리턴값을 JSON 형식으로 변환하여 반환
+	@PostMapping("insertBoardLike")
+	public Map<String, Object> insertBoardLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<>();
+		
+		// 넘어온 파라미터 : 글번호, 공감/공감취소여부
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		
+		String state = "false";
+		int boardLikeCount = 0;
+		
+		try {
+			long bnum = Long.parseLong(req.getParameter("bnum"));
+			String userLiked = req.getParameter("userLiked");
 			
-			// 넘어온 파라미터 : 글번호, 공감/공감취소여부
-			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			Map<String, Object> map = new HashMap<>();
+			map.put("bnum", bnum);
+			map.put("memberIdx", info.getMemberIdx()); // 회원 번호 사용
 			
-			String state = "false";
-			int boardLikeCount = 0;
-			
-			try {
-				long bnum = Long.parseLong(req.getParameter("bnum"));
-				String userLiked = req.getParameter("userLiked");
-				
-				Map<String, Object> map = new HashMap<>();
-				map.put("bnum", bnum);
-				map.put("memberIdx", info.getMemberIdx()); // 회원 번호 사용
-				
-				if(userLiked.equals("true")) {
-					service.deleteBoardLike(map); // 공감 취소
-				} else {
-					service.insertBoardLike(map); // 공감
-				}
-				
-				boardLikeCount = service.boardLikeCount(bnum);
-				
-				state = "true";
-				
-			} catch (SQLException e) {
-				// 중복 공감 등으로 에러가 발생할 경우 'liked' 상태 반환
-				state = "liked";
-			} catch (Exception e) {
-				e.printStackTrace();
+			if(userLiked.equals("true")) {
+				service.deleteBoardLike(map); // 공감 취소
+			} else {
+				service.insertBoardLike(map); // 공감
 			}
 			
-			model.put("state", state);
-			model.put("boardLikeCount", boardLikeCount);
+			boardLikeCount = service.boardLikeCount(bnum);
 			
-			return model;
+			state = "true";
+			
+		} catch (SQLException e) {
+			// 중복 공감 등으로 에러가 발생할 경우 'liked' 상태 반환
+			state = "liked";
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
+		model.put("state", state);
+		model.put("boardLikeCount", boardLikeCount);
+		
+		return model;
+	}
 	
 }

@@ -14,8 +14,6 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.ReplyBoardService;
 import com.syfc.service.ReplyBoardServiceImpl;
-import com.syfc.util.MyUtil;
-import com.syfc.util.PaginateUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +24,6 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/community/reply/*")
 public class ReplyBoardController {
 	private ReplyBoardService service = new ReplyBoardServiceImpl();
-	private MyUtil util = new MyUtil();
-	private PaginateUtil paginateUtil = new PaginateUtil();
 	int size = 5;
 	
 	

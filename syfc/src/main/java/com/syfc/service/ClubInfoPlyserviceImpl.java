@@ -1,0 +1,55 @@
+package com.syfc.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.syfc.dto.ClubInfoPlyDTO;
+import com.syfc.mapper.ClubInfoPlyMapper;
+import com.syfc.mybatis.support.MapperContainer;
+import com.syfc.util.MyUtil;
+
+public class ClubInfoPlyserviceImpl implements ClubInfoPlyservice {
+	private ClubInfoPlyMapper mapper = MapperContainer.get(ClubInfoPlyMapper.class);
+	private MyUtil util = new MyUtil();
+	
+	@Override
+	public List<ClubInfoPlyDTO> listClubInfoPly(Map<String, Object> map) {
+		List<ClubInfoPlyDTO> list = null;
+		
+		try {
+			list = mapper.listClubInfoPly(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int dataCount(Map<String, Object> map) {
+		int result = 0;
+		
+		try {
+			result = mapper.dataCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ClubInfoPlyDTO findById(long clubowner_key) {
+		ClubInfoPlyDTO dto = null;
+		
+		try {
+			dto = mapper.findById(clubowner_key);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
+	}
+
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.ClubInfoPlyMapper">
+
+	
+	<select id="listClubInfoPly" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT clubowner_key, club_name, club_logo, club_region, club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
+		FROM Club
+		<where>
+	  	<if test="kwd != null and kwd != '' ">
+				<include refid="where-list"/>
+		</if>
+		</where>
+		ORDER BY clubowner_key DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all' ">
+				(INSTR(club_name, #{kwd}) &gt; 0
+						OR INSTR(club_region, #{kwd}) &gt; 0)
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM Club
+		<where>
+ 			<if test="kwd != null and kwd != '' ">
+ 				<include refid="where-list"/>
+ 			</if>
+ 		</where>
+	</select>
+	
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT c.clubowner_key, club_name, club_logo, club_region, club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content,
+			clubjoin_num, position, height, weight, join_date, status
+		FROM Club c
+		LEFT OUTER JOIN Player p ON c.clubowner_key = p.clubowner_key
+		WHERE c.clubowner_key = #{clubowner_key}
+	</select>
+
+</mapper>
