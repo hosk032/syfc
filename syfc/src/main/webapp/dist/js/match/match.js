@@ -213,6 +213,10 @@ $(document).on("click", ".stadium-card", function() {
 //<button type="button" class="btn btn-primary btn-sm px-4 fw-bold"
 //    onclick="submitMatchPost1()">모집글 등록하기</button> 에 연결
 function submitMatchPost1() {
+	if (window.matchPostSubmitting) {
+	    return;
+	}
+	window.matchPostSubmitting = true;
 
     const cmb_Subject = $("#postTitle").val().trim();
     const cmb_Content = $("#postContent").val().trim();
@@ -234,6 +238,7 @@ function submitMatchPost1() {
     if (!matchType2) { alert("경기 유형을 선택해주세요." ); return; }
 
     $.ajax({
+		
         url: contextPath + "/match/createMatchPost",
         type: "POST",
         data: {
@@ -248,23 +253,55 @@ function submitMatchPost1() {
         },
 
         dataType: "json",
-        success: function(data) {
-            if (data.success) {
-                alert( data.message );
+		success: function(data) {
+		    if (data.success) {
+		        alert(data.message);
+		        // 1. 모달 닫기
+		        const modalElement = document.getElementById("writeModal");
+		        const modal = bootstrap.Modal.getInstance(modalElement);
+		        if (modal) { modal.hide(); }
 
-                console.log( "생성된 게시글 번호:", data.cmb_num);
+		        // 2. 입력값 초기화
+		        $("#postTitle").val("");
+		        $("#postContent").val("");
 
-                $("#writeModal").modal("hide"); // 모달 닫기
-            
-            } else {
-                alert(data.message || "게시글 등록에 실패했습니다.");
-            }
-        },
+		        // 3. 선택 경기장 초기화
+		        selectedStadium = null;
+		        $(".stadium-card").removeClass("selected");
+		        $("#selectedMatchInfo").addClass("d-none");
+
+		        // 4. 모집 게시판 목록 다시 조회
+		        loadMatchBoardList();
+
+		        // 5. '참가 선수 모집 게시판' 탭으로 이동
+		        const boardTab =
+		            document.querySelector(
+		                '[data-bs-target="#match-board-pane"]'
+		            );
+
+		        if (boardTab) {
+		            bootstrap.Tab
+		                .getOrCreateInstance(boardTab)
+		                .show();
+		        }
+
+		    } else {
+
+		        alert(
+		            data.message ||
+		            "게시글 등록에 실패했습니다."
+		        );
+		    }
+		},
 
         error: function(xhr) {
             console.log(xhr.responseText);
             alert("게시글 등록 중 오류가 발생했습니다.");
-        }
+        },
+		
+		complete: function() {
+		    window.matchPostSubmitting = false;
+		}
     });
 }
 
