@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html lang="ko">
@@ -89,13 +90,11 @@
 							class="list-group-item list-group-item-action rounded-3 mb-1 active"
 							data-bs-toggle="list"> <i class="bi bi-shield-shaded me-2"></i>구단
 							등록 / 수정
-						</a>
-						<a href="#team-history"
+						</a> <a href="#team-history"
 							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-journal-text me-2"></i>구단
 							경기 이력
-						</a>
-						<a href="#team-result-register"
+						</a> <a href="#team-result-register"
 							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-pencil-square me-2"></i>구단
 							성적 등록 / 조회
@@ -106,8 +105,8 @@
 							class="list-group-item list-group-item-action rounded-3 mb-1 d-flex justify-content-between align-items-center"
 							data-bs-toggle="list"> <span><i
 								class="bi bi-person-plus me-2"></i>입단 승인 관리</span> <span
-							class="badge bg-danger rounded-pill" id="approvalPendingBadge">2</span>
-						</a> <a href="#player-list"
+							class="badge bg-danger rounded-pill" id="approvalPendingBadge">${empty pendingCount ? 0 : pendingCount}</span>
+						</a><a href="#player-list"
 							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-people me-2"></i>소속 선수
 							조회 / 제적
@@ -159,12 +158,56 @@
 
 	<!-- 입단 거절 모달 -->
 	<div class="modal fade" id="rejectReasonModal" tabindex="-1"
-		aria-hidden="true">...</div>
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content border-0 shadow rounded-4">
+				<div class="modal-header border-bottom-0 pb-0">
+					<h6 class="modal-header-title fw-bold text-dark mb-0">
+						<i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>입단
+						신청 거절
+					</h6>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-4">
+					<p class="small text-muted mb-3">
+						<strong id="rejectTargetName" class="text-dark"></strong> 선수의 입단
+						신청을 거절합니다. 거절 사유는 신청자에게 안내됩니다.
+					</p>
+					<!-- AJAX 수신용 Hidden Input -->
+					<input type="hidden" id="rejectApplyNum" value="">
+
+					<div class="mb-3">
+						<label class="form-label small fw-bold text-secondary">거절
+							사유 선택</label> <select class="form-select form-select-sm"
+							id="rejectReasonSelect" onchange="changeRejectReason(this.value)">
+							<option value="정원 초과">포지션 정원이 초과되었습니다.</option>
+							<option value="활동 지역 불일치">주요 활동 지역이 일치하지 않습니다.</option>
+							<option value="custom">직접 입력</option>
+						</select>
+					</div>
+					<div>
+						<label class="form-label small fw-bold text-secondary">상세
+							거절 사유</label>
+						<textarea class="form-control form-control-sm"
+							id="rejectReasonText" rows="3">포지션 정원이 초과되었습니다.</textarea>
+					</div>
+				</div>
+				<div class="modal-footer border-top-0 pt-0">
+					<button type="button" class="btn btn-sm btn-light px-3"
+						data-bs-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-sm btn-danger px-4 fw-bold"
+						onclick="submitRejectProcess()">거절 확정</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
 
-<script src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.0"></script>
+	<script
+		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.0"></script>
 </body>
 </html>
