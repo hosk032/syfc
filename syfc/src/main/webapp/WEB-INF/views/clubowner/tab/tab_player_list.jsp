@@ -9,7 +9,7 @@
 				<h5 class="fw-bold mb-1">소속 선수 목록 & 제적 관리</h5>
 				<p class="text-muted small mb-0">우리 팀 소속 선수 목록을 조회하고 필요 시 제적(강퇴) 처리를 진행합니다.</p>
 			</div>
-			<span class="text-muted small">총 <strong id="totalPlayerCount" class="text-primary fs-6">4</strong>명</span>
+			<span class="text-muted small">총 <strong id="totalPlayerCount" class="text-primary fs-6">${empty playerCount ? 0 : playerCount}</strong>명</span>
 		</div>
 
 		<!-- 검색 및 필터 영역 -->
@@ -43,38 +43,45 @@
 					</tr>
 				</thead>
 				<tbody class="small text-center" id="playerListBody">
-					<tr id="player-row-1" data-name="박지성" data-position="FW">
-						<td class="text-start ps-4 fw-bold text-dark">박지성</td>
-						<td><span class="badge bg-danger-subtle text-danger border px-2.5 py-1">FW</span></td>
-						<td class="text-muted">2025-03-10</td>
-						<td class="text-end pe-4">
-							<button class="btn btn-sm btn-outline-danger fw-bold" onclick="removePlayer('박지성', 1)">제적</button>
-						</td>
-					</tr>
-					<tr id="player-row-2" data-name="손흥민" data-position="FW">
-						<td class="text-start ps-4 fw-bold text-dark">손흥민</td>
-						<td><span class="badge bg-danger-subtle text-danger border px-2.5 py-1">FW</span></td>
-						<td class="text-muted">2025-01-20</td>
-						<td class="text-end pe-4">
-							<button class="btn btn-sm btn-outline-danger fw-bold" onclick="removePlayer('손흥민', 2)">제적</button>
-						</td>
-					</tr>
-					<tr id="player-row-3" data-name="김민재" data-position="DF">
-						<td class="text-start ps-4 fw-bold text-dark">김민재</td>
-						<td><span class="badge bg-primary-subtle text-primary border px-2.5 py-1">DF</span></td>
-						<td class="text-muted">2025-05-12</td>
-						<td class="text-end pe-4">
-							<button class="btn btn-sm btn-outline-danger fw-bold" onclick="removePlayer('김민재', 3)">제적</button>
-						</td>
-					</tr>
-					<tr id="player-row-4" data-name="홍길동" data-position="MF">
-						<td class="text-start ps-4 fw-bold text-dark">홍길동 <span class="badge bg-warning text-dark extra-small ms-1">구단주</span></td>
-						<td><span class="badge bg-primary-subtle text-primary border px-2.5 py-1">MF</span></td>
-						<td class="text-muted">2024-01-15</td>
-						<td class="text-end pe-4">
-							<button class="btn btn-sm btn-secondary disabled extra-small" disabled>본인</button>
-						</td>
-					</tr>
+					<c:choose>
+						<c:when test="${not empty playerList}">
+							<c:forEach var="player" items="${playerList}">
+								<tr id="player-row-${player.clubJoin_num}" data-name="${player.userName}" data-position="${player.position}">
+									<td class="text-start ps-4 fw-bold text-dark">
+										${player.userName}
+										<%-- 본인(구단주) 여부 판단 (세션 memberIdx와 비교하거나 DTO의 구단주 여부 활용) --%>
+										<c:if test="${player.memberIdx == sessionScope.member.memberIdx}">
+											<span class="badge bg-warning text-dark extra-small ms-1">구단주</span>
+										</c:if>
+									</td>
+									<td>
+										<span class="badge ${player.position == 'FW' ? 'bg-danger-subtle text-danger' : (player.position == 'GK' ? 'bg-warning-subtle text-warning' : 'bg-primary-subtle text-primary')} border px-2.5 py-1">
+											${player.position}
+										</span>
+									</td>
+									<td class="text-muted">${player.join_date}</td>
+									<td class="text-end pe-4">
+										<c:choose>
+											<c:when test="${player.memberIdx == sessionScope.member.memberIdx}">
+												<button class="btn btn-sm btn-secondary disabled extra-small" disabled>본인</button>
+											</c:when>
+											<c:otherwise>
+												<button class="btn btn-sm btn-outline-danger fw-bold" onclick="removePlayer('${player.userName}', ${player.clubJoin_num})">제적</button>
+											</c:otherwise>
+										</c:choose>
+									</td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr class="empty-row">
+								<td colspan="4" class="py-5 text-center text-muted">
+									<i class="bi bi-people fs-1 d-block mb-2 text-secondary opacity-50"></i>
+									소속된 선수가 없습니다.
+								</td>
+							</tr>
+						</c:otherwise>
+					</c:choose>
 				</tbody>
 			</table>
 		</div>
