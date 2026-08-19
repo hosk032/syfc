@@ -10,4 +10,5 @@ public interface ClubInfoPlyservice {
 	public int dataCount(Map<String, Object> map);
 	
 	public ClubInfoPlyDTO findById(long clubowner_key);
+	public List<ClubInfoPlyDTO> listPlayer(long clubowner_key);
 }

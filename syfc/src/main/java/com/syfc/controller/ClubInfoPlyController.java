@@ -138,11 +138,10 @@ public class ClubInfoPlyController {
 				return new ModelAndView("redirect:/clubinfoply/clubList?" + query);
 			}
 			
-			if(dto.getClub_content() != null) {
-	            dto.setClub_content(util.htmlSymbols(dto.getClub_content()));
-	        }
+			List<ClubInfoPlyDTO> playerList = service.listPlayer(clubowner_key);
 			
 			mav.addObject("dto", dto);
+			mav.addObject("playerList", playerList);
 	        mav.addObject("page", page);
 	        mav.addObject("clubowner_key", clubowner_key);
 	        mav.addObject("schType", schType);

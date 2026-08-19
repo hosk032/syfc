@@ -183,7 +183,7 @@ public class BoardController {
 			if(dto == null) {
 				return new ModelAndView("redirect:/community/board/boardList?" + query);
 			}
-			dto.setB_content(util.htmlSymbols(dto.getB_content()));
+			// dto.setB_content(util.htmlSymbols(dto.getB_content()));
 			
 			// 이전글 / 다음글
 			Map<String, Object> map = new HashMap<String, Object>();

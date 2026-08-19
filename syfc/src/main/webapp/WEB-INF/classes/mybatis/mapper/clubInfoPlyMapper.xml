@@ -41,12 +41,21 @@
 	</select>
 	
 	<select id="findById" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
-		SELECT c.clubowner_key, club_name, club_logo, club_region, club_status,
-			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content,
-			clubjoin_num, position, height, weight, join_date, status
-		FROM Club c
-		LEFT OUTER JOIN Player p ON c.clubowner_key = p.clubowner_key
-		WHERE c.clubowner_key = #{clubowner_key}
+		SELECT clubowner_key, club_name, club_logo, club_region, club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
+		FROM Club 
+		WHERE clubowner_key = #{clubowner_key}
+	</select>
+
+	<select id="listPlayer" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, position, height, weight, join_date, p.status, m.userName,
+			m.userLevel, m.memberIdx, c.club_logo
+		FROM Player p 
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		WHERE p.clubowner_key = #{clubowner_key}
+		ORDER BY p.clubjoin_num
 	</select>
 
 </mapper>

@@ -50,7 +50,7 @@
 	                <td>${dataCount - (page - 1) * size - status.index}</td>
 	                <td class="left">
 	                    <div class="text-wrap">
-	                        <a href="${noticeDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/><c:if test="${dto.replyCount > 0}">(${dto.replyCount})</c:if></a>
+	                        <a href="${boardDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/><c:if test="${dto.replyCount > 0}">(${dto.replyCount})</c:if></a>
 	                    </div>
 	                </td>
 	                <td> ${dto.userName}</td>

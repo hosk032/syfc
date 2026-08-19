@@ -52,4 +52,18 @@ public class ClubInfoPlyserviceImpl implements ClubInfoPlyservice {
 		return dto;
 	}
 
+	@Override
+	public List<ClubInfoPlyDTO> listPlayer(long clubowner_key) {
+	    List<ClubInfoPlyDTO> list = null;
+
+	    try {
+	        list = mapper.listPlayer(clubowner_key);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
+		
+	}
+
 }
