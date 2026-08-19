@@ -1,5 +1,4 @@
 function loadMatchBoardList() {
-
     $.ajax({
         url: contextPath + '/match/boardList',
         type: 'GET',
@@ -261,7 +260,7 @@ function renderApplicantList(applicants, myRequest, board) {
                         data-club-join-num="${player.clubJoin_num}">
 
                         <button type="button" class="btn btn-sm btn-success me-1"
-                            onclick="approvePlayer( ${player.clubJoin_num})">
+                            onclick="approvePlayerRequest( ${player.clubJoin_num})">
                             승인
                         </button>
 
@@ -417,7 +416,7 @@ function cancelMatchPlayer() {
 }
 
 // 구단주 - 선수 승인
-function approvePlayer(clubJoin_num) {
+function approvePlayerRequest(clubJoin_num) {
 
     if(!confirm(
         '이 선수의 참가 신청을 승인하시겠습니까?'

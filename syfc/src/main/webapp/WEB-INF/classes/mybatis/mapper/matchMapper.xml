@@ -98,7 +98,7 @@
         INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
         INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
 
-        WHERE a.status = 3
+        WHERE a.status = 3 AND b.clubOwner_key = #{clubOwnerKey}
         ORDER BY b.cmb_Reg_date DESC
 
     </select>
@@ -127,31 +127,20 @@
 	    FROM clubMatchBoard b
 	
 	    INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
-	
 	    INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
-	
 	    INNER JOIN Club home ON a.clubOwner_key = home.clubOwner_key
-	
 	    LEFT JOIN Club away ON a.clubOwner_key2 = away.clubOwner_key
 	
-	    WHERE b.cmb_num = #{cmb_num}
-	
-	      AND a.apply_id = (
-	          SELECT apply_id
-	          FROM (
-	              SELECT ma.apply_id
-	              FROM Match_Apply ma
-	              WHERE ma.cmb_num = b.cmb_num
-	                AND ma.status IN (1, 3)
-	              ORDER BY
-	                  CASE
-	                      WHEN ma.status = 1 THEN 1
-	                      WHEN ma.status = 3 THEN 2
-	                  END,
-	                  ma.apply_id DESC
-	          )
-	          WHERE ROWNUM = 1
-	      )
+	    WHERE b.cmb_num = #{cmb_num} AND a.status IN (1, 2, 3)
+		ORDER BY
+	        CASE
+	            WHEN a.status = 1 THEN 1
+	            WHEN a.status = 2 THEN 2
+	            WHEN a.status = 3 THEN 3
+	            ELSE 4
+	        END,
+	        a.apply_id DESC
+    	FETCH FIRST 1 ROW ONLY
 	
 	</select>
 

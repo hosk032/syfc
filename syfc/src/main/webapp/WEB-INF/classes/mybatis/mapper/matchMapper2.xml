@@ -165,7 +165,7 @@
             match_type1, match_type2, clubOwner_key2, stadium_fee, cmb_num)
         VALUES (apply_id_seq.NEXTVAL, #{apply_date}, #{apply_time},
             2, NULL, #{stadium_id}, #{clubOwner_key}, #{match_type1},
-            #{match_type2}, #{clubOwner_key2}, #{stadium_fee}, #{cmb_num})
+            #{match_type2}, #{clubOwner_key2}, #{stadium_fee, jdbcType=INTEGER}, #{cmb_num})
     </insert>
     
     

@@ -1,6 +1,7 @@
 package com.syfc.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,34 @@ public class MatchController {
         Map<String, Object> result =new HashMap<>();
 
         try {
+            HttpSession session = req.getSession();
+            SessionInfo info =(SessionInfo) session.getAttribute("member");
+            if (info == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+
+            int memberIdx = info.getMemberIdx();
+            	// 1순위 : 구단주 본인
+            Long clubOwnerKey = service.findOwnerKeyByMemberIdx(memberIdx);
+
+            // 2순위 : 선수 → 소속 구단
+            if (clubOwnerKey == null) {
+                clubOwnerKey = service.findClubOwnerKeyByMemberIdx(memberIdx);
+            }
+
+            if (clubOwnerKey == null) {
+                result.put("success", false);
+                result.put("message", "소속 구단 정보를 찾을 수 없습니다.");
+
+                return result;
+            }
+
             Map<String, Object> param = new HashMap<>();
+
+            param.put("clubOwnerKey", clubOwnerKey);
+
             List<ClubMatchBoardDTO> list = service.listMatchBoard(param);
 
             result.put("success", true);
@@ -210,13 +238,73 @@ public class MatchController {
                 }
 
         }
-        result.put("isOwner", isOwner);
+        // DTO → Map //현재 커스텀 mvc라 json - map 으로만 응답을 보낼 수 있네요
+
+        Map<String, Object> boardMap = new HashMap<>();
+
+        boardMap.put("cmb_num", board.getCmb_num());
+        boardMap.put("cmb_Subject", board.getCmb_Subject());
+        boardMap.put("cmb_Content", board.getCmb_Content());
+        boardMap.put("cmb_HitCount", board.getCmb_HitCount());
+        boardMap.put("cmb_Reg_date", board.getCmb_Reg_date());
+
+        boardMap.put("clubOwner_key", board.getClubOwner_key());
+
+        // Match_Apply
+        boardMap.put("apply_id", board.getApply_id());
+        boardMap.put("apply_date", board.getApply_date());
+        boardMap.put("apply_time", board.getApply_time());
+        boardMap.put("match_status", board.getMatch_status());
+        boardMap.put("cancel_reason", board.getCancel_reason());
+
+        // Stadium
+        boardMap.put("stadium_id", board.getStadium_id());
+        boardMap.put("stadium_name", board.getStadium_name());
+        boardMap.put("region", board.getRegion());
+        boardMap.put("addr1", board.getAddr1());
+        boardMap.put("addr2", board.getAddr2());
+        boardMap.put("zip", board.getZip());
+        boardMap.put("latitude", board.getLatitude());
+        boardMap.put("longitude", board.getLongitude());
+        boardMap.put("capacity", board.getCapacity());
+        boardMap.put("stadium_cost", board.getStadium_cost());
+
+        // 경기 종류
+        boardMap.put("match_type1", board.getMatch_type1());
+        boardMap.put("match_type2", board.getMatch_type2());
+
+        // 홈 / 원정
+        boardMap.put("home_clubOwner_key", board.getHome_clubOwner_key());
+        boardMap.put("home_clubName", board.getHome_clubName());
+        boardMap.put("away_clubOwner_key", board.getAway_clubOwner_key());
+        boardMap.put("away_clubName", board.getAway_clubName());
+
 
         result.put("success", true);
-        result.put("board", board);
-        result.put("applicants", applicants);
+        result.put("board", boardMap);
         result.put("applicantCount", applicantCount);
-        result.put("myRequest", myRequest);
+        result.put("isOwner", isOwner);
+
+        // 현재는 null이어도 됨
+        if (myRequest != null) {
+
+            Map<String, Object> myRequestMap = new HashMap<>();
+
+            myRequestMap.put("clubJoin_num", myRequest.getClubJoin_num());
+            myRequestMap.put("request_date", myRequest.getRequest_date());
+            myRequestMap.put("request_state", myRequest.getRequest_state());
+            myRequestMap.put("request_intro", myRequest.getRequest_intro());
+            myRequestMap.put("reject_reason", myRequest.getReject_reason());
+            myRequestMap.put("request_cancel", myRequest.getRequest_cancel());
+
+            result.put("myRequest", myRequestMap);
+
+        } else {
+
+            result.put("myRequest", null);
+        }
+        
+        result.put("applicants", applicants);
 
         return result;
     }

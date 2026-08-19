@@ -21,6 +21,11 @@ function loadMyMatchApply() {
         dataType: "json",
 
         success: function(res) {
+			console.log("===== myMatchApply 응답 =====");
+			console.log(res);
+			console.log("isOwner:", res.isOwner);
+			console.log("list:", res.list);
+			console.log("list length:", res.list ? res.list.length : null);
 
             if(!res.success) {
                 container.innerHTML = `
@@ -129,29 +134,64 @@ function loadMyMatchApply() {
                 // 수락 / 거절 버튼 표시
                 let opponentButtonHtml = "";
 
-                if(dto.my_team_type === "HOME" &&
-                   dto.opponent_clubOwner_key != null &&
-                   dto.status === 2) {
+				const isOwner = res.isOwner === true;
 
-                    opponentButtonHtml = `
-                        <div class="mt-3 pt-3 border-top">
-                            <div class="d-flex justify-content-end  gap-2">
+				if(isOwner && dto.my_team_type === "HOME") {
 
-                                <button type="button"
-                                    class="btn btn-primary btn-sm px-3"
-                                    onclick="acceptOpponent(${dto.apply_id})">
-                                    수락
-                                </button>
+				    if(dto.status === 2 && dto.opponent_clubOwner_key != null) {
 
-                                <button type="button" class="btn btn-outline-danger btn-sm px-3"
-                                    onclick="rejectOpponent(${dto.apply_id})">
-                                    거절
-                                </button>
+				        opponentButtonHtml = `
+				            <div class="mt-3 pt-3 border-top">
+				                <div class="d-flex justify-content-end gap-2">
 
-                            </div>
+				                    <button type="button"
+				                        class="btn btn-primary btn-sm px-3"
+				                        onclick="acceptOpponent(${dto.apply_id})">
+				                        수락
+				                    </button>
 
-                        </div>`;
-                }
+				                    <button type="button"
+				                        class="btn btn-outline-danger btn-sm px-3"
+				                        onclick="rejectOpponent(${dto.apply_id})">
+				                        거절
+				                    </button>
+
+				                    <button type="button"
+				                        class="btn btn-outline-secondary btn-sm px-3"
+				                        onclick="cancelMatch(${dto.apply_id})">
+				                        매칭 취소
+				                    </button>
+
+				                </div>
+				            </div>`;
+
+				    } else if(dto.status === 3) {
+
+				        opponentButtonHtml = `
+				            <div class="mt-3 pt-3 border-top text-end">
+				                <button type="button"
+				                    class="btn btn-outline-secondary btn-sm px-3"
+				                    onclick="cancelMatch(${dto.apply_id})">
+				                    매칭 취소
+				                </button>
+				            </div>`;
+				    }
+				}
+				
+				//취소버튼
+				let cancelButtonHtml = "";
+
+				if(isOwner &&
+				   dto.my_team_type === "HOME" &&
+				   (dto.status === 2 || dto.status === 3)) {
+
+				    cancelButtonHtml = `
+				        <button type="button"
+				            class="btn btn-outline-secondary btn-sm px-3"
+				            onclick="cancelMatch(${dto.apply_id})">
+				            매칭 취소
+				        </button>`;
+				}
 
                 // 취소사유
                 let cancelReasonHtml = "";
@@ -288,6 +328,7 @@ function loadMyMatchApply() {
 
                         ${cancelReasonHtml}
                         ${opponentButtonHtml}
+						${cancelButtonHtml}
 
                     </div>`;
             });
@@ -393,3 +434,14 @@ function rejectOpponent(applyId) {
         }
     });
 }
+
+
+$(document).on(
+    "shown.bs.tab",
+    '[data-bs-target="#match-history-pane"]',
+    function() {
+
+        loadMyMatchApply();
+
+    }
+);

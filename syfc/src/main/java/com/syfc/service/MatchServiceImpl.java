@@ -209,7 +209,15 @@ public class MatchServiceImpl implements MatchService {
         MatchApplyDTO homeMatch = mapper.findMatchForAwayApply(map);
         if (homeMatch == null) {
             throw new IllegalStateException("신청할 수 있는 매칭이 존재하지 않습니다.");
+        }      
+        
+        Long cmb_num = homeMatch.getCmb_num(); // 기존 경기의 모집글 번호
+        if (cmb_num == null) {
+            throw new IllegalStateException(
+                    "해당 경기의 모집글 번호가 존재하지 않습니다."
+            );
         }
+        map.put("cmb_num", cmb_num); // 이후 countAwayApply()에서 사용할 값
 
         // 자기 구단이 홈팀인 경기인지 확인
         if (homeMatch.getClubOwner_key().equals(awayClubOwnerKey)) {
