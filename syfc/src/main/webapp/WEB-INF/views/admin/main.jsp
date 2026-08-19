@@ -180,20 +180,18 @@
 				<div class="subMenu">
 
 					<button type="button"
-						class="subMenuButton disabledSubButton"
-						disabled>
+						class="subMenuButton"
+						onclick="location.href='${pageContext.request.contextPath}/admin/stadium/list';">
 
-						경기장 등록 / 상태 관리
+						경기장 등록 및 관리
 
 					</button>
 
 
 					<button type="button"
-						class="subMenuButton disabledSubButton"
-						disabled>
-
+						class="subMenuButton"
+						onclick="location.href='${pageContext.request.contextPath}/admin/stadiumIssue/write';">
 						경기장 이슈 관리
-
 					</button>
 
 				</div>

@@ -1,0 +1,366 @@
+@charset "UTF-8";
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #f8f9fa;
+	color: #333;
+}
+
+
+/* =========================================================
+   경기장 이슈 관리 공통
+   ========================================================= */
+
+.issueContainer {
+	width: 100%;
+	max-width: 1024px;
+	margin: 40px auto 60px;
+	padding: 32px;
+	background: #fff;
+	border: 1px solid #e9ecef;
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.issueHeader {
+	margin-bottom: 24px;
+	padding-bottom: 16px;
+	border-bottom: 2px solid #6b4ba1;
+}
+
+.issueTitle {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 800;
+	color: #1a1a1a;
+}
+
+.issueDesc {
+	margin: 6px 0 0;
+	font-size: 14px;
+	color: #868e96;
+}
+
+
+/* =========================================================
+   이슈 등록 폼
+   ========================================================= */
+
+.issueForm {
+	width: 100%;
+}
+
+.formGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px 20px;
+}
+
+.formGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.formGroup.wide {
+	grid-column: 1 / -1;
+}
+
+.formLabel {
+	font-size: 13px;
+	font-weight: 700;
+	color: #495057;
+}
+
+.required {
+	color: #c44550;
+}
+
+.formControl {
+	width: 100%;
+	height: 44px;
+	padding: 0 12px;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	background: #fff;
+	font-size: 14px;
+	outline: none;
+}
+
+.formControl:focus {
+	border-color: #6b4ba1;
+	box-shadow: 0 0 0 3px rgba(107, 75, 161, 0.12);
+}
+
+.textArea {
+	height: 120px;
+	padding: 12px;
+	resize: vertical;
+	line-height: 1.6;
+}
+
+
+/* =========================================================
+   버튼
+   ========================================================= */
+
+.formActions,
+.bottomActions {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 30px;
+}
+
+.btn {
+	height: 44px;
+	padding: 0 24px;
+	border-radius: 9px;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.btnSubmit {
+	border: none;
+	background: #6b4ba1;
+	color: #fff;
+}
+
+.btnSubmit:hover {
+	background: #553982;
+}
+
+.btnCancel {
+	border: 1px solid #dee2e6;
+	background: #fff;
+	color: #6c757d;
+}
+
+
+/* =========================================================
+   등록된 이슈 정보
+   ========================================================= */
+
+.issueInfo {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	margin-bottom: 28px;
+	border-top: 2px solid #454545;
+	border-bottom: 1px solid #e9ecef;
+}
+
+.infoItem {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 58px;
+	padding: 12px 14px;
+	border-bottom: 1px solid #f1f3f5;
+}
+
+.infoItem.wide {
+	grid-column: 1 / -1;
+}
+
+.infoLabel {
+	min-width: 55px;
+	font-size: 13px;
+	font-weight: 700;
+	color: #6b4ba1;
+}
+
+.infoItem strong {
+	font-size: 14px;
+	font-weight: 600;
+	color: #495057;
+	word-break: break-all;
+}
+
+
+/* =========================================================
+   영향 받는 경기 목록
+   ========================================================= */
+
+.resultTitleArea {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.resultTitleArea h3 {
+	margin: 0;
+	font-size: 17px;
+	color: #333;
+}
+
+.resultTitleArea span {
+	font-size: 13px;
+	color: #868e96;
+}
+
+.resultTitleArea strong {
+	color: #6b4ba1;
+}
+
+.tableWrap {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.issueTable {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.issueTable thead {
+	border-top: 2px solid #454545;
+	background: #f8f9fa;
+}
+
+.issueTable th {
+	padding: 14px 10px;
+	font-size: 14px;
+	color: #495057;
+	text-align: center;
+}
+
+.issueTable td {
+	padding: 15px 10px;
+	border-bottom: 1px solid #e9ecef;
+	font-size: 14px;
+}
+
+.issueTable td.center {
+	text-align: center;
+}
+
+.emptyRow {
+	height: 110px;
+	text-align: center;
+	color: #adb5bd;
+}
+
+
+/* =========================================================
+   경기 신청 상태
+   ========================================================= */
+
+.matchStatus {
+	display: inline-block;
+	min-width: 68px;
+	padding: 5px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.matchStatus.rejected {
+	background: #fbeaec;
+	color: #a63d49;
+}
+
+.matchStatus.failed {
+	background: #f1f3f5;
+	color: #6c757d;
+}
+
+.matchStatus.waiting {
+	background: #fff4dc;
+	color: #9a6a10;
+}
+
+.matchStatus.matched {
+	background: #eaf7ef;
+	color: #267448;
+}
+
+.matchStatus.canceled {
+	background: #f1f3f5;
+	color: #868e96;
+}
+
+
+/* =========================================================
+   반려 버튼
+   ========================================================= */
+
+.rejectForm {
+	margin: 0;
+}
+
+.btnReject {
+	height: 34px;
+	padding: 0 14px;
+	border: 1px solid #d96470;
+	border-radius: 7px;
+	background: #fff;
+	color: #b74854;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.btnReject:hover {
+	background: #fff4f5;
+}
+
+.btnReject.disabled {
+	border-color: #dee2e6;
+	background: #f8f9fa;
+	color: #adb5bd;
+	cursor: default;
+}
+
+
+/* =========================================================
+   반응형
+   ========================================================= */
+
+@media (max-width: 820px) {
+
+	.issueContainer {
+		width: auto;
+		margin: 20px 10px 50px;
+		padding: 20px 15px;
+	}
+
+	.formGrid,
+	.issueInfo {
+		grid-template-columns: 1fr;
+	}
+
+	.formGroup.wide,
+	.infoItem.wide {
+		grid-column: auto;
+	}
+
+}
+
+.issueListArea {
+	margin-top: 45px;
+	padding-top: 25px;
+	border-top: 1px solid #e9ecef;
+}
+
+.btnResult {
+	height: 34px;
+	padding: 0 14px;
+	border: 1px solid #6b4ba1;
+	border-radius: 7px;
+	background: #fff;
+	color: #6b4ba1;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.btnResult:hover {
+	background: #faf8fc;
+}
