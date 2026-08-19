@@ -108,14 +108,152 @@
 						</div>
 						<img alt="회전하는 축구공" src="${rotatingBallImage}" class="rotating-ball">
 						
-						<button type="button" id="drawBallBtn" class="draw-ball-btn">⚽공 뽑기</button>
+						<form action="${pageContext.request.contextPath}/player/miniGame" method="post">
+						    <button type="submit" id="drawBallBtn" class="draw-ball-btn">
+						        ⚽ 공 뽑기
+						    </button>
+						</form>
+						
 					</div>
 			</div>
 			
+				<!-- 뽑은 공 이미지 모달 -->
+				<c:url value="/dist/images/minigame/뽑은공이름.png" var="drawBallImage"/>
+				
+				<c:if test="${not empty pickedBall}">
+					<div class="modal fade" id="drawBallModal" tabindex="-1" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5>⚽공 뽑기 결과⚽</h5>
+								</div>
+									
+									
+									<div class="modal-body">
+										<img alt="뽑은 공 이미지" src="${pageContext.request.contextPath}${pickedBall.ball_image}" class="pickBallImage">
+										<p>획득한 공 이름 : ${pickedBall.ball_name}</p>
+										<p>공 등급 : ${pickedBall.ball_grade}</p>
+
+									</div>
+
+									
+									<div class="modal-footer">
+										<button type="button" class="ball-collection-btn" data-bs-toggle="modal" 
+											data-bs-target="#ballCollectionModal" data-bs-dismiss="modal">⚽ 축구공 도감 바로가기 ⚽
+										</button>
+										
+										<button type="button" class="ball-close-btn" data-bs-dismiss="modal">닫기</button>
+										
+									</div>
+		
+							</div>
+	
+						</div>
+					
+					
+					</div>
+				</c:if>
+				<!-- 뽑은 공 이미지 모달 끝 -->
+					
+				<!-- 금일 다시 공뽑기 누를 경우 안내 모달 -->
+				<c:if test="${alreadyPicked}">
+					<div class="modal fade" id="alreadyPickModal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-body">
+								<img src="${pageContext.request.contextPath}/dist/images/minigame/already-picked-mascot.png"
+									alt="축구공을 안고 아쉬워하는 캐릭터" class="already-pick-mascot">
+								<h5>❗오늘은 이미 공을 뽑았습니다</h5>
+								<h5>🥳내일 또 도전해주세요!🥳</h5>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="ball-close-btn" data-bs-dismiss="modal">닫기</button>
+								</div>
+							
+							</div>
+						
+						
+						</div>
+					
+					</div>
+				</c:if>
+				<!-- 안내 모달 끝 -->
+					
+					<!-- 도감 모달 -->
+					<div class="">
+						<div class="modal fade" id="ballCollectionModal" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5>⚽미니게임 축구공 도감⚽</h5>
+														
+									</div>
+									<div class="modal-body">
+									<!-- 획득한 공 이미지 들어갈 곳 -->
+										<div class="ballCollectionImage">
+										
+											<c:choose>
+												<c:when test="${not empty memberBallCollection}">
+												
+													<c:forEach var="collectedBall" items="${memberBallCollection}">
+														<div class="collection-ball-card">
+															<img alt="뽑은 공 이미지" src="${pageContext.request.contextPath}${collectedBall.ball_image}" class="pickBallImage">
+															<p>획득한 공 이름 : ${collectedBall.ball_name}</p>
+															<p>공 등급 : ${collectedBall.ball_grade}</p>
+														</div>
+													</c:forEach>	
+													
+												</c:when>
+												
+												<c:otherwise>
+													<p>아직 획득한 공이 없습니다.</p>
+												</c:otherwise>
+											</c:choose>
+										</div>
+									</div>
+									<div class="modal-footer">
+										
+										<button type="button" class="ball-close-btn" data-bs-dismiss="modal">닫기</button>
+										
+									</div>					
+												
+												
+								</div>
+							</div>
+										
+						</div>
+									
+					</div>
+					<!-- 도감 모달 끝 -->
+
 		</div>
 	</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+
+<c:if test="${not empty pickedBall}">
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(){
+		const modalElement = document.getElementById("drawBallModal");
+		const drawBallModal = new bootstrap.Modal(modalElement);
+		drawBallModal.show();
+	});
+
+</script>
+</c:if>
+
+<c:if test="${alreadyPicked}">
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(){
+		const modalElement = document.getElementById("alreadyPickModal");
+		const alreadyPickModal = new bootstrap.Modal(modalElement);
+		alreadyPickModal.show();
+	});
+</script>
+</c:if>
+
+
+
 </body>
 </html>
