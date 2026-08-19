@@ -1,19 +1,16 @@
 /* ==========================================================================
-   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 함수 스크립트 (v2.5)
+   구단주 마이페이지 (ownerpage.js) 전체 이벤트 및 통합 스크립트
    ========================================================================== */
 
-// 전역 변수: 선택된 경기장 이름 및 타임슬롯 참가 선수 수
 let selectedStadiumName = "쌍용 주 경기장";
 let currentSelectedPlayerCount = 0;
 
-// 페이지 로드 시 부트스트랩 툴팁 및 미리보기 이벤트 활성화
 document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // 엠블럼 파일 입력창 이벤트를 등록
     const logoInput = document.getElementById("uploadLogoInput");
     if (logoInput) {
         logoInput.addEventListener("change", function() {
@@ -22,17 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 라디오 버튼 선택 시 선택된 타임의 인원수를 세팅
 function checkPlayerCount(count) {
     currentSelectedPlayerCount = count;
 }
 
-
 /* ==========================================================================
-   [탭 1] 구단 정보 등록 및 수정 전용
+   [탭 1] 구단 정보 등록 / 수정
    ========================================================================== */
 
-// 구단 엠블럼 이미지 실시간 미리보기
 function previewImage(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -57,7 +51,6 @@ function previewImage(input) {
     }
 }
 
-// 구단 정보 수정 저장
 function saveTeamInfo() {
     const form = document.getElementById("teamEditForm");
     if (form && form.teamName && !form.teamName.value.trim()) {
@@ -71,13 +64,10 @@ function saveTeamInfo() {
     }
 }
 
-
 /* ==========================================================================
-   [탭 2] 구단 경기 이력 / 성적 조회 전용
+   [탭 2] 구단 경기 이력 조회
    ========================================================================== */
 
-// 연도/월/결과별 경기 성적 이력 검색 함수
-// 경기 이력 검색 (AJAX)
 function loadTeamHistory() {
     var year = $('#searchYear').val();
     var month = $('#searchMonth').val();
@@ -88,11 +78,7 @@ function loadTeamHistory() {
     $.ajax({
         url: reqUrl,
         type: 'GET',
-        data: {
-            year: year,
-            month: month,
-            result: result
-        },
+        data: { year: year, month: month, result: result },
         dataType: 'html',
         success: function(data) {
             $('#matchHistoryList').html(data);
@@ -111,93 +97,258 @@ function loadTeamHistory() {
 }
 
 /* ==========================================================================
-   [탭 3] 입단 승인 관리 전용
+   [탭 3] 구단 성적 등록 / 관리 (백엔드 완벽 연동)
    ========================================================================== */
 
-// 입단 승인 처리
-function approvePlayer(name, rowId) {
-    if (confirm(`${name} 선수의 입단을 승인하시겠습니까?\n승인 시 소속 선수 목록으로 이동합니다.`)) {
-        alert(`${name} 선수의 입단 승인이 완료되었습니다.`);
-
-        const row = document.getElementById(`approval-row-${rowId}`);
-        if (row) row.remove();
-
-        updatePendingCount();
-    }
-}
-
-// 입단 거절 모달 열기
-function openRejectModal(name, rowId) {
-    const applicantNameElem = document.getElementById('rejectApplicantName');
-    const targetNameInput = document.getElementById('targetRejectName');
-
-    if (applicantNameElem) applicantNameElem.innerText = name;
-    if (targetNameInput) {
-        targetNameInput.value = name;
-        targetNameInput.setAttribute('data-row-id', rowId);
-    }
-
-    const selectBox = document.getElementById('rejectReasonSelect');
-    if (selectBox) selectBox.value = "정원 초과";
-
-    const textarea = document.getElementById('rejectReasonText');
-    if (textarea) textarea.value = "포지션 정원이 초과되었습니다.";
-
-    const modalElement = document.getElementById('rejectReasonModal');
-    if (modalElement) {
-        const rejectModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        rejectModal.show();
-    }
-}
-
-// 거절 사유 셀렉트 박스 변경 이벤트
-function changeRejectReason(value) {
-    const textarea = document.getElementById('rejectReasonText');
-    const selectBox = document.getElementById('rejectReasonSelect');
-
-    if (!textarea || !selectBox) return;
-
-    if (value === 'custom') {
-        textarea.value = '';
-        textarea.focus();
+// 1. 경기 선택 시 폼 데이터 바인딩
+function selectMatchForRegister(matchNum, matchDate, stadium, homeClub, awayClub, awayLogo) {
+    $('#selectedMatchNum').val(matchNum);
+    $('#regMatchDate').val(matchDate.substring(0, 10));
+    $('#regStadiumName').val(stadium);
+    $('#regAwayClubName').val(awayClub);
+    
+    $('#homeClubTitle').text(homeClub);
+    $('#awayClubTitle').text(awayClub);
+    
+    // 상대팀 로고 유무에 따른 404 안전 처리
+    if (awayLogo && awayLogo !== 'null' && awayLogo !== '') {
+        var logoUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/uploads/club/' + awayLogo;
+        $('#awayEmblem').attr('src', logoUrl).show();
     } else {
-        textarea.value = selectBox.options[selectBox.selectedIndex].text;
+        $('#awayEmblem').attr('src', '').hide();
     }
+
+    $('#regHomeScore').val(0);
+    $('#regAwayScore').val(0);
+
+    $('#formCardTitle').html('<i class="bi bi-plus-circle-fill text-primary me-2"></i>경기 성적 신규 등록');
+    $('#formStatusBadge').attr('class', 'badge bg-primary px-3 py-1 fs-8').text('성적 등록 모드');
+    $('#btnSubmitScore').prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i>성적 등록 완료');
+    $('#btnCancelEdit').removeClass('d-none');
+
+    $('html, body').animate({ scrollTop: $('#team-result-register').offset().top - 100 }, 300);
 }
 
-// 입단 거절 확정 제출
-function submitRejectReason() {
-    const nameInput = document.getElementById('targetRejectName');
-    if (!nameInput) return;
+// 2. 수정 모드 바인딩
+function selectMatchForEdit(matchNum, matchDate, stadium, homeClub, awayClub, homeScore, awayScore, awayLogo) {
+    selectMatchForRegister(matchNum, matchDate, stadium, homeClub, awayClub, awayLogo);
 
-    const name = nameInput.value;
-    const rowId = nameInput.getAttribute('data-row-id');
-    const reasonText = document.getElementById('rejectReasonText');
-    const reason = reasonText ? reasonText.value.trim() : '';
+    $('#regHomeScore').val(homeScore);
+    $('#regAwayScore').val(awayScore);
 
-    if (!reason) {
-        alert('거절 사유를 입력해 주세요.');
-        if (reasonText) reasonText.focus();
+    $('#formCardTitle').html('<i class="bi bi-pencil-square text-warning me-2"></i>경기 성적 수정');
+    $('#formStatusBadge').attr('class', 'badge bg-warning text-dark px-3 py-1 fs-8').text('성적 수정 모드');
+    $('#btnSubmitScore').prop('disabled', false).html('<i class="bi bi-pencil-square me-1"></i>성적 수정 완료');
+}
+
+// 3. 폼 초기화
+function resetResultForm() {
+    $('#teamResultForm')[0].reset();
+    $('#selectedMatchNum').val('');
+    $('#regMatchDate').val('');
+    $('#regStadiumName').val('');
+    $('#regAwayClubName').val('');
+    $('#awayClubTitle').text('상대팀');
+    $('#awayEmblem').attr('src', '').hide();
+    
+    $('#formCardTitle').html('<i class="bi bi-plus-circle-fill text-primary me-2"></i>경기 성적 입력');
+    $('#formStatusBadge').attr('class', 'badge bg-secondary px-3 py-1 fs-8').text('경기를 선택해 주세요');
+    $('#btnSubmitScore').prop('disabled', true).html('<i class="bi bi-check-lg me-1"></i>성적 등록 완료');
+    $('#btnCancelEdit').addClass('d-none');
+}
+
+// 성적 저장 AJAX
+function submitMatchScore() {
+    var matchNum = $('#selectedMatchNum').val();
+    var homeScore = $('#regHomeScore').val();
+    var awayScore = $('#regAwayScore').val();
+
+    if (!matchNum) {
+        alert("성적을 등록할 경기를 아래 목록에서 먼저 선택해 주세요.");
         return;
     }
 
-    if (confirm(`${name} 선수의 입단 신청을 거절하시겠습니까?\n[거절 사유]: ${reason}`)) {
-        alert('입단 거절 처리가 완료되었습니다.');
+    if (homeScore === "" || awayScore === "" || homeScore < 0 || awayScore < 0) {
+        alert("정확한 스코어를 입력해 주세요.");
+        return;
+    }
 
-        const modalElement = document.getElementById('rejectReasonModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
+    if (confirm("경기 성적(스코어)을 저장하시겠습니까?")) {
+        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/saveMatchScore';
 
-        const row = document.getElementById(`approval-row-${rowId}`);
-        if (row) row.remove();
-
-        updatePendingCount();
+        $.ajax({
+            url: reqUrl,
+            type: 'POST',
+            data: { matchNum: matchNum, homeScore: homeScore, awayScore: awayScore },
+            dataType: 'html',
+            success: function(resp) {
+                alert("성적이 성공적으로 저장되었습니다.");
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Score save error:", error);
+                alert("성적 저장 중 오류가 발생했습니다.");
+            }
+        });
     }
 }
 
-// 입단 대기 건수 및 사이드바 뱃지 업데이트
+// 성적 삭제 AJAX
+function deleteMatchScore(matchNum) {
+    if (!matchNum) return;
+
+    if (confirm("등록된 경기 성적을 삭제하시겠습니까?\n삭제 시 스코어가 초기화됩니다.")) {
+        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/deleteMatchScore';
+
+        $.ajax({
+            url: reqUrl,
+            type: 'POST',
+            data: { matchNum: matchNum },
+            dataType: 'html',
+            success: function(resp) {
+                alert("경기 성적이 성공적으로 삭제(초기화)되었습니다.");
+                location.reload(); 
+            },
+            error: function(xhr, status, error) {
+                console.error("Score delete error:", error);
+                alert("성적 삭제 중 오류가 발생했습니다.");
+            }
+        });
+    }
+}
+
+// 6. 목록 비동기 새로고침
+function reloadMatchResultList() {
+    var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/matchResultList';
+
+    $.ajax({
+        url: reqUrl,
+        type: 'GET',
+        dataType: 'html',
+        success: function(htmlData) {
+            $('#team-result-register').html(htmlData);
+        },
+        error: function(xhr, status, error) {
+            console.error("List reload error:", error);
+        }
+    });
+}
+
+/* ==========================================================================
+   [탭 4] 입단 승인 관리 (백엔드 완벽 연동)
+   ========================================================================== */
+
+// 1. 입단 승인 처리 (AJAX)
+function approvePlayerProcess(applyNum, name) {
+    if (!applyNum) {
+        alert("선택된 신청 정보가 없습니다.");
+        return;
+    }
+
+    if (confirm(`${name} 선수의 입단을 승인하시겠습니까?\n승인 시 소속 선수로 정식 등록됩니다.`)) {
+        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/approvePlayer';
+
+        $.ajax({
+            url: reqUrl,
+            type: 'POST',
+            data: { applyNum: applyNum },
+            dataType: 'html',
+            success: function() {
+                alert(`${name} 선수의 입단 승인이 완료되었습니다.`);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Approve error:", error);
+                alert("입단 승인 처리 중 오류가 발생했습니다.");
+            }
+        });
+    }
+}
+
+// 2. 입단 거절 모달 열기
+function openRejectModal(applyNum, name) {
+    if (!applyNum) {
+        alert("선택된 신청 정보가 없습니다.");
+        return;
+    }
+
+    $('#rejectApplyNum').val(applyNum);
+    $('#rejectTargetName').text(name);
+
+    if ($('#rejectReasonSelect').length > 0) {
+        $('#rejectReasonSelect').val('정원 초과');
+    }
+    if ($('#rejectReasonText').length > 0) {
+        $('#rejectReasonText').val('포지션 정원이 초과되었습니다.');
+    }
+
+    var modalElem = document.getElementById('rejectReasonModal');
+    if (modalElem) {
+        var modal = bootstrap.Modal.getInstance(modalElem);
+        if (!modal) {
+            modal = new bootstrap.Modal(modalElem);
+        }
+        modal.show();
+    } else {
+        alert("거절 모달(rejectReasonModal) 요소가 존재하지 않습니다.");
+    }
+}
+
+// 3. 셀렉트 박스 변경 이벤트
+function changeRejectReason(val) {
+    var $text = $('#rejectReasonText');
+    if (!$text.length) return;
+
+    if (val === 'custom') {
+        $text.val('').focus();
+    } else {
+        var selectedText = $('#rejectReasonSelect option:selected').text();
+        $text.val(selectedText);
+    }
+}
+
+// 4. 입단 거절 최종 제출 (AJAX)
+function submitRejectProcess() {
+    var applyNum = $('#rejectApplyNum').val();
+    var reason = $('#rejectReasonText').val();
+
+    if (!reason || !reason.trim()) {
+        alert("거절 사유를 입력해 주세요.");
+        $('#rejectReasonText').focus();
+        return;
+    }
+
+    if (confirm("정말로 입단 신청을 거절하시겠습니까?")) {
+        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/rejectPlayer';
+
+        $.ajax({
+            url: reqUrl,
+            type: 'POST',
+            data: { 
+                applyNum: applyNum, 
+                rejectReason: reason.trim() 
+            },
+            dataType: 'html',
+            success: function() {
+                alert("입단 신청이 성공적으로 거절 처리되었습니다.");
+
+                var modalElem = document.getElementById('rejectReasonModal');
+                if (modalElem) {
+                    var modal = bootstrap.Modal.getInstance(modalElem);
+                    if (modal) modal.hide();
+                }
+
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Reject error:", error);
+                alert("거절 처리 중 오류가 발생했습니다.");
+            }
+        });
+    }
+}
+
+// 5. 입단 대기 건수 UI 업데이트 (동적 제거 시 활용)
 function updatePendingCount() {
     const listBody = document.getElementById('approvalListBody');
     const countBadge = document.getElementById('approvalPendingCount');
@@ -221,24 +372,19 @@ function updatePendingCount() {
     }
 }
 
-
 /* ==========================================================================
-   [탭 4] 소속 선수 목록 전용 (제적 및 필터링)
+   [탭 5] 소속 선수 관리
    ========================================================================== */
 
-// 소속 선수 제적 처리
 function removePlayer(name, rowId) {
     if (confirm(`정말로 ${name} 선수를 구단에서 제적(강퇴)하시겠습니까?\n제적 처리 시 선수 목록에서 즉시 삭제됩니다.`)) {
         alert(`${name} 선수가 제적 처리되었습니다.`);
-
         const row = document.getElementById(`player-row-${rowId}`);
         if (row) row.remove();
-
         updateTotalPlayerCount();
     }
 }
 
-// 전체 선수 수 차감 및 Empty State 체크
 function updateTotalPlayerCount() {
     const listBody = document.getElementById('playerListBody');
     const totalCountElem = document.getElementById('totalPlayerCount');
@@ -260,7 +406,6 @@ function updateTotalPlayerCount() {
     }
 }
 
-// 선수명 및 포지션 실시간 필터링
 function filterPlayerList() {
     const keyword = document.getElementById('searchPlayerKeyword').value.toLowerCase().trim();
     const posFilter = document.getElementById('filterPosition').value;
@@ -281,12 +426,93 @@ function filterPlayerList() {
     });
 }
 
-
 /* ==========================================================================
-   [탭 5] 경기장 예약 & 경기 매칭 / 모집글 작성 전용
+   [탭 6] 개인/선수 평점 & 성적 기록 관리
    ========================================================================== */
 
-// 1. 홈팀 모집 vs 어웨이 참가 모드 전환
+function saveMatchRecord() {
+    const matchDate = document.getElementById('matchDate').value;
+    const playerSelect = document.getElementById('ratingPlayerSelect');
+    const recordIdx = document.getElementById('recordIdx').value;
+
+    if (!matchDate) {
+        alert("경기 일자를 선택해 주세요.");
+        document.getElementById('matchDate').focus();
+        return;
+    }
+
+    if (!playerSelect.value) {
+        alert("대상 선수를 선택해 주세요.");
+        playerSelect.focus();
+        return;
+    }
+
+    const playerName = playerSelect.options[playerSelect.selectedIndex].getAttribute('data-name');
+    const isEdit = recordIdx !== "";
+
+    const confirmMsg = isEdit
+        ? `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 수정하시겠습니까?`
+        : `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 등록하시겠습니까?`;
+
+    if (confirm(confirmMsg)) {
+        alert(isEdit ? "성적이 성공적으로 수정되었습니다." : "성적이 성공적으로 등록되었습니다.");
+        resetRatingForm();
+    }
+}
+
+function editMatchRecord(recordId) {
+    const row = document.getElementById(`record-row-${recordId}`);
+    if (!row) return;
+
+    const date = row.getAttribute('data-date');
+    const playerId = row.getAttribute('data-player-id');
+    const score = row.getAttribute('data-score');
+    const goal = row.getAttribute('data-goal');
+    const assist = row.getAttribute('data-assist');
+    const ownGoal = row.getAttribute('data-owngoal');
+    const yellow = row.getAttribute('data-yellow') === 'true';
+    const red = row.getAttribute('data-red') === 'true';
+    const comment = row.getAttribute('data-comment');
+
+    document.getElementById('recordIdx').value = recordId;
+    document.getElementById('matchDate').value = date;
+    document.getElementById('ratingPlayerSelect').value = playerId;
+    document.getElementById('playerRatingScore').value = score;
+    document.getElementById('statGoal').value = goal;
+    document.getElementById('statAssist').value = assist;
+    document.getElementById('statOwnGoal').value = ownGoal;
+    document.getElementById('statYellowCard').checked = yellow;
+    document.getElementById('statRedCard').checked = red;
+    document.getElementById('statComment').value = comment;
+
+    document.getElementById('ratingFormTitle').innerText = "경기 성적 수정";
+    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-pencil-square me-1"></i>성적 수정 완료`;
+    document.getElementById('btnCancelEdit').classList.remove('d-none');
+
+    document.getElementById('playerRatingForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetRatingForm() {
+    document.getElementById('playerRatingForm').reset();
+    document.getElementById('recordIdx').value = "";
+
+    document.getElementById('ratingFormTitle').innerText = "경기 성적 등록 / 수정";
+    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-check-lg me-1"></i>성적 저장하기`;
+    document.getElementById('btnCancelEdit').addClass('d-none');
+}
+
+function deleteMatchRecord(recordId) {
+    if (confirm("해당 경기 성적 기록을 삭제하시겠습니까?\n삭제된 기록은 복구되지 않습니다.")) {
+        alert("기록이 삭제되었습니다.");
+        const row = document.getElementById(`record-row-${recordId}`);
+        if (row) row.remove();
+    }
+}
+
+/* ==========================================================================
+   [탭 7] 경기장 예약 & 매칭 신청
+   ========================================================================== */
+
 function toggleMatchMode(mode) {
     const homeArea = document.getElementById('homeMatchArea');
     const awayArea = document.getElementById('awayMatchArea');
@@ -306,14 +532,12 @@ function toggleMatchMode(mode) {
     }
 }
 
-// 2. 가능 경기장 조회
 function searchStadiums() {
     const date = document.getElementById('searchDate') ? document.getElementById('searchDate').value : '';
     const region = document.getElementById('searchRegion') ? document.getElementById('searchRegion').value : '';
     alert(`[${region}] ${date} 날짜에 사용 가능한 경기장을 DB에서 불러옵니다.`);
 }
 
-// 3. 경기장 카드 선택 visual Highlight
 function selectStadiumCard(element, name, address, price) {
     const cards = document.querySelectorAll('.stadium-card');
     cards.forEach(card => {
@@ -324,7 +548,6 @@ function selectStadiumCard(element, name, address, price) {
     selectedStadiumName = name;
 }
 
-// 4. 모집글 작성 모달 오픈 및 데이터 연결
 function openMatchPostModal() {
     const date = document.getElementById('searchDate') ? document.getElementById('searchDate').value : '2026-08-20';
     const mainTypeSelect = document.getElementById('matchTypeMain');
@@ -347,7 +570,6 @@ function openMatchPostModal() {
     }
 }
 
-// 5. 모집글 최종 등록 제출
 function submitMatchPost() {
     const titleInput = document.getElementById('postTitle');
     const title = titleInput ? titleInput.value.trim() : '';
@@ -369,7 +591,6 @@ function submitMatchPost() {
     }
 }
 
-// 6. 타임슬롯 선택 후 경기 신청 검증
 function submitMatchBooking() {
     const selectedSlot = document.querySelector('input[name="matchSlot"]:checked');
     if (!selectedSlot) {
@@ -396,9 +617,8 @@ function submitMatchBooking() {
     }
 }
 
-
 /* ==========================================================================
-   [탭 6] 구단주 변경 / 권한 양도 신청 전용
+   [탭 8] 구단주 권한 양도
    ========================================================================== */
 
 function submitOwnerTransfer() {
@@ -438,96 +658,5 @@ function submitOwnerTransfer() {
 
     if (confirm(confirmMessage)) {
         alert(`${selectedName} 선수에게 구단주 권한 양도 신청이 성공적으로 완료되었습니다.\n마이페이지로 이동합니다.`);
-        // 백엔드 연동 시 주석 해제 후 submit
-        // document.getElementById('ownerTransferForm').submit();
-    }
-}
-
-
-/* ==========================================================================
-   [신규 탭] 선수 평점 & 경기 성적 관리 전용 (등록, 수정, 삭제)
-   ========================================================================== */
-
-// 1. 성적 저장 (신규 등록 및 수정 처리)
-function saveMatchRecord() {
-    const matchDate = document.getElementById('matchDate').value;
-    const playerSelect = document.getElementById('ratingPlayerSelect');
-    const recordIdx = document.getElementById('recordIdx').value;
-
-    if (!matchDate) {
-        alert("경기 일자를 선택해 주세요.");
-        document.getElementById('matchDate').focus();
-        return;
-    }
-
-    if (!playerSelect.value) {
-        alert("대상 선수를 선택해 주세요.");
-        playerSelect.focus();
-        return;
-    }
-
-    const playerName = playerSelect.options[playerSelect.selectedIndex].getAttribute('data-name');
-    const isEdit = recordIdx !== "";
-
-    const confirmMsg = isEdit
-        ? `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 수정하시겠습니까?`
-        : `[${matchDate}] ${playerName} 선수의 경기 성적 및 평점을 등록하시겠습니까?`;
-
-    if (confirm(confirmMsg)) {
-        alert(isEdit ? "성적이 성공적으로 수정되었습니다." : "성적이 성공적으로 등록되었습니다.");
-        resetRatingForm();
-    }
-}
-
-// 2. 수정 버튼 클릭 시 목록 데이터를 입력 폼에 바인딩
-function editMatchRecord(recordId) {
-    const row = document.getElementById(`record-row-${recordId}`);
-    if (!row) return;
-
-    const date = row.getAttribute('data-date');
-    const playerId = row.getAttribute('data-player-id');
-    const score = row.getAttribute('data-score');
-    const goal = row.getAttribute('data-goal');
-    const assist = row.getAttribute('data-assist');
-    const ownGoal = row.getAttribute('data-owngoal');
-    const yellow = row.getAttribute('data-yellow') === 'true';
-    const red = row.getAttribute('data-red') === 'true';
-    const comment = row.getAttribute('data-comment');
-
-    document.getElementById('recordIdx').value = recordId;
-    document.getElementById('matchDate').value = date;
-    document.getElementById('ratingPlayerSelect').value = playerId;
-    document.getElementById('playerRatingScore').value = score;
-    document.getElementById('statGoal').value = goal;
-    document.getElementById('statAssist').value = assist;
-    document.getElementById('statOwnGoal').value = ownGoal;
-    document.getElementById('statYellowCard').checked = yellow;
-    document.getElementById('statRedCard').checked = red;
-    document.getElementById('statComment').value = comment;
-
-    document.getElementById('ratingFormTitle').innerText = "경기 성적 수정";
-    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-pencil-square me-1"></i>성적 수정 완료`;
-    document.getElementById('btnCancelEdit').classList.remove('d-none');
-
-    document.getElementById('playerRatingForm').scrollIntoView({ behavior: 'smooth' });
-}
-
-// 3. 수정 취소 / 폼 초기화 (등록 모드로 복귀)
-function resetRatingForm() {
-    document.getElementById('playerRatingForm').reset();
-    document.getElementById('recordIdx').value = "";
-
-    document.getElementById('ratingFormTitle').innerText = "경기 성적 등록 / 수정";
-    document.getElementById('btnSubmitRating').innerHTML = `<i class="bi bi-check-lg me-1"></i>성적 저장하기`;
-    document.getElementById('btnCancelEdit').classList.add('d-none');
-}
-
-// 4. 성적 기록 삭제
-function deleteMatchRecord(recordId) {
-    if (confirm("해당 경기 성적 기록을 삭제하시겠습니까?\n삭제된 기록은 복구되지 않습니다.")) {
-        alert("기록이 삭제되었습니다.");
-
-        const row = document.getElementById(`record-row-${recordId}`);
-        if (row) row.remove();
     }
 }

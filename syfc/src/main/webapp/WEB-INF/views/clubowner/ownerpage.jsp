@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html lang="ko">
@@ -7,9 +6,6 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/dist/css/clubowner/ownerpage.css?v=2.4" />
-<script>
-	const contextPath = "${pageContext.request.contextPath}";
-</script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body class="bg-light">
@@ -94,13 +90,11 @@
 							data-bs-toggle="list"> <i class="bi bi-shield-shaded me-2"></i>구단
 							등록 / 수정
 						</a>
-						<!-- [수정] 구단 경기 이력 -->
 						<a href="#team-history"
 							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-journal-text me-2"></i>구단
 							경기 이력
 						</a>
-						<!-- [신규] 구단 성적 등록 / 조회 -->
 						<a href="#team-result-register"
 							class="list-group-item list-group-item-action rounded-3 mb-1"
 							data-bs-toggle="list"> <i class="bi bi-pencil-square me-2"></i>구단
@@ -146,7 +140,6 @@
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_team_edit.jsp" />
 					<jsp:include
 						page="/WEB-INF/views/clubowner/tab/tab_team_history.jsp" />
-					<!-- [신규] 구단 성적 등록/조회 탭 Include 추가 -->
 					<jsp:include
 						page="/WEB-INF/views/clubowner/tab/tab_team_result_register.jsp" />
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_approval.jsp" />
@@ -164,7 +157,7 @@
 		</div>
 	</div>
 
-	<!-- 입단 거절 모달 생략 (동일) -->
+	<!-- 입단 거절 모달 -->
 	<div class="modal fade" id="rejectReasonModal" tabindex="-1"
 		aria-hidden="true">...</div>
 
@@ -172,7 +165,6 @@
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
 
-	<!-- 기존 v=2.4 또는 v=2.5 에서 v=3.0 으로 변경 -->
 <script src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.0"></script>
 </body>
 </html>

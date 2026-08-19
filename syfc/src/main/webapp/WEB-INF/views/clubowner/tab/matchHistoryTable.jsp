@@ -14,9 +14,6 @@
 				<c:when test="${dto.matchTime == 2}">
 					<span class="badge bg-light text-dark border ms-1">오후 (14:00 ~ 17:00)</span>
 				</c:when>
-				<c:otherwise>
-					<span class="badge bg-light text-dark border ms-1">야간 (18:00 ~ 21:00)</span>
-				</c:otherwise>
 			</c:choose>
 		</td>
 		<td class="fw-semibold">${dto.stadiumName}</td>
