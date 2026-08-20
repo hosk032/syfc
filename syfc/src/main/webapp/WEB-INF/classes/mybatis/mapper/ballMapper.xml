@@ -22,5 +22,14 @@
 		FROM Ball
 		WHERE ball_idx = #{ball_idx}
 	</select>
+	
+	<!-- 사용자가 뽑을 수 있는 공 목록 -->
+	<select id="findEligibleBalls" parameterType="int" resultType="com.syfc.dto.BallDTO">
+		SELECT ball_idx, ball_name, ball_image, 
+		    ball_grade, ball_rating, required_match_count
+		FROM Ball 
+		WHERE required_match_count &lt;= #{playedMatchCount} AND is_active = 1
+		ORDER BY ball_idx
+	</select>
 
 </mapper>

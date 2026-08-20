@@ -1,5 +1,7 @@
 package com.syfc.service;
 
+import java.util.List;
+
 import com.syfc.dto.BallDTO;
 import com.syfc.mapper.BallMapper;
 import com.syfc.mybatis.support.MapperContainer;
@@ -17,6 +19,12 @@ public class BallServiceImpl implements BallService {
 	public BallDTO findBallByIdx(long ball_idx) {
 		
 		return mapper.findBallByIdx(ball_idx);
+	}
+
+	@Override
+	public List<BallDTO> findEligibleBalls(int playedMatchCount) {
+		
+		return mapper.findEligibleBalls(playedMatchCount);
 	}
 
 }

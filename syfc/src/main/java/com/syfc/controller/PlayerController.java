@@ -262,20 +262,74 @@ public class PlayerController {
 		// 회원 정보 가져오기
 		long memberIdx = info.getMemberIdx();
 		
-		MemberBallpickDTO dto = new MemberBallpickDTO();
-		
-		dto.setMemberIdx(memberIdx);
-		
-		// 테스트용 블루공번호
-		dto.setBall_idx(5);
-		
 		// 오늘 뽑기 횟수 확인하기
 		int todayPickCount = memberBallPickService.countTodayPick(memberIdx);
 		
+		// 이미 뽑은 공이 있으면 리다이렉트
 		if(todayPickCount > 0) {
 			session.setAttribute("alreadyPicked", true);
 			return new ModelAndView("redirect:/player/miniGame");
 		}
+		
+		MemberBallpickDTO dto = new MemberBallpickDTO();
+		dto.setMemberIdx(memberIdx);
+		
+		// 회원경기 횟수 - 미니게임: 경기 3회 이상시 레어공 확률 배분
+		int playedMatchCount = matchHistoryService.countPlayedMatches(memberIdx);
+		
+		// 테스트용 블루공번호
+		// dto.setBall_idx(5);
+		
+		
+		// 경기 참여 횟수 조회
+		// 뽑기에 나올 후보 공 목록들 
+		List<BallDTO> eligibleBalls = ballService.findEligibleBalls(playedMatchCount);
+
+		// 조회된 후보 공 목록이 비어 있는지 확인
+		// 비어 있다면 활성화된 공 데이터가 없는 상황
+		if(eligibleBalls == null || eligibleBalls.isEmpty()) {
+			
+			return new ModelAndView("redirect:/player/miniGame");
+		}
+		
+		// 모든 후보 공의 rating 총 합 계산
+		int totalRating = 0;
+		
+		// 후보 공들의 ball_rating 값을 이용해 확률 랜덤 선택
+		// eligibleBalls : 뽑기 가능한 후보 공 목록
+		// 전체확률 += 공 추첨확률
+		for(BallDTO ball : eligibleBalls) {
+			totalRating += ball.getBall_rating();
+		}
+		// NORMAL or RARE 중 하나이니까
+		// 두가지 경우의 수를 더해줘서 확률을 높여줌 
+		
+		// 랜덤 돌리기
+		// 확률이 10, 2 같은 정수라서 int 로 돌린다
+		int randomNumber = (int)(Math.random() * totalRating) + 1;
+		
+		// cumulativeRating : 반복하면서 누적하는 확률 범위
+		int cumulativeRating = 0; // = offset
+		// 랜덤 숫자에 해당하는 볼
+		BallDTO selectedBall = null;
+		
+		// 후보 공들을 다시 한번 반복
+		// 랜덤 숫자에 해당하는 selectBall을 찾는용
+		for(BallDTO ball : eligibleBalls) {
+			cumulativeRating += ball.getBall_rating();
+			
+			// 만약에 랜덤 번호가 누적하는 확률 범위보다
+			// 작거나 같으면
+			                          
+			if(randomNumber <= cumulativeRating) {
+				// 현재 반복중인 공
+				selectedBall = ball;
+				break;
+			}
+		}
+		
+		// selectBall 의 ball_idx를 dto 에 저장
+		dto.setBall_idx(selectedBall.getBall_idx());
 
 		memberBallPickService.insertMemberBallPick(dto);
 		
@@ -308,6 +362,7 @@ public class PlayerController {
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		List<MatchRecordDTO> list = matchRecordService.listMatchRecord(info.getMemberIdx());
+		
 		
 		ModelAndView mav = new ModelAndView("player/rating");
 		mav.addObject("list", list);
