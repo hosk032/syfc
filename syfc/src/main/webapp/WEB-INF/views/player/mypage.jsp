@@ -63,9 +63,8 @@
 
 					<!-- 대분류 4 -->
 					<div class="list-group-item bg-light fw-bold">경기 신청</div>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a> 
-					<a href="#" class="list-group-item list-group-item-action ps-4">신청 경기 조회</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 신청 수정/취소</a> 
+					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a> 
+		
 				</div>
 			</div>
 

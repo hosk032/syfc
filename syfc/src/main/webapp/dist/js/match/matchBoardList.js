@@ -438,6 +438,14 @@ function approvePlayerRequest(clubJoin_num) {
             alert(res.message);
 
             if(res.success) {
+				//(모달창 끈 후 배경 먹통되는 현상 해결)데이터를 새로 그리기 전에 현재 열려있는 모달을 완전히 숨기기
+				const modalEl = document.getElementById('matchBoardDetailModal');
+				const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+				modalInstance.hide();      
+				//혹시 몰라서: 부트스트랩 버전이나 환경에 따라 백드롭이 남는 현상 방지
+				$('.modal-backdrop').remove();
+				$('body').removeClass('modal-open').css('overflow', '');
+				
                 reloadMatchDetail();
             }
         }
@@ -469,6 +477,14 @@ function rejectPlayer(clubJoin_num) {
             alert(res.message);
 
             if(res.success) {
+
+				const modalEl = document.getElementById('matchBoardDetailModal');
+				const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+				modalInstance.hide();      
+
+				$('.modal-backdrop').remove();
+				$('body').removeClass('modal-open').css('overflow', '');
+				
                 reloadMatchDetail();
             }
         }
@@ -544,3 +560,19 @@ function escapeHtml(value) {
         .text(value)
         .html();
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const detailModal = document.getElementById('matchBoardDetailModal');
+    
+    if (detailModal) {
+        detailModal.addEventListener('hidden.bs.modal', function () {
+            // 남아있는 백드롭(회색 막) 모두 제거
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+            // body에 남아있는 모달용 스타일 및 클래스 정상화
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        });
+    }
+});

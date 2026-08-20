@@ -311,13 +311,15 @@ public class MatchController {
 
     @PostMapping("request")
     @ResponseBody // 3. 선수 참가신청
-    public Map<String, Object> request(
-            Long cmb_num, String request_intro, HttpServletRequest req) {
+    public Map<String, Object> request(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
 
         HttpSession session = req.getSession();
         SessionInfo info =(SessionInfo) session.getAttribute("member");
+        
+        String request_intro = req.getParameter("request_intro");
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
 
         if (info == null) {
             result.put("success", false);
@@ -366,13 +368,15 @@ public class MatchController {
     	
     @PostMapping("requestCancel")
     @ResponseBody // 4. 선수 참가신청 취소
-    public Map<String, Object> requestCancel
-    	(Long cmb_num, String request_cancel, HttpServletRequest req) {
+    public Map<String, Object> requestCancel(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
         
         HttpSession session = req.getSession();
         SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        String request_cancel = req.getParameter("request_cancel");
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
 
         if (info == null) {
             result.put("success", false);
@@ -408,13 +412,15 @@ public class MatchController {
     
     @PostMapping("approveRequest")
     @ResponseBody // 5. 구단주 - 선수 승인
-    public Map<String, Object> approveRequest(
-            Long cmb_num, Long clubJoin_num, HttpServletRequest req) {
+    public Map<String, Object> approveRequest(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
 
         HttpSession session = req.getSession();
         SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
+        Long clubJoin_num = Long.parseLong(req.getParameter("clubJoin_num"));
 
         if (info == null) {
             result.put("success", false);
@@ -441,13 +447,16 @@ public class MatchController {
     
     @PostMapping("rejectRequest")
     @ResponseBody // 6. 구단주 - 선수 반려
-    public Map<String, Object> rejectRequest( Long cmb_num, Long clubJoin_num, 
-    		String reject_reason, HttpServletRequest req) {
+    public Map<String, Object> rejectRequest(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
 
         HttpSession session = req.getSession();
         SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        String reject_reason = req.getParameter("reject_reason");
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
+        Long clubJoin_num = Long.parseLong(req.getParameter("clubJoin_num"));
 
         if (info == null) {
             result.put("success", false);
@@ -474,14 +483,17 @@ public class MatchController {
     }
 
     @PostMapping("cancelMatch")
-    @ResponseBody  // 7. 구단주 - 모집글/매칭 취소
+    @ResponseBody  // 7. 구단주 - 모집글에서 매칭 취소
     public Map<String, Object> cancelMatch(
-            Long cmb_num, String cancel_reason, HttpServletRequest req) {
-
+    		HttpServletRequest req, HttpServletResponse resp) {
+    
         Map<String, Object> result = new HashMap<>();
 
         HttpSession session = req.getSession();
         SessionInfo info = (SessionInfo) session.getAttribute("member");
+        
+        String cancel_reason = req.getParameter("cancel_reason");
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
 
         if (info == null) {
             result.put("success", false);
