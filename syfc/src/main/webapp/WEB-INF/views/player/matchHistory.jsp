@@ -22,10 +22,20 @@
 		<!-- 상단 간단 요약 프로필 바 -->
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
-				<img src="${pageContext.request.contextPath}/dist/images/user.png" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+				<div class="summary-profile-box me-3">
+					<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}"
+						class="summary-profile-image" alt="프로필 이미지" />
+
+					<c:if test="${not empty mainBall}">
+						<div class="summary-main-ball">
+							<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
+						</div>
+					</c:if>
+				</div>
+				
 				<div>
 					<h5 class="mb-1">
-						<strong>홍길동</strong> 님 환영합니다!
+						<strong>${sessionScope.member.userName}</strong> 님 환영합니다!
 					</h5>
 					<span class="badge bg-primary">구단주</span>
 					<!-- 등급 표시 -->
@@ -43,12 +53,12 @@
 
 					<!-- 대분류 1 -->
 					<div class="list-group-item bg-light fw-bold">내 프로필</div>
-					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4 active">프로필 등록/수정</a> 
-					<a href="${pageContext.request.contextPath}/player/todo" class="list-group-item list-group-item-action ps-4">투두리스트</a>
+					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4">프로필 등록/수정</a> 
+					<a href="${pageContext.request.contextPath}/player/miniGame" class="list-group-item list-group-item-action ps-4">미니게임</a>
 
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
-					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4">내 경기 참가 이력</a>
+					<a href="${pageContext.request.contextPath}/player/matchHistory" class="list-group-item list-group-item-action ps-4 active">내 경기 참가 이력</a>
 					<a href="${pageContext.request.contextPath}/player/playerProfile" class="list-group-item list-group-item-action ps-4">내 선수 프로필</a>
 					<a href="${pageContext.request.contextPath}/player/rating" class="list-group-item list-group-item-action ps-4">내 경기 성적</a>
 
@@ -61,10 +71,7 @@
 					<a href="${pageContext.request.contextPath}/player/clubOwnerRequestHistory" class="list-group-item list-group-item-action ps-4">구단주 신청 결과 조회/취소</a>
 
 					<!-- 대분류 4 -->
-					<div class="list-group-item bg-light fw-bold">경기 신청</div>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a> 
-					<a href="#" class="list-group-item list-group-item-action ps-4">신청 경기 조회</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 신청 수정/취소</a> 
+					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a>
 				</div>
 			</div>
 		

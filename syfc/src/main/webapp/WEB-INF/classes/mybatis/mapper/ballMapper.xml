@@ -31,5 +31,17 @@
 		WHERE required_match_count &lt;= #{playedMatchCount} AND is_active = 1
 		ORDER BY ball_idx
 	</select>
-
+	
+	<!-- 프로필 대표 공 지정 -->
+	<insert id="insertProfileBall" parameterType="com.syfc.dto.MemberBallmainDTO">
+		INSERT INTO MemberBall_main(memberIdx, ball_idx)
+			VALUES(#{memberIdx}, #{ball_idx})
+	</insert>
+	
+	<!-- 대표공 변경 시 업데이트 -->
+	<update id="updateProfileBall" parameterType="com.syfc.dto.MemberBallmainDTO">
+		UPDATE MemberBall_main SET ball_idx = #{ball_idx}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+	
 </mapper>
