@@ -49,13 +49,48 @@
 
 	<select id="listPlayer" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
 		SELECT p.clubjoin_num, position, height, weight, join_date, p.status, m.userName,
-			m.userLevel, m.memberIdx, c.club_logo
+			m.userLevel, m.memberIdx, c.club_logo, m2.profile_photo, pr.rating
 		FROM Player p 
 		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
 		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
-		JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
 		WHERE p.clubowner_key = #{clubowner_key}
 		ORDER BY p.clubjoin_num
+	</select>
+	
+	<select id="findClubOwner" parameterType="Long" resultType="String">
+		SELECT userName
+		FROM Player p 
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		WHERE p.clubowner_key = #{clubowner_key} AND userLevel = 50
+	</select>
+
+	<select id="listPlayerInfo" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
+			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status,
+			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
+		WHERE p.clubowner_key = #{clubowner_key}
+	</select>
+	
+	<select id="getclubowner" parameterType="Long" resultType="Long">
+		SELECT p.clubowner_key
+	    FROM Player p
+	    JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
+	    WHERE cj.memberIdx = #{memberIdx}
+	    FETCH FIRST 1 ROWS ONLY
 	</select>
 
 </mapper>

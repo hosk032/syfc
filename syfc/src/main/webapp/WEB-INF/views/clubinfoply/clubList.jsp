@@ -25,22 +25,18 @@
 					<c:when test="${not empty list}">
 						<c:forEach var="dto" items="${list}" varStatus="status">
 							<a href="${clubInfoUrl}&clubowner_key=${dto.clubowner_key}" class="club-item-card">
-								<!-- 구단 로고 불러오기 -->
 						        <div class="club-logo-wrapper">
 						            <c:choose>
-						                <%-- DB에 저장된 club_logo 파일명이 존재하는 경우 --%>
 						                <c:when test="${not empty dto.club_logo}">
 									        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
 									             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
 									             alt="${dto.club_name}">
 									    </c:when>
-						                <%-- DB에 club_logo가 null이거나 비어있을 경우 기본 이미지 출력 --%>
 						                <c:otherwise>
 										    <span class="club-default-logo">⚽</span>
 										</c:otherwise>
 									</c:choose>
 						        </div>
-								<!-- 구단 이름 & 소개 -->
 								<div class="club-info-wrapper">
 									<div class="club-name"><c:out value="${dto.club_name}"/></div>
 									<div class="club-intro-summary">

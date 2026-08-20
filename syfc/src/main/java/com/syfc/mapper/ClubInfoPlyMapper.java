@@ -12,4 +12,8 @@ public interface ClubInfoPlyMapper {
 	
 	public ClubInfoPlyDTO findById(long clubowner_key);
 	public List<ClubInfoPlyDTO> listPlayer(long clubowner_key);
+	public String findClubOwner(long clubowner_key);
+	
+	public List<ClubInfoPlyDTO> listPlayerInfo(Long clubowner_key);
+	public Long getclubowner(long memberIdx);
 }

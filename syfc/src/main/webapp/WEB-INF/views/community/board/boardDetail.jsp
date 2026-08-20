@@ -45,10 +45,7 @@
 
             <div class="detail-top">
                 <h3>자유 게시판</h3>
-                <a href="${pageContext.request.contextPath}/community/board/boardList"
-                   class="list-btn">
-                    목록
-                </a>
+                <a href="${pageContext.request.contextPath}/community/board/boardList"class="list-btn"> 목록</a>
 
             </div>
 
@@ -166,22 +163,13 @@
                     </div>
 
                     <div class="detail-actions-right">
-                        <button type="button"
-                                class="btn btn-light"
-                                onclick="location.href='${pageContext.request.contextPath}/community/board/boardList?${query}';">
-                            리스트
-                        </button>
-
+                        <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/boardList?${query}';">리스트</button>
                     </div>
-
                 </div>
 
             </div>
 
-            <div id="replyArea"
-                 data-bnum="${dto.bnum}">
-            </div>
-
+            <div id="replyArea" data-bnum="${dto.bnum}"></div>
         </section>
     </div>
 

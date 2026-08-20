@@ -1,0 +1,108 @@
+@charset "UTF-8";
+
+/* ==========================================
+   포지션 요약 카드 영역
+========================================== */
+.play-container {
+	max-width : 1024px;
+	margin: 0 auto;
+}
+
+.position-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    background-color: #f9f9fb;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.summary-card .count {
+    font-size: 18px;
+    color: #222;
+}
+
+/* ==========================================
+   포지션 뱃지 디자인
+========================================== */
+.pos-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    min-width: 45px;
+}
+
+.pos-fw { background-color: #e63946; } /* 공격수: 빨강 */
+.pos-mf { background-color: #2a9d8f; } /* 미드필더: 초록 */
+.pos-df { background-color: #457b9d; } /* 수비수: 파랑 */
+.pos-gk { background-color: #e9c46a; color: #333; } /* 골키퍼: 노랑 */
+.pos-etc { background-color: #6c757d; }
+
+/* ==========================================
+   선수 테이블 상세 스타일ing
+========================================== */
+.player-backno {
+    font-size: 16px;
+    font-weight: 800;
+    color: #8a60ba; /* 메인 퍼플 포인트컬러 */
+}
+
+.player-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e2e2e2;
+    background-color: #fff;
+}
+
+.player-stat {
+    font-size: 13px;
+    color: #444;
+    font-weight: 500;
+}
+
+/* ==========================================
+   선수 상태(활동중/부상/휴식) 뱃지
+========================================== */
+.status-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 11px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.status-active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-injured {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status-inactive {
+    background-color: #f5f5f5;
+    color: #616161;
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+    .position-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

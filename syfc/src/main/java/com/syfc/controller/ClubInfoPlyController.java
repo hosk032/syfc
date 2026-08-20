@@ -139,9 +139,11 @@ public class ClubInfoPlyController {
 			}
 			
 			List<ClubInfoPlyDTO> playerList = service.listPlayer(clubowner_key);
+			String ownerName = service.findClubOwner(clubowner_key);
 			
 			mav.addObject("dto", dto);
 			mav.addObject("playerList", playerList);
+			mav.addObject("ownerName", ownerName);
 	        mav.addObject("page", page);
 	        mav.addObject("clubowner_key", clubowner_key);
 	        mav.addObject("schType", schType);
@@ -155,6 +157,55 @@ public class ClubInfoPlyController {
 		
 		 return new ModelAndView("redirect:/clubinfoply/clubList");
 	}
+	
+	@GetMapping("playerInfo")
+	public ModelAndView playerInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if (info == null) {
+	        return new ModelAndView("redirect:/member/login");
+	    }
+		
+		ModelAndView mav = new ModelAndView("clubinfoply/playerInfo");
+		
+		try {
+			Long clubowner_key = service.getclubowner(info.getMemberIdx());
+			
+			if (clubowner_key != null && clubowner_key > 0L) {
+				List<ClubInfoPlyDTO> list = service.listPlayerInfo(clubowner_key);
+				
+				int fwCount = 0, mfCount = 0, dfCount = 0, gkCount = 0;
+				if(list != null) {
+					for(ClubInfoPlyDTO dto : list) {
+						if("FW".equalsIgnoreCase(dto.getPosition())) fwCount++;
+						else if("MF".equalsIgnoreCase(dto.getPosition())) mfCount++;
+						else if("DF".equalsIgnoreCase(dto.getPosition())) dfCount++;
+						else if("GK".equalsIgnoreCase(dto.getPosition())) gkCount++;
+					}
+				}
+		        
+		        mav.addObject("list", list);
+		        mav.addObject("fwCount", fwCount);
+		        mav.addObject("mfCount", mfCount);
+		        mav.addObject("dfCount", dfCount);
+		        mav.addObject("gkCount", gkCount);
+		        mav.addObject("clubowner_key", clubowner_key);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	   
+		return mav;
+    }
+	
+	@GetMapping("playerList")
+    public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+        return new ModelAndView("clubinfoply/playerList");
+    }
+	
 	
 	
 }

@@ -83,8 +83,8 @@
 					</div>
 					<div class="dropdown-column">
 						<a href="${pageContext.request.contextPath}/clubinfoply/clubList">구단 정보</a> 
-						<a href="#">소속 선수들의 정보</a> 
-						<a href="#">선수 정보</a>
+						<a href="${pageContext.request.contextPath}/clubinfoply/playerInfo">소속 선수들의 정보</a> 
+						<a href="${pageContext.request.contextPath}/clubinfoply/playerList">선수 정보</a>
 					</div>
 				</div>
 			</div>
