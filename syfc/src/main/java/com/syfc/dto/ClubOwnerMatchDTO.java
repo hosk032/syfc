@@ -10,8 +10,8 @@ public class ClubOwnerMatchDTO implements Serializable {
 	private Long matchNum; // 경기 번호(PK)
 	private String matchDate; // 경기 날짜 (YYYY-MM-DD)
 	private int matchTime; // 경기 시간 (1: 오전 / 2: 오후 등)
-	private int homeScore; // 홈팀 점수
-	private int awayScore; // 원정팀 점수
+	private Integer homeScore; // 홈팀 점수
+	private Integer awayScore; // 원정팀 점수
 	private Long applyId; // 경기 신청 번호(FK)
 
 	// 2. 경기장 테이블 (Stadium)
@@ -31,9 +31,8 @@ public class ClubOwnerMatchDTO implements Serializable {
 	private String matchResult; // 경기 결과 (승리 / 무승부 / 패배)
 
 	/*
-	 * [추후 기능 구현 예정 - 모달 상세조회 전용] 
-	 * - 경기장 사진 , 경기장 위치 , 홈팀 사진 , 원정팀 사진 ,
-	 * - 득점 시간대 , 득점 선수 , 경기날짜 
+	 * [추후 기능 구현 예정 - 모달 상세조회 전용] - 경기장 사진 , 경기장 위치 , 홈팀 사진 , 원정팀 사진 , - 득점 시간대 , 득점
+	 * 선수 , 경기날짜
 	 */
 
 	// 기본 생성자
@@ -64,19 +63,19 @@ public class ClubOwnerMatchDTO implements Serializable {
 		this.matchTime = matchTime;
 	}
 
-	public int getHomeScore() {
+	public Integer getHomeScore() {
 		return homeScore;
 	}
 
-	public void setHomeScore(int homeScore) {
+	public void setHomeScore(Integer homeScore) {
 		this.homeScore = homeScore;
 	}
 
-	public int getAwayScore() {
+	public Integer getAwayScore() {
 		return awayScore;
 	}
 
-	public void setAwayScore(int awayScore) {
+	public void setAwayScore(Integer awayScore) {
 		this.awayScore = awayScore;
 	}
 

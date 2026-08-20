@@ -5,56 +5,95 @@
    ========================================================================== */
 
 /* 1. 공통 요소 & 유틸리티 */
-.cursor-pointer { cursor: pointer; }
-.extra-small { font-size: 0.78rem; }
-.fs-7 { font-size: 0.82rem; }
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.extra-small {
+	font-size: 0.78rem;
+}
+
+.fs-7 {
+	font-size: 0.82rem;
+}
 
 /* 2. 상단 프로필 바 */
 .owner-profile-icon {
-    width: 64px;
-    height: 64px;
-    font-size: 28px;
+	width: 64px;
+	height: 64px;
+	font-size: 28px;
 }
 
 /* 3. 사이드바 (LNB) */
 .owner-sidebar-card {
-    top: 20px;
+	top: 20px;
 }
 
 /* 4. [탭 1] 구단 정보 등록 / 수정 */
 .emblem-wrapper {
-    width: 80px;
-    height: 80px;
+	width: 80px;
+	height: 80px;
 }
+
 .emblem-icon {
-    font-size: 32px;
+	font-size: 32px;
 }
+
 .emblem-camera-btn {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
+	width: 26px;
+	height: 26px;
+	font-size: 12px;
 }
 
 /* 5. [탭 2] 경기 이력 / 성적 */
-.select-year-width { width: 110px; }
-.select-month-width { width: 100px; }
-.select-result-width { width: 110px; }
-.th-date-width { width: 140px; }
-.th-score-width { width: 110px; }
-.th-result-width { width: 90px; }
+.select-year-width {
+	width: 110px;
+}
+
+.select-month-width {
+	width: 100px;
+}
+
+.select-result-width {
+	width: 110px;
+}
+
+.th-date-width {
+	width: 140px;
+}
+
+.th-score-width {
+	width: 110px;
+}
+
+.th-result-width {
+	width: 90px;
+}
+/* [추가] 경기 이력 행 마우스오버 시 포인터 변경 */
+.table-hover tbody tr.match-row:hover {
+	cursor: pointer;
+	background-color: rgba(0, 123, 255, 0.03) !important;
+	/* 은은한 파란빛 배경 효과 */
+}
 
 /* 6. [탭 3] 입단 승인 관리 & [탭 4] 소속 선수 목록 */
-.msg-truncate-width { max-width: 220px; }
+.msg-truncate-width {
+	max-width: 220px;
+}
 
 /* 7. [탭 5] 경기장 예약 & 매칭 */
 .match-header-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+	width: 48px;
+	height: 48px;
+	font-size: 20px;
 }
 
 /* 8. [탭 6] 구단주 변경 신청 */
-.transfer-form-max-width { max-width: 550px; }
+.transfer-form-max-width {
+	max-width: 550px;
+}
 
 /* 9. 공통 모달 스타일 */
-.modal-score-select { max-width: 200px; }
+.modal-score-select {
+	max-width: 200px;
+}

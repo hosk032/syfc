@@ -22,7 +22,7 @@
 			TO_CHAR(club_created, 'YYYY-MM-DD') AS club_created,
 			club_content
 		FROM club
-		WHERE clubOwner_key = #{clubOwnerKey}
+		WHERE clubOwner_key = #{clubOwn	erKey}
 	</select>
 
 	<!-- 2. 구단 정보 수정 -->

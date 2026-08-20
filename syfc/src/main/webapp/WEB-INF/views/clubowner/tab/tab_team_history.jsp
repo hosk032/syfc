@@ -6,7 +6,7 @@
 		<div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
 			<div>
 				<h5 class="fw-bold mb-1">경기 이력 및 전적</h5>
-				<p class="text-muted small mb-0">우리 팀의 누적 매치 통계 및 경기 결과 조회</p>
+				<p class="text-muted small mb-0">우리 팀의 누적 매치 통계 및 경기 결과 조회 (행 클릭 시 상세 기록 확인)</p>
 			</div>
 		</div>
 
@@ -74,15 +74,12 @@
 					</tr>
 				</thead>
 				<tbody class="small" id="matchHistoryList">
-					<!-- JSTL을 통한 실제 DB 데이터 출력 -->
 					<c:forEach var="dto" items="${matchList}">
-						<tr>
+						<!-- 행 클릭 시 모달 오픈 함수 호출 및 마우스 포인터 스타일 적용 -->
+						<tr class="cursor-pointer match-row" onclick="openMatchDetailModal('${dto.matchNum}')">
 							<td class="text-muted">
-								<!-- 1. 날짜문자열 YYYY-MM-DD 만 잘라서 출력 -->
 								<c:set var="mDate" value="${dto.matchDate}" />
 								${mDate.substring(0, 10)} 
-								
-								<!-- 2. matchTime 값에 따른 오전/오후 분기 처리 -->
 								<c:choose>
 									<c:when test="${dto.matchTime == 1}">
 										<span class="badge bg-light text-dark border ms-1">오전 (09:00 ~ 12:00)</span>
@@ -90,9 +87,6 @@
 									<c:when test="${dto.matchTime == 2}">
 										<span class="badge bg-light text-dark border ms-1">오후 (14:00 ~ 17:00)</span>
 									</c:when>
-									<c:otherwise>
-										<span class="badge bg-light text-dark border ms-1">야간 (18:00 ~ 21:00)</span>
-									</c:otherwise>
 								</c:choose>
 							</td>
 							<td class="fw-semibold">${dto.stadiumName}</td>
@@ -101,7 +95,6 @@
 							</td>
 							<td class="fw-bold fs-6 text-primary">${dto.homeScore} : ${dto.awayScore}</td>
 							<td>
-								<!-- 승/무/패 판정 배지 -->
 								<c:choose>
 									<c:when test="${dto.homeScore > dto.awayScore}">
 										<span class="badge bg-primary px-3 py-1">승리</span>
@@ -117,7 +110,6 @@
 						</tr>
 					</c:forEach>
 
-					<!-- 경기 이력이 없을 경우 처리 -->
 					<c:if test="${empty matchList}">
 						<tr>
 							<td colspan="5" class="py-5 text-center text-muted">

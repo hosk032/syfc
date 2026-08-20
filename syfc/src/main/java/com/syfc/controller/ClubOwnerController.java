@@ -8,7 +8,7 @@ import java.util.Map;
 import com.syfc.dto.ClubApprovalDTO;
 import com.syfc.dto.ClubDTO;
 import com.syfc.dto.ClubOwnerMatchDTO;
-import com.syfc.dto.ClubOwnerPlayerDTO; // [추가] 소속 선수 DTO
+import com.syfc.dto.ClubOwnerPlayerDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.mvc.annotation.Controller;
 import com.syfc.mvc.annotation.GetMapping;
@@ -19,8 +19,8 @@ import com.syfc.service.ClubApprovalService;
 import com.syfc.service.ClubApprovalServiceImpl;
 import com.syfc.service.ClubOwnerMatchService;
 import com.syfc.service.ClubOwnerMatchServiceImpl;
-import com.syfc.service.ClubOwnerPlayerService; // [추가] 소속 선수 서비스
-import com.syfc.service.ClubOwnerPlayerServiceImpl; // [추가] 소속 선수 서비스 구현체
+import com.syfc.service.ClubOwnerPlayerService;
+import com.syfc.service.ClubOwnerPlayerServiceImpl;
 import com.syfc.service.ClubOwnerService;
 import com.syfc.service.ClubOwnerServiceImpl;
 
@@ -33,262 +33,348 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/clubowner/*")
 public class ClubOwnerController {
 
-    private ClubOwnerService service = new ClubOwnerServiceImpl();
-    private ClubOwnerMatchService matchService = new ClubOwnerMatchServiceImpl();
-    private ClubApprovalService approvalService = new ClubApprovalServiceImpl(); // 추가된 입단 승인 서비스
-    private ClubOwnerPlayerService playerService = new ClubOwnerPlayerServiceImpl(); // [추가] 소속 선수 관리 서비스
+	private ClubOwnerService service = new ClubOwnerServiceImpl();
+	private ClubOwnerMatchService matchService = new ClubOwnerMatchServiceImpl();
+	private ClubApprovalService approvalService = new ClubApprovalServiceImpl();
+	private ClubOwnerPlayerService playerService = new ClubOwnerPlayerServiceImpl();
 
-    // 1. 구단주 메인 페이지
-    @GetMapping("ownerpage")
-    public ModelAndView ownerPage(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+	// 1. 구단주 메인 페이지
+	@GetMapping("ownerpage")
+	public ModelAndView ownerPage(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
 
-        if (info == null) {
-            return new ModelAndView("redirect:/member/login");
-        }
+		if (info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
 
-        try {
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            req.setAttribute("club", clubDto);
+		try {
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			req.setAttribute("club", clubDto);
 
-            if (clubDto != null) {
-                // 경기 목록 조회
-                List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
-                req.setAttribute("matchList", matchList);
+			if (clubDto != null) {
+				Long clubOwnerKey = clubDto.getClubOwner_key();
 
-                // [추가] 입단 신청 대기 목록 조회 (status = 2)
-                List<ClubApprovalDTO> approvalList = approvalService.getPendingApprovalList(clubDto.getClubOwner_key());
-                req.setAttribute("approvalList", approvalList);
-                req.setAttribute("pendingCount", approvalList != null ? approvalList.size() : 0);
-                
-                // [추가] 구단 소속 선수 목록 기본 조회 (메인 또는 탭 진입 시 활용)
-                ClubOwnerPlayerDTO playerParams = new ClubOwnerPlayerDTO();
-                playerParams.setClubOwner_key(clubDto.getClubOwner_key());
-                List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(playerParams);
-                req.setAttribute("playerList", playerList);
-                req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+				// 경기 목록 조회
+				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubOwnerKey);
+				req.setAttribute("matchList", matchList);
+				// 승 / 무 / 패 전적 자동 집계 로직
+				int wins = 0;
+				int losses = 0;
+				int draws = 0;
+				if (matchList != null) {
+					for (ClubOwnerMatchDTO match : matchList) {
+						if (match.getHomeScore() != null && match.getAwayScore() != null) {
+							int myScore = match.getHomeScore();
+							int opScore = match.getAwayScore();
 
-        return new ModelAndView("clubowner/ownerpage");
-    }
+							if (myScore > opScore) {
+								wins++;
+							} else if (myScore < opScore) {
+								losses++;
+							} else {
+								draws++;
+							}
+						}
+					}
+				}
 
-    // 2. 경기 이력 검색 (AJAX)
-    @GetMapping("searchMatchHistory")
-    public ModelAndView searchMatchHistory(HttpServletRequest req, HttpServletResponse resp) 
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+				req.setAttribute("wins", wins);
+				req.setAttribute("draws", draws);
+				req.setAttribute("losses", losses);
 
-        try {
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            if (clubDto != null) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("clubOwnerKey", clubDto.getClubOwner_key());
-                map.put("year", req.getParameter("year"));
-                map.put("month", req.getParameter("month"));
-                map.put("result", req.getParameter("result"));
+				// 입단 신청 대기 목록 조회
+				List<ClubApprovalDTO> approvalList = approvalService.getPendingApprovalList(clubOwnerKey);
+				req.setAttribute("approvalList", approvalList);
+				req.setAttribute("pendingCount", approvalList != null ? approvalList.size() : 0);
 
-                List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchListByMap(map);
-                req.setAttribute("matchList", matchList);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ModelAndView("clubowner/tab/matchHistoryTable");
-    }
+				// 구단 소속 선수 목록 조회
+				ClubOwnerPlayerDTO playerParams = new ClubOwnerPlayerDTO();
+				playerParams.setClubOwner_key(clubOwnerKey);
+				List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(playerParams);
+				req.setAttribute("playerList", playerList);
 
-    // 3. 구단 정보 수정
-    @PostMapping("update")
-    public ModelAndView updateClubInfo(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        // ... 기존 구단 정보 수정 로직 동일 ...
-        return new ModelAndView("redirect:/clubowner/ownerpage");
-    }
+				// 소속 선수 총원 세팅
+				req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
 
-    // 4. 구단주 성적 관리 - 완료된 매치 목록 조회
-    @GetMapping("matchResultList")
-    public ModelAndView getMatchResultList(HttpServletRequest req, HttpServletResponse resp) 
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+				// 구단 평균 평점 실제 DB 조회 연동
+				Double avgRating = playerService.getClubAverageRating(clubOwnerKey);
+				req.setAttribute("avgRating", avgRating != null ? avgRating : 0.0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        try {
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            if (clubDto != null) {
-                List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
-                req.setAttribute("club", clubDto);
-                req.setAttribute("matchList", matchList);
-            }
-        } catch (Exception e) {}
+		return new ModelAndView("clubowner/ownerpage");
+	}
 
-        return new ModelAndView("clubowner/tab/tab_team_result_register");
-    }
+	// 2. 경기 이력 검색 (AJAX)
+	@GetMapping("searchMatchHistory")
+	public ModelAndView searchMatchHistory(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
 
-    // 5. 구단 성적 등록 및 수정 (POST - AJAX)
-    @PostMapping("saveMatchScore")
-    public ModelAndView saveMatchScore(HttpServletRequest req, HttpServletResponse resp) 
-            throws ServletException, IOException {
+		try {
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			if (clubDto != null) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("clubOwnerKey", clubDto.getClubOwner_key());
+				map.put("year", req.getParameter("year"));
+				map.put("month", req.getParameter("month"));
+				map.put("result", req.getParameter("result"));
 
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchListByMap(map);
+				req.setAttribute("matchList", matchList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("clubowner/tab/matchHistoryTable");
+	}
 
-        try {
-            String matchNum = req.getParameter("matchNum");
-            String homeScore = req.getParameter("homeScore");
-            String awayScore = req.getParameter("awayScore");
+	// [수정] 경기 상세 기록 모달 내용 조회 (스포츠 스코어보드 스타일 디자인 적용)
+	@GetMapping("matchDetailModal")
+	public void matchDetailModal(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null) {
+			resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
 
-            if (matchNum != null && homeScore != null && awayScore != null) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("matchNum", Long.parseLong(matchNum));
-                map.put("homeScore", Integer.parseInt(homeScore));
-                map.put("awayScore", Integer.parseInt(awayScore));
-                matchService.updateMatchScore(map);
-            }
+		resp.setContentType("text/html; charset=UTF-8");
 
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            if (clubDto != null) {
-                List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
-                req.setAttribute("club", clubDto);
-                req.setAttribute("matchList", matchList);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			String matchNumStr = req.getParameter("matchNum");
+			if (matchNumStr != null) {
+				Long matchNum = Long.parseLong(matchNumStr);
 
-        return new ModelAndView("clubowner/tab/tab_team_result_register");
-    }
+				StringBuilder html = new StringBuilder();
+				// 1. 상단 매치 요약 배너 (스코어보드 느낌)
+				html.append("<div class='p-2'>");
+				html.append("  <div class='bg-light p-3 rounded-3 text-center mb-4 border'>");
+				html.append("    <div class='text-muted small fw-bold mb-1'>2026-08-01 · 쌍용 주 경기장</div>");
+				html.append(
+						"    <div class='d-flex align-items-center justify-content-center gap-3 fs-5 fw-bold text-dark'>");
+				html.append("      <span>울산 HD FC</span>");
+				html.append("      <span class='text-primary fs-4 px-2'>4 : 3</span>");
+				html.append("      <span>전북 현대 모터스</span>");
+				html.append("    </div>");
+				html.append("  </div>");
 
-    // 6. 구단 성적 삭제/초기화 (POST - AJAX)
-    @PostMapping("deleteMatchScore")
-    public ModelAndView deleteMatchScore(HttpServletRequest req, HttpServletResponse resp) 
-            throws ServletException, IOException {
+				// 2. 출전 선수 평점 및 기록 테이블
+				html.append("  <div class='d-flex justify-content-between align-items-center mb-2'>");
+				html.append(
+						"    <h6 class='fw-bold mb-0 text-dark'><i class='bi bi-people-fill me-1 text-primary'></i> 출전 선수 평점 및 기록</h6>");
+				html.append("    <span class='text-muted small'>매치 ID: ").append(matchNum).append("</span>");
+				html.append("  </div>");
 
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+				html.append("  <div class='table-responsive'>");
+				// 테이블 전체 너비를 100%로 잡고, 컬럼별 비율을 조정합니다.
+				html.append(
+						"    <table class='table table-hover align-middle text-center small border mb-0' style='width: 100%; table-layout: fixed;'>");
+				html.append("      <thead class='table-light text-muted'>");
+				html.append("        <tr>");
+				html.append("          <th style='width: 12%'>포지션</th>");
+				html.append("          <th style='width: 15%'>선수명</th>");
+				html.append("          <th style='width: 13%'>평점</th>");
+				html.append("          <th style='width: 20%'>득점/도움</th>");
+				html.append("          <th style='width: 15%'>카드</th>");
+				html.append("          <th style='width: 25%' class='text-start ps-3'>평가 코멘트</th>"); // 코멘트 헤더 왼쪽 정렬
+				html.append("        </tr>");
+				html.append("      </thead>");
+				html.append("      <tbody>");
 
-        try {
-            String matchNum = req.getParameter("matchNum");
-            if (matchNum != null) {
-                matchService.deleteMatchScore(Long.parseLong(matchNum));
-            }
+				// [추가 예정 데이터 영역]
+				html.append("        <tr>");
+				html.append(
+						"          <td><span class='badge bg-secondary-subtle text-secondary border'>FW</span></td>");
+				html.append("          <td class='fw-semibold'>손흥민</td>");
+				html.append("          <td class='text-warning fw-bold'>⭐ 5.0</td>");
+				html.append("          <td><span class='text-danger fw-bold'>2득점</span> / 0도움</td>");
+				html.append("          <td><span class='badge bg-warning text-dark'>경고</span></td>");
+				// 코멘트 셀에 text-start와 ps-3(padding-start)를 주어 간격을 확보했습니다.
+				html.append("          <td class='text-muted text-start text-truncate ps-3'>골 결정력 탁월</td>");
+				html.append("        </tr>");
 
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            if (clubDto != null) {
-                List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
-                req.setAttribute("club", clubDto);
-                req.setAttribute("matchList", matchList);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+				html.append("      </tbody>");
+				html.append("    </table>");
+				html.append("  </div>");
+				html.append("</div>");
+				resp.getWriter().write(html.toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp.getWriter().write("<p class='text-danger text-center'>데이터를 불러오는 중 오류가 발생했습니다.</p>");
+		}
+	}
 
-        return new ModelAndView("clubowner/tab/tab_team_result_register");
-    }
+	// 3. 구단 정보 수정 (POST)
+	@PostMapping("update")
+	public ModelAndView updateClubInfo(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
 
-    // 7. [추가] 입단 신청 승인 처리 (POST - AJAX)
-    @PostMapping("approvePlayer")
-    public ModelAndView approvePlayer(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+	// 4. 구단 성적 관리 목록 조회
+	@GetMapping("matchResultList")
+	public ModelAndView getMatchResultList(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
 
-        try {
-            String applyNumStr = req.getParameter("applyNum");
-            if (applyNumStr != null) {
-                Long applyNum = Long.parseLong(applyNumStr);
-                approvalService.approvePlayer(applyNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ModelAndView("redirect:/clubowner/ownerpage");
-    }
+		try {
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			if (clubDto != null) {
+				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
+				req.setAttribute("club", clubDto);
+				req.setAttribute("matchList", matchList);
+			}
+		} catch (Exception e) {
+		}
 
-    // 8. [추가] 입단 신청 거절 처리 (POST - AJAX)
-    @PostMapping("rejectPlayer")
-    public ModelAndView rejectPlayer(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+		return new ModelAndView("clubowner/tab/tab_team_result_register");
+	}
 
-        try {
-            String applyNumStr = req.getParameter("applyNum");
-            String rejectReason = req.getParameter("rejectReason");
-            if (applyNumStr != null) {
-                Long applyNum = Long.parseLong(applyNumStr);
-                approvalService.rejectPlayer(applyNum, rejectReason);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ModelAndView("redirect:/clubowner/ownerpage");
-    }
+	// 5. 성적 등록/수정 (POST-AJAX)
+	@PostMapping("saveMatchScore")
+	public ModelAndView saveMatchScore(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
 
-    // ==========================================
-    // ⚽ [추가] 소속 선수 조회 및 제적 관리 관련 메서드
-    // ==========================================
+		try {
+			String matchNum = req.getParameter("matchNum");
+			String homeScore = req.getParameter("homeScore");
+			String awayScore = req.getParameter("awayScore");
 
-    // 9. [추가] 소속 선수 목록 조회 (검색 및 포지션 필터링 포함 - AJAX)
-    @GetMapping("playerList")
-    public ModelAndView getPlayerList(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+			if (matchNum != null && homeScore != null && awayScore != null) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("matchNum", Long.parseLong(matchNum));
+				map.put("homeScore", Integer.parseInt(homeScore));
+				map.put("awayScore", Integer.parseInt(awayScore));
+				matchService.updateMatchScore(map);
+			}
 
-        try {
-            ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
-            if (clubDto != null) {
-                String userName = req.getParameter("userName");
-                String position = req.getParameter("position");
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			if (clubDto != null) {
+				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
+				req.setAttribute("club", clubDto);
+				req.setAttribute("matchList", matchList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-                ClubOwnerPlayerDTO params = new ClubOwnerPlayerDTO();
-                params.setClubOwner_key(clubDto.getClubOwner_key());
-                params.setUserName(userName);
-                params.setPosition(position);
+		return new ModelAndView("clubowner/tab/tab_team_result_register");
+	}
 
-                List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(params);
-                req.setAttribute("playerList", playerList);
-                req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	// 6. 성적 삭제 (POST-AJAX)
+	@PostMapping("deleteMatchScore")
+	public ModelAndView deleteMatchScore(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
 
-        // 소속 선수 목록을 렌더링할 탭/테이블 JSP 경로 (프로젝트 구조에 맞게 수정 가능)
-        return new ModelAndView("clubowner/tab/tab_player_list");
-    }
+		try {
+			String matchNum = req.getParameter("matchNum");
+			if (matchNum != null) {
+				matchService.deleteMatchScore(Long.parseLong(matchNum));
+			}
 
-    // 10. [추가] 소속 선수 제적(강퇴) 처리 (POST - AJAX)
-    @PostMapping("removePlayer")
-    public ModelAndView removePlayer(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        SessionInfo info = (SessionInfo) session.getAttribute("member");
-        if (info == null) return new ModelAndView("redirect:/member/login");
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			if (clubDto != null) {
+				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
+				req.setAttribute("club", clubDto);
+				req.setAttribute("matchList", matchList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        try {
-            String clubJoinNumStr = req.getParameter("clubJoinNum");
-            if (clubJoinNumStr != null) {
-                Long clubJoinNum = Long.parseLong(clubJoinNumStr);
-                playerService.removePlayer(clubJoinNum);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		return new ModelAndView("clubowner/tab/tab_team_result_register");
+	}
 
-        return new ModelAndView("redirect:/clubowner/ownerpage");
-    }
+	// 7. 입단 승인 (POST-AJAX)
+	@PostMapping("approvePlayer")
+	public ModelAndView approvePlayer(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			String applyNum = req.getParameter("applyNum");
+			if (applyNum != null)
+				approvalService.approvePlayer(Long.parseLong(applyNum));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
+
+	// 8. 입단 거절 (POST-AJAX)
+	@PostMapping("rejectPlayer")
+	public ModelAndView rejectPlayer(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			String applyNum = req.getParameter("applyNum");
+			String reason = req.getParameter("rejectReason");
+			if (applyNum != null)
+				approvalService.rejectPlayer(Long.parseLong(applyNum), reason);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
+
+	// 9. 소속 선수 조회 (AJAX)
+	@GetMapping("playerList")
+	public ModelAndView getPlayerList(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
+
+		try {
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+			if (clubDto != null) {
+				ClubOwnerPlayerDTO params = new ClubOwnerPlayerDTO();
+				params.setClubOwner_key(clubDto.getClubOwner_key());
+				params.setUserName(req.getParameter("userName"));
+				params.setPosition(req.getParameter("position"));
+
+				List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(params);
+				req.setAttribute("playerList", playerList);
+				req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("clubowner/tab/tab_player_list");
+	}
+
+	// 10. 소속 선수 제적 (POST-AJAX)
+	@PostMapping("removePlayer")
+	public ModelAndView removePlayer(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			String num = req.getParameter("clubJoinNum");
+			if (num != null)
+				playerService.removePlayer(Long.parseLong(num));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
 }
