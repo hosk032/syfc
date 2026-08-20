@@ -35,4 +35,16 @@ public class ClubOwnerPlayerServiceImpl implements ClubOwnerPlayerService {
 		}
 		return result;
 	}
+
+	@Override
+	public Double getClubAverageRating(Long clubOwnerKey) throws Exception {
+		Double avgRating = 0.0;
+		try {
+			avgRating = mapper.getClubAverageRating(clubOwnerKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// 평점 데이터가 없거나 null일 경우 안전하게 0.0 반환
+		return avgRating != null ? avgRating : 0.0;
+	}
 }

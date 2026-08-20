@@ -16,9 +16,11 @@
 		m.userName,
 		m.memberIdx
 		FROM Player p
-		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num
+		JOIN clubJoin cj ON p.clubJoin_num =
+		cj.clubJoin_num
 		JOIN member1 m ON cj.memberIdx = m.memberIdx
-		WHERE p.clubOwner_key = #{clubOwner_key}
+		WHERE
+		p.clubOwner_key = #{clubOwner_key}
 		AND p.status = '1' <!-- 정상 소속 선수 -->
 
 		<!-- 선수명 검색 필터 -->
@@ -37,9 +39,19 @@
 	<!-- 선수 제적(강퇴) 처리 -->
 	<update id="deletePlayer" parameterType="Long">
 		UPDATE Player
-		SET status = '0',
+		SET status
+		= '0',
 		leave_date = SYSDATE
 		WHERE clubJoin_num = #{clubJoin_num}
 	</update>
+
+	<!-- 구단 소속 선수들의 평균 평점 조회 -->
+	<select id="getClubAverageRating" parameterType="Long"
+		resultType="Double">
+		SELECT ROUND(AVG(pr.rating), 1) AS avgRating
+		FROM Player_Record pr
+		JOIN Player p ON pr.clubJoin_num = p.clubJoin_num
+		WHERE p.clubOwner_key = #{clubOwnerKey} AND p.status = '1'
+	</select>
 
 </mapper>

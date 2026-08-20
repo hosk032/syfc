@@ -22,7 +22,6 @@
 			<div
 				class="card-body p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
 				<div class="d-flex align-items-center">
-					<!-- 구단 로고 -->
 					<div class="me-3">
 						<c:choose>
 							<c:when test="${not empty club.club_logo}">
@@ -52,18 +51,19 @@
 				</div>
 				<div class="d-none d-md-flex gap-4 text-center border-start ps-4">
 					<div>
-						<div class="fs-4 fw-bold text-dark">${empty record.totalPlayers ? 0 : record.totalPlayers}명</div>
+						<div class="fs-4 fw-bold text-dark">${empty playerCount ? 0 : playerCount}명</div>
 						<div class="extra-small text-muted">소속 선수</div>
 					</div>
 					<div>
 						<div class="fs-4 fw-bold">
-							<span class="text-primary">${empty record.wins ? 0 : record.wins}승</span>
-							<span class="text-danger">${empty record.losses ? 0 : record.losses}패</span>
+							<span class="text-primary">${empty wins ? 0 : wins}승</span> <span
+								class="text-success">${empty draws ? 0 : draws}무</span> <span
+								class="text-danger">${empty losses ? 0 : losses}패</span>
 						</div>
 						<div class="extra-small text-muted">최근 전적</div>
 					</div>
 					<div>
-						<div class="fs-4 fw-bold text-warning">⭐ ${empty record.avgRating ? '0.0' : record.avgRating}</div>
+						<div class="fs-4 fw-bold text-warning">⭐ ${empty avgRating ? '0.0' : avgRating}</div>
 						<div class="extra-small text-muted">구단 평점</div>
 					</div>
 				</div>
@@ -174,7 +174,6 @@
 						<strong id="rejectTargetName" class="text-dark"></strong> 선수의 입단
 						신청을 거절합니다. 거절 사유는 신청자에게 안내됩니다.
 					</p>
-					<!-- AJAX 수신용 Hidden Input -->
 					<input type="hidden" id="rejectApplyNum" value="">
 
 					<div class="mb-3">
@@ -203,11 +202,28 @@
 		</div>
 	</div>
 
+	<!-- [추가] 경기 상세 이력 조회 모달 -->
+	<div class="modal fade" id="matchDetailModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content border-0 shadow rounded-4">
+				<div class="modal-header border-bottom pb-3">
+					<h6 class="modal-title fw-bold text-dark">
+						<i class="bi bi-journal-richtext text-primary me-2"></i>경기 상세 선수 기록
+					</h6>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-4" id="matchDetailContent">
+					<!-- AJAX를 통해 해당 경기의 선수별 득점/어시스트 상세 내용이 여기에 로드됩니다 -->
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
 
 	<script
-		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.0"></script>
+		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.1"></script>
 </body>
 </html>

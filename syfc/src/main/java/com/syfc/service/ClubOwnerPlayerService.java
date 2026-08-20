@@ -9,4 +9,7 @@ public interface ClubOwnerPlayerService {
 
     // 선수 제적(강퇴) 처리
     int removePlayer(Long clubJoinNum);
+    
+    // 구단 평균 평점 조회
+    Double getClubAverageRating(Long clubOwnerKey) throws Exception;
 }
