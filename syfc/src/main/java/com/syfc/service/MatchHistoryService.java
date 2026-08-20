@@ -6,4 +6,6 @@ import com.syfc.dto.MatchHistoryDTO;
 
 public interface MatchHistoryService {
 	List<MatchHistoryDTO> listMatchHistory(long memberIdx);
+	
+	public int countPlayedMatches(long memeberIdx);
 }

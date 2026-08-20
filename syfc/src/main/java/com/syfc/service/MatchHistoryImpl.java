@@ -15,4 +15,10 @@ public class MatchHistoryImpl implements MatchHistoryService{
 		return mapper.listMatchHistory(memberIdx);
 	}
 
+	@Override
+	public int countPlayedMatches(long memeberIdx) {
+		
+		return mapper.countPlayedMatches(memeberIdx);
+	}
+
 }

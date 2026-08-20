@@ -14,5 +14,14 @@
 		JOIN match m ON m.match_num = pr.match_num
 		WHERE cj.memberIdx = #{memberIdx}
 	</select>
+	
+	<!-- 미니게임: 선수가 경기한 횟수 조회(레어공 확률 배분 분류시 필요) -->
+	<select id="countPlayedMatches" parameterType="long" resultType="int">
+		SELECT COUNT(DISTINCT pr.match_num) AS played_match_count
+		FROM Player_Record pr
+		JOIN clubJoin cj ON cj.clubJoin_num = pr.clubJoin_num
+		JOIN match m ON m.match_num = pr.match_num
+		WHERE cj.memberIdx = #{memberIdx} AND m.match_date &lt; TRUNC(SYSDATE)
+	</select>
 
 </mapper>

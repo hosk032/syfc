@@ -198,7 +198,7 @@
 													<c:forEach var="collectedBall" items="${memberBallCollection}">
 														<div class="collection-ball-card">
 															<img alt="뽑은 공 이미지" src="${pageContext.request.contextPath}${collectedBall.ball_image}" class="pickBallImage">
-															<p>획득한 공 이름 : ${collectedBall.ball_name}</p>
+															<p>공 이름 : ${collectedBall.ball_name}</p>
 															<p>공 등급 : ${collectedBall.ball_grade}</p>
 														</div>
 													</c:forEach>	
