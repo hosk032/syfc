@@ -1,5 +1,6 @@
 package com.syfc.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,13 +8,16 @@ import java.util.Map;
 import com.syfc.dto.MatchApplyDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.mvc.annotation.Controller;
+import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.annotation.RequestMethod;
 import com.syfc.mvc.annotation.ResponseBody;
+import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.MatchService;
 import com.syfc.service.MatchServiceImpl;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -269,7 +273,7 @@ public class MatchController2 {
     }
 
 
-    @ResponseBody // 4. 매칭 취소
+    @ResponseBody // 4. 탭3 경기이력에서 매칭 취소
     @RequestMapping(value = "cancelMatch", method = RequestMethod.POST)
     public Map<String, Object> cancelMatch(HttpServletRequest req, HttpServletResponse resp) {
     	
@@ -462,5 +466,12 @@ public class MatchController2 {
 
         return result;
     }
+    
+    
+	@GetMapping("playermatchtab")
+	public ModelAndView loginForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 선수의 경기신청/이력 페이지로 이동
+		return new ModelAndView("match/fragment/player/tab_match_apply_player");
+	}
 
 }

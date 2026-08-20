@@ -43,7 +43,7 @@
 					<!-- 대분류 1 -->
 					<div class="list-group-item bg-light fw-bold">내 프로필</div>
 					<a href="${pageContext.request.contextPath}/player/mypage"  class="list-group-item list-group-item-action ps-4">프로필 등록/수정</a> 
-					<a href="${pageContext.request.contextPath}/player/miniGame" class="list-group-item list-group-item-action ps-4">미니게임</a>
+					<a href="${pageContext.request.contextPath}/player/todo" class="list-group-item list-group-item-action ps-4">투두리스트</a>
 
 					<!-- 경기 참가신청 조회 항목에서 신청한 경기 수정/취소 -->
 					<div class="list-group-item bg-light fw-bold">경기</div>
@@ -60,57 +60,15 @@
 
 					<!-- 대분류 4 -->
 					<div class="list-group-item bg-light fw-bold">경기 신청</div>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a> 
-					<a href="#" class="list-group-item list-group-item-action ps-4">신청 경기 조회</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 신청 수정/취소</a> 
+					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4 active">경기 참가 신청/이력</a> 
+		
 				</div>
 			</div>
 		
 		<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 		<div class="col-md-9">
 			<div class="card p-4">
-			
-			<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
-
-					<h4 class="border-bottom pb-2 mb-4">경기 참가신청 결과조회</h4>
-					<div class="table-responsive">
-						<table class="table table-hover text-center align-middle">
-							<thead class="table-light">
-								<tr>
-									<th>신청일</th>
-									<th>경기장</th>
-									<th>매치 구분</th>
-									<th>상대 구단</th>
-									<th>신청 상태</th>
-								</tr>
-							</thead>
-
-							<tbody>
-								<tr>
-									<td>2026-08-10</td>
-									<td>쌍용 풋살장</td>
-									<td>풋살</td>
-									<td>FC 쌍용</td>
-									<td><span class="apply-status status-pending">대기</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-08</td>
-									<td>강남 축구장</td>
-									<td>축구</td>
-									<td>강남 유나이티드</td>
-									<td><span class="apply-status status-approved">승인</span></td>
-								</tr>
-								<tr>
-									<td>2026-08-05</td>
-									<td>역삼 풋살장</td>
-									<td>풋살</td>
-									<td>FC 서울</td>
-									<td><span class="apply-status status-rejected">반려</span></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</form>
+				<jsp:include page="/WEB-INF/views/match/fragment/player/tab_match_apply_player.jsp" />
 			</div>
 			
 		</div>

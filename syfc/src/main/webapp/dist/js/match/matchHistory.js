@@ -1,8 +1,19 @@
 // 3번탭 우리 구단 홈/원정 경기신청 이력
+if (typeof escapeHtml !== 'function') {
+    window.escapeHtml = function(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+}
 
 function loadMyMatchApply() {
 
-    const container = document.getElementById("matchHistoryList");
+    const container = document.getElementById("matchHistoryList1");
 
     if(!container) {
         return;
@@ -21,11 +32,6 @@ function loadMyMatchApply() {
         dataType: "json",
 
         success: function(res) {
-			console.log("===== myMatchApply 응답 =====");
-			console.log(res);
-			console.log("isOwner:", res.isOwner);
-			console.log("list:", res.list);
-			console.log("list length:", res.list ? res.list.length : null);
 
             if(!res.success) {
                 container.innerHTML = `
@@ -177,21 +183,6 @@ function loadMyMatchApply() {
 				            </div>`;
 				    }
 				}
-				
-				//취소버튼
-				let cancelButtonHtml = "";
-
-				if(isOwner &&
-				   dto.my_team_type === "HOME" &&
-				   (dto.status === 2 || dto.status === 3)) {
-
-				    cancelButtonHtml = `
-				        <button type="button"
-				            class="btn btn-outline-secondary btn-sm px-3"
-				            onclick="cancelMatch(${dto.apply_id})">
-				            매칭 취소
-				        </button>`;
-				}
 
                 // 취소사유
                 let cancelReasonHtml = "";
@@ -327,8 +318,7 @@ function loadMyMatchApply() {
                         </div>
 
                         ${cancelReasonHtml}
-                        ${opponentButtonHtml}
-						${cancelButtonHtml}
+                        ${opponentButtonHtml}						
 
                     </div>`;
             });
@@ -431,6 +421,62 @@ function rejectOpponent(applyId) {
 
             console.error("rejectOpponent error:", xhr);
             alert( "상대팀 거절 중 오류가 발생했습니다.");
+        }
+    });
+}
+
+// 1. [취소] 버튼 클릭 시 모달을 띄우는 함수
+function cancelMatch(applyId) {
+    if (!applyId) {
+        alert("경기 신청번호가 없습니다.");
+        return;
+    }
+    // 모달 안의 hidden input과 textarea 초기화
+    $("#modalApplyId").val(applyId);
+    $("#cancelReason").val("");
+
+    // Bootstrap 모달 띄우기
+    var myModal = new bootstrap.Modal(document.getElementById('cancelMatchModal'));
+    myModal.show();
+}
+
+// 2. 모달 안에서 [취소 신청] 버튼을 누를 때 실행되는 AJAX 함수
+function submitCancelMatch() {
+    var applyId = $("#modalApplyId").val();
+    var reason = $("#cancelReason").val().trim();
+
+    // 유효성 검사
+    if (!reason) {
+        alert("취소 사유를 입력해 주세요.");
+        $("#cancelReason").focus();
+        return;
+    }
+
+    $.ajax({
+        url: contextPath + "/match2/cancelMatch",
+        type: "POST",
+        data: { 
+            apply_id: applyId,
+            cancel_reason: reason // 컨트롤러로 취소 사유도 함께 전송
+        },
+        dataType: "json",
+        success: function(res) {
+            if (res.success) {
+                alert(res.message);
+                
+                // 모달 닫기
+                var cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelMatchModal'));
+                cancelModal.hide();
+
+                // 취소 후 목록 새로고침
+                loadMyMatchApply();
+            } else {
+                alert(res.message);
+            }
+        },
+        error: function(xhr) {
+            console.error("cancelMatch error:", xhr);
+            alert("매치 취소 중 오류가 발생했습니다.");
         }
     });
 }

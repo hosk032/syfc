@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
+<script src="${pageContext.request.contextPath}/dist/js/match/match.js"></script>
 
 <div class="card border-0 shadow-sm rounded-4 p-4">
 

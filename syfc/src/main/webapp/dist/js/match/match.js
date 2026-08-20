@@ -2,6 +2,12 @@ $(function() {
     loadRegions();
 });
 // 지역 목록 조회 GET /match/region
+
+$(document).ready(function() {
+  let today = new Date().toISOString().split('T')[0];
+  $('#searchDate').attr('min', today);
+});
+
 function loadRegions() {
 
     $.ajax({

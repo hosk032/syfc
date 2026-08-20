@@ -3,8 +3,9 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 
-<!-- 상세모달 내부 fragement -->
+<script src="${pageContext.request.contextPath}/dist/js/match/matchBoardList.js"></script>
 
+<!-- 상세모달 내부 fragement -->
 <div class="modal fade"
      id="matchBoardDetailModal"
      tabindex="-1"
