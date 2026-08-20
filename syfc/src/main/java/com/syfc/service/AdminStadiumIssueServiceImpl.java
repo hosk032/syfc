@@ -72,6 +72,22 @@ public class AdminStadiumIssueServiceImpl implements AdminStadiumIssueService {
 		return dto;
 	}
 	
+	// 경기장 이슈 수정
+	@Override
+	public void updateIssue(AdminStadiumIssueDTO dto) throws Exception {
+		try {
+			int result = mapper.updateIssue(dto);
+
+			if(result == 0) {
+				throw new Exception("경기장 이슈 수정에 실패했습니다.");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
 	// 영향 받는 경기 목록
 	@Override
 	public List<AdminStadiumIssueDTO> listAffectedMatch(long issueId) {

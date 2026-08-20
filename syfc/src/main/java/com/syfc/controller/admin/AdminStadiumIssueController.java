@@ -131,4 +131,75 @@ public class AdminStadiumIssueController {
 		// 반려 처리 후 현재 이슈 결과 페이지 다시 표시
 		return new ModelAndView("redirect:/admin/stadiumIssue/result?issueId=" + issueId);
 	}
+	
+	// =========================================================
+	// 경기장 이슈 수정 화면
+	// =========================================================
+	@GetMapping("update")
+	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			long issueId = Long.parseLong(req.getParameter("issueId"));
+
+			// 기존 이슈 정보 조회
+			AdminStadiumIssueDTO dto = service.findIssue(issueId);
+
+			if(dto == null) {
+				return new ModelAndView("redirect:/admin/stadiumIssue/write");
+			}
+
+			ModelAndView mav = new ModelAndView("admin/stadiumIssue/update");
+			mav.addObject("dto", dto);
+
+			return mav;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("redirect:/admin/stadiumIssue/write");
+		}
+	}
+	
+	// =========================================================
+	// 경기장 이슈 수정
+	// =========================================================
+	@PostMapping("update")
+	public ModelAndView updateSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		long issueId = 0;
+
+		try {
+			AdminStadiumIssueDTO dto = new AdminStadiumIssueDTO();
+
+			issueId = Long.parseLong(req.getParameter("issueId"));
+
+			dto.setIssueId(issueId);
+			dto.setStartDate(req.getParameter("startDate"));
+			dto.setEndDate(req.getParameter("endDate"));
+			dto.setIssueType(req.getParameter("issueType"));
+			dto.setReason(req.getParameter("reason"));
+
+			// 시작일 또는 종료일이 비어 있는 경우
+			if(dto.getStartDate() == null || dto.getStartDate().isBlank()
+					|| dto.getEndDate() == null || dto.getEndDate().isBlank()) {
+				throw new Exception("시작일과 종료일을 입력하세요.");
+			}
+
+			// 종료일이 시작일보다 빠른 경우
+			if(dto.getStartDate().compareTo(dto.getEndDate()) > 0) {
+				throw new Exception("종료일은 시작일보다 빠를 수 없습니다.");
+			}
+
+			service.updateIssue(dto);
+
+			// 수정 완료 후 해당 이슈 결과 화면
+			return new ModelAndView("redirect:/admin/stadiumIssue/result?issueId=" + issueId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			if(issueId > 0) {
+				return new ModelAndView("redirect:/admin/stadiumIssue/update?issueId=" + issueId);
+			}
+
+			return new ModelAndView("redirect:/admin/stadiumIssue/write");
+		}
+	}
 }
