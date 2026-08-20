@@ -364,3 +364,53 @@ body {
 .btnResult:hover {
 	background: #faf8fc;
 }
+
+.readonlyControl {
+	display: flex;
+	align-items: center;
+	background: #f8f9fa;
+	color: #6c757d;
+	cursor: default;
+}
+
+.issueManageButtons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+
+.btnUpdateIssue {
+	height: 34px;
+	padding: 0 15px;
+	border: 1px solid #d8c8e8;
+	border-radius: 7px;
+	background: #f4eef9;
+	color: #6b4ba1;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.btnUpdateIssue:hover {
+	background: #e9ddf3;
+	border-color: #bda5d5;
+	color: #573b82;
+}
+
+.issueManageButtons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	flex-wrap: nowrap;
+}
+
+.btnUpdateIssue,
+.btnResult {
+	height: 34px;
+	padding: 0 12px;
+	white-space: nowrap;
+	flex-shrink: 0;
+}

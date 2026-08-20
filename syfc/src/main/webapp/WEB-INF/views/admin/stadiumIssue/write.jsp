@@ -127,10 +127,19 @@
 						</td>
 
 						<td class="center">
-							<button type="button" class="btnResult"
-								onclick="location.href='${pageContext.request.contextPath}/admin/stadiumIssue/result?issueId=${dto.issueId}';">
-								결과 보기
-							</button>
+							<div class="issueManageButtons">
+						
+								<button type="button" class="btnUpdateIssue"
+									onclick="location.href='${pageContext.request.contextPath}/admin/stadiumIssue/update?issueId=${dto.issueId}';">
+									수정
+								</button>
+						
+								<button type="button" class="btnResult"
+									onclick="location.href='${pageContext.request.contextPath}/admin/stadiumIssue/result?issueId=${dto.issueId}';">
+									결과 보기
+								</button>
+						
+							</div>
 						</td>
 					</tr>
 				</c:forEach>

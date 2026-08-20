@@ -17,6 +17,9 @@ public interface AdminStadiumIssueService {
 	
 	// 경기장 이슈 한 건 조회
 	public AdminStadiumIssueDTO findIssue(long issueId);
+	
+	// 경기장 이슈 수정
+	public void updateIssue(AdminStadiumIssueDTO dto) throws Exception;
 
 	// 영향 받는 경기 목록
 	public List<AdminStadiumIssueDTO> listAffectedMatch(long issueId);

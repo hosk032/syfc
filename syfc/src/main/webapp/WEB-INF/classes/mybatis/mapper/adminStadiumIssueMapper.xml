@@ -58,6 +58,16 @@
 		WHERE si.issue_id = #{issueId}
 	</select>
 	
+	<!-- 경기장 이슈 수정 -->
+	<update id="updateIssue" parameterType="com.syfc.dto.AdminStadiumIssueDTO">
+		UPDATE Stadium_Issue
+		SET start_date = TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+			end_date = TO_DATE(#{endDate}, 'YYYY-MM-DD'),
+			issue_type = #{issueType},
+			reason = #{reason}
+		WHERE issue_id = #{issueId}
+	</update>
+	
 	<!-- 이슈 기간에 영향받는 경기 목록 -->
 	<select id="listAffectedMatch" parameterType="Long" resultType="com.syfc.dto.AdminStadiumIssueDTO">
 		SELECT ma.apply_id AS applyId,
