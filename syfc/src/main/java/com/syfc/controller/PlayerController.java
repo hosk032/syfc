@@ -7,10 +7,12 @@ import java.util.List;
 
 import com.syfc.dto.BallDTO;
 import com.syfc.dto.ClubInfoDTO;
+import com.syfc.dto.ClubJoinDTO;
 import com.syfc.dto.ClubOwnerHistoryDTO;
 import com.syfc.dto.ClubOwnerRequestDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
+import com.syfc.dto.MemberBallmainDTO;
 import com.syfc.dto.MemberBallpickDTO;
 import com.syfc.dto.MemberDTO;
 import com.syfc.dto.PlayerMypageDTO;
@@ -181,7 +183,7 @@ public class PlayerController {
 		
 		PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
 		PlayerMypageDTO tmp = service.selectProfile(info.getMemberIdx());
-		
+		BallDTO mainBall = ballService.findMainBall(info.getMemberIdx());
 		
 		if(tmp != null) {
 			dto.setUniform_no(tmp.getUniform_no());
@@ -202,6 +204,7 @@ public class PlayerController {
 		mav.addObject("passwordError", passwordError);
 		mav.addObject("dto", dto);
 		mav.addObject("profileUpdateSuccess", profileUpdateSuccess);
+		mav.addObject("mainBall", mainBall);
 		
 		return mav;
 	}
@@ -220,12 +223,14 @@ public class PlayerController {
 		// 회원정보 info 에서 가져오기
 		long memberIdx = info.getMemberIdx();
 		
-		BallDTO dto = ballService.findMainBall(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
 		// 사용자 화면에 보여줄 컬럼: 공 이름, 공 이미지, 공 등급
 		//	ball_name, ball_image, ball_grade(NORMAL or RARE)
 		
 		// DB 에 저장된 공 정보를 조회하는 곳
 		ModelAndView mav = new ModelAndView("player/miniGame");
+		
+		PlayerMypageDTO dto = service.findProfile(memberIdx);
 		
 		// POST 세션에 넣어둔 뽑은 공 정보를 가져온다
 		BallDTO pickedBall = (BallDTO) session.getAttribute("pickedBall");
@@ -237,14 +242,19 @@ public class PlayerController {
 		Boolean alreadyPicked = (Boolean)session.getAttribute("alreadyPicked");
 		session.removeAttribute("alreadyPicked");
 		
+		// 프로필 공 변경 업데이트 
+		Boolean mainBallUpdated = (Boolean)session.getAttribute("mainBallUpdated");
+		session.removeAttribute("mainBallUpdated");
+		
 		// 뽑은 공 도감 목록 확인
 		List<BallDTO> memberBallCollection = memberBallPickService.findMemberBallCollection(memberIdx);
 
 		mav.addObject("pickedBall", pickedBall);
 		mav.addObject("alreadyPicked", alreadyPicked);
+		mav.addObject("mainBallUpdated", mainBallUpdated);
 		mav.addObject("memberBallCollection", memberBallCollection);
-		
-		mav.addObject("ball", dto);
+		mav.addObject("mainBall", mainBall);
+		mav.addObject("dto", dto);
 		
 		return mav;
 	}
@@ -341,6 +351,42 @@ public class PlayerController {
 		return new ModelAndView("redirect:/player/miniGame");
 	}
 	
+	// 프로필 대표 공 설정
+	@PostMapping("mainBall")
+	public ModelAndView mainBall(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		long memberIdx = info.getMemberIdx();
+		long ball_idx = Long.parseLong(req.getParameter("ball_idx"));
+		
+		// MemberBallmainDTO 에서 회원번호랑 ball_idx 가져오기
+		MemberBallmainDTO dto = new MemberBallmainDTO();
+		// 위에서 이미 info 로 가져왔기 때문에 여기서는 바로 memberIdx 해도 됌
+		dto.setMemberIdx(memberIdx);
+		dto.setBall_idx(ball_idx);
+		
+		// 대표공 존재여부
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
+		
+		if(mainBall == null) {
+			// 대표공이 없으면 최초 지정
+			ballService.insertProfileBall(dto);
+		} else {
+			// 대표공이 있으면 변경
+			ballService.updateProfileBall(dto);
+		}
+		
+		session.setAttribute("mainBallUpdated", true);
+		
+		return new ModelAndView("redirect:/player/miniGame");
+	}
+	
+	
 	// 내 선수 프로필 조회
 	@GetMapping("playerProfile")
 	public ModelAndView playerProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -348,9 +394,13 @@ public class PlayerController {
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		List<PlayerProfileDTO> players = playerService.findPlayer(info.getMemberIdx());
+		PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
+		BallDTO mainBall = ballService.findMainBall(info.getMemberIdx());
 		
 		ModelAndView mav = new ModelAndView("player/playerProfile");
 		mav.addObject("players", players);
+		mav.addObject("dto", dto);
+		mav.addObject("mainBall", mainBall);
 		
 		return mav;
 	}
@@ -361,11 +411,17 @@ public class PlayerController {
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
+		long memberIdx = info.getMemberIdx();
+		
 		List<MatchRecordDTO> list = matchRecordService.listMatchRecord(info.getMemberIdx());
 		
+		PlayerMypageDTO dto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
 		
 		ModelAndView mav = new ModelAndView("player/rating");
 		mav.addObject("list", list);
+		mav.addObject("dto", dto);
+		mav.addObject("mainBall", mainBall);
 		
 		return mav;
 	}
@@ -376,11 +432,18 @@ public class PlayerController {
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
+		long memberIdx = info.getMemberIdx();
+		
 		List<MatchHistoryDTO> list = matchHistoryService.listMatchHistory(info.getMemberIdx());
-	
+		
+		PlayerMypageDTO dto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
+		
 		ModelAndView mav = new ModelAndView("player/matchHistory");
 		
 		mav.addObject("list", list);
+		mav.addObject("dto", dto);
+		mav.addObject("mainBall", mainBall);
 		
 		return mav;
 	}
@@ -397,11 +460,17 @@ public class PlayerController {
 	    HttpSession session = req.getSession();
 	    SessionInfo info = (SessionInfo)session.getAttribute("member");
 	    
-	    ClubInfoDTO dto = myClubInfoService.MyClubInfo(info.getMemberIdx());
+	    long memberIdx = info.getMemberIdx();
+	    
+	    ClubInfoDTO dto = myClubInfoService.MyClubInfo(memberIdx);
+	    PlayerMypageDTO profileDto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
 	    
 	    ModelAndView mav = new ModelAndView("player/club");
 	    
 	    mav.addObject("dto", dto);
+	    mav.addObject("profileDto", profileDto);
+	    mav.addObject("mainBall", mainBall);
 		
 		return mav;
 	}
@@ -417,11 +486,19 @@ public class PlayerController {
 	    		return new ModelAndView("redirect:/member/login");
 	    }
 	    
+	    long memberIdx = info.getMemberIdx();
+	    
 	    List<ClubOwnerHistoryDTO> list = historyService.clubOwnerRequestHistory(info.getMemberIdx());
+		PlayerMypageDTO profileDto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
+		ClubJoinDTO dto = new ClubJoinDTO();
 		
 		ModelAndView mav = new ModelAndView("player/clubJoin");
 		
 		mav.addObject("list", list);
+		mav.addObject("profileDto", profileDto);
+		mav.addObject("mainBall", mainBall);
+		mav.addObject("dto", dto);
 		
 		return mav;
 	}
@@ -436,6 +513,8 @@ public class PlayerController {
 	    		return new ModelAndView("redirect:/member/login");
 	    }
 	    
+	    long memberIdx = info.getMemberIdx();
+	    
 	    // 신청 값 전달한 뒤 바로 제거해야 함
 	    // 그래야 새로고침 했을때 신청이 완료되었습니다 같은 문구 재로딩x
 	    boolean clubOwnerRequestSuccess = Boolean.TRUE.equals(session.getAttribute("clubOwnerRequestSuccess"));
@@ -443,9 +522,14 @@ public class PlayerController {
 	    // 전달 후 바로 제거
 	    session.removeAttribute("clubOwnerRequestSuccess");
 	 
+		PlayerMypageDTO profileDto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
+	    
 	    ModelAndView mav = new ModelAndView("player/clubOwnerRequest");
 	    mav.addObject("clubOwnerRequestSuccess", clubOwnerRequestSuccess);
 		mav.addObject("today", new Date());
+		mav.addObject("profileDto", profileDto);
+		mav.addObject("mainBall", mainBall);
 	    
 		return mav;
 	}
@@ -497,6 +581,7 @@ public class PlayerController {
 		
 		// dto 에 있는 구단주 신청번호, 회원번호
 		ClubOwnerRequestDTO dto = new ClubOwnerRequestDTO();
+		
 		dto.setCor_request_num(cor_request_num);
 		dto.setMemberIdx(info.getMemberIdx());
 		
@@ -515,11 +600,17 @@ public class PlayerController {
 			return new ModelAndView("redirect:/member/login");
 		}
 		
+		long memberIdx = info.getMemberIdx();
+		
 		List<ClubOwnerRequestDTO> list = clubOwnerRequestService.listClubOwnerRequest(info.getMemberIdx());
+		PlayerMypageDTO profileDto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
 		
 		ModelAndView mav = new ModelAndView("player/clubOwnerRequestHistory");
 		
 		mav.addObject("list", list);
+		mav.addObject("profileDto", profileDto);
+		mav.addObject("mainBall", mainBall);
 		
 		return mav;
 

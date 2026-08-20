@@ -22,10 +22,19 @@
 		<!-- 상단 간단 요약 프로필 바 -->
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
-				<img src="${pageContext.request.contextPath}/dist/images/user.png" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+				<div class="summary-profile-box me-3">
+					<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+					
+					<c:if test="${not empty mainBall}">
+							<div class="summary-main-ball">
+								<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
+							</div>
+					</c:if>
+				</div>
+				
 				<div>
 					<h5 class="mb-1">
-						<strong>홍길동</strong> 님 환영합니다!
+						<strong>${sessionScope.member.userName}</strong> 님 환영합니다!
 					</h5>
 					<span class="badge bg-primary">구단주</span>
 					<!-- 등급 표시 -->
@@ -60,10 +69,7 @@
 					<a href="${pageContext.request.contextPath}/player/clubOwnerRequestHistory" class="list-group-item list-group-item-action ps-4">구단주 신청 결과 조회/취소</a>
 
 					<!-- 대분류 4 -->
-					<div class="list-group-item bg-light fw-bold">경기 신청</div>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 참가 신청</a> 
-					<a href="#" class="list-group-item list-group-item-action ps-4">신청 경기 조회</a>
-					<a href="#" class="list-group-item list-group-item-action ps-4">경기 신청 수정/취소</a> 
+					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a>
 				</div>
 			</div>
 		
@@ -200,6 +206,18 @@
 															<img alt="뽑은 공 이미지" src="${pageContext.request.contextPath}${collectedBall.ball_image}" class="pickBallImage">
 															<p>공 이름 : ${collectedBall.ball_name}</p>
 															<p>공 등급 : ${collectedBall.ball_grade}</p>
+															
+															<div id="mainBallSelectBtn">
+																<form action="${pageContext.request.contextPath}/player/mainBall" method="post">
+																
+																	<input type="hidden" name="ball_idx" value="${collectedBall.ball_idx}">
+																
+																	<button type="submit" class="main-ball-select-btn">
+																		대표 공으로 설정
+																	</button>
+																</form>
+															</div>
+															
 														</div>
 													</c:forEach>	
 													
@@ -253,6 +271,12 @@
 </script>
 </c:if>
 
+<c:if test="${mainBallUpdated}">
+<script type="text/javascript">
+	alert("프로필에 적용되었습니다.");
+</script>
+
+</c:if>
 
 
 </body>
