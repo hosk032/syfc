@@ -1,0 +1,111 @@
+/* 전체 컨테이너 및 레이아웃 */
+.club-container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.club-top {
+    border-bottom: 2px solid #333;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.club-top h3 {
+    font-weight: 700;
+    margin: 0;
+}
+
+/* 선수 리스트 카드 그룹 */
+.player-list-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 카드 개별 스타일 (clubList.css 스타일 이식) */
+.player-item-card {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.player-item-card:hover {
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.12);
+}
+
+/* 등번호 배지 영역 */
+.player-backno-wrapper {
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.player-backno-badge {
+    display: inline-block;
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #cfe2ff;
+}
+
+/* 선수 정보 영역 */
+.player-info-wrapper {
+    flex-grow: 1;
+}
+
+.player-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.player-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+.player-club-tag {
+    font-size: 0.82rem;
+    font-weight: 600;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.player-details {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.player-details strong {
+    color: #343a40;
+}
+
+.player-details .dot {
+    margin: 0 6px;
+    color: #adb5bd;
+}
+
+/* 하단 검색 및 페이징 */
+.board-list-footer {
+    margin-top: 25px;
+    align-items: center;
+}
+
+.club-list-footer {
+    display: flex;
+    justify-content: center;
+}

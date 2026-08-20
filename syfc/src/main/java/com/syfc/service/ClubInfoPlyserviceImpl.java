@@ -66,4 +66,40 @@ public class ClubInfoPlyserviceImpl implements ClubInfoPlyservice {
 		
 	}
 
+	@Override
+	public String findClubOwner(long clubowner_key) {
+		String ownerName = null;
+		
+		try {
+			ownerName = mapper.findClubOwner(clubowner_key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ownerName;
+	}
+
+	@Override
+	public List<ClubInfoPlyDTO> listPlayerInfo(long clubowner_key) {
+		List<ClubInfoPlyDTO> list = null;
+
+		try {
+			list = mapper.listPlayerInfo(clubowner_key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public Long getclubowner(long memberIdx) {
+		
+		try {
+			return mapper.getclubowner(memberIdx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
