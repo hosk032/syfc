@@ -1,5 +1,5 @@
 /* ==========================================================================
-   구단주 마이페이지 전용 통합 JS (ownerpage.js v3.1)
+   구단주 마이페이지 전용 통합 JS (ownerpage.js v3.10 - 최종 전체 버전)
    ========================================================================== */
 
 let selectedStadiumName = "쌍용 주 경기장";
@@ -16,6 +16,43 @@ document.addEventListener('DOMContentLoaded', function() {
         logoInput.addEventListener("change", function() {
             previewImage(this);
         });
+    }
+
+    // 상대팀 점수 입력 차단
+    const awayScoreInput = document.getElementById('regAwayScore');
+    if (awayScoreInput) {
+        awayScoreInput.addEventListener('keydown', function(e) {
+            e.preventDefault();
+            alert("상대팀 점수는 수정할 수 없습니다.");
+            document.getElementById('regHomeScore').focus();
+        });
+    }
+
+    // 💡 [최종 해결] 사이드바 메뉴 클릭 시 강제로 탭을 활성화하고 데이터 로드 (이벤트 위임 방식)
+    $(document).on('click', '.owner-sidebar a[data-bs-toggle="list"]', function (e) {
+        e.preventDefault();
+        
+        // 1. 사이드바 active 이동
+        $('.owner-sidebar a[data-bs-toggle="list"]').removeClass('active');
+        $(this).addClass('active');
+        
+        // 2. 대상 탭 ID 추출 (#team-history 등)
+        var target = $(this).attr('href');
+        
+        // 3. 모든 탭 컨텐츠 숨기고 선택한 탭만 강제 노출
+        $('.tab-content .tab-pane').removeClass('show active');
+        $(target).addClass('show active');
+        
+        // 4. 구단 경기 이력 탭이면 AJAX 데이터 로드 실행
+        if (target === '#team-history') {
+            loadTeamHistory();
+        }
+    });
+
+    // 페이지 최초 로딩 시 첫 번째 active 탭 강제 노출
+    var initialTarget = $('.owner-sidebar a.active').attr('href');
+    if (initialTarget) {
+        $(initialTarget).addClass('show active');
     }
 });
 
@@ -96,7 +133,6 @@ function loadTeamHistory() {
     });
 }
 
-// [추가] 경기 이력 행 클릭 시 상세 모달을 띄우는 함수
 function openMatchDetailModal(matchNum) {
     if (!matchNum) return;
 
@@ -108,10 +144,8 @@ function openMatchDetailModal(matchNum) {
         data: { matchNum: matchNum },
         dataType: 'html',
         success: function(htmlResponse) {
-            // 모달 바디 영역에 서버에서 받아온 상세 기록 HTML 주입
             $('#matchDetailContent').html(htmlResponse);
-            
-            // Bootstrap 모달 실행
+
             var modalElem = document.getElementById('matchDetailModal');
             if (modalElem) {
                 var modal = bootstrap.Modal.getOrCreateInstance(modalElem);
@@ -134,10 +168,10 @@ function selectMatchForRegister(matchNum, matchDate, stadium, homeClub, awayClub
     $('#regMatchDate').val(matchDate.substring(0, 10));
     $('#regStadiumName').val(stadium);
     $('#regAwayClubName').val(awayClub);
-    
+
     $('#homeClubTitle').text(homeClub);
     $('#awayClubTitle').text(awayClub);
-    
+
     if (awayLogo && awayLogo !== 'null' && awayLogo !== '') {
         var logoUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/uploads/club/' + awayLogo;
         $('#awayEmblem').attr('src', logoUrl).show();
@@ -147,6 +181,7 @@ function selectMatchForRegister(matchNum, matchDate, stadium, homeClub, awayClub
 
     $('#regHomeScore').val(0);
     $('#regAwayScore').val(0);
+    $('#regAwayScore').attr('readonly', true);
 
     $('#formCardTitle').html('<i class="bi bi-plus-circle-fill text-primary me-2"></i>경기 성적 신규 등록');
     $('#formStatusBadge').attr('class', 'badge bg-primary px-3 py-1 fs-8').text('성적 등록 모드');
@@ -161,6 +196,7 @@ function selectMatchForEdit(matchNum, matchDate, stadium, homeClub, awayClub, ho
 
     $('#regHomeScore').val(homeScore);
     $('#regAwayScore').val(awayScore);
+    $('#regAwayScore').attr('readonly', true);
 
     $('#formCardTitle').html('<i class="bi bi-pencil-square text-warning me-2"></i>경기 성적 수정');
     $('#formStatusBadge').attr('class', 'badge bg-warning text-dark px-3 py-1 fs-8').text('성적 수정 모드');
@@ -175,7 +211,10 @@ function resetResultForm() {
     $('#regAwayClubName').val('');
     $('#awayClubTitle').text('상대팀');
     $('#awayEmblem').attr('src', '').hide();
-    
+
+    $('#regAwayScore').val(0);
+    $('#regAwayScore').attr('readonly', true);
+
     $('#formCardTitle').html('<i class="bi bi-plus-circle-fill text-primary me-2"></i>경기 성적 입력');
     $('#formStatusBadge').attr('class', 'badge bg-secondary px-3 py-1 fs-8').text('경기를 선택해 주세요');
     $('#btnSubmitScore').prop('disabled', true).html('<i class="bi bi-check-lg me-1"></i>성적 등록 완료');
@@ -192,8 +231,8 @@ function submitMatchScore() {
         return;
     }
 
-    if (homeScore === "" || awayScore === "" || homeScore < 0 || awayScore < 0) {
-        alert("정확한 스코어를 입력해 주세요.");
+    if (homeScore === "" || homeScore < 0) {
+        alert("정확한 우리팀 점수를 입력해 주세요.");
         return;
     }
 
@@ -212,29 +251,6 @@ function submitMatchScore() {
             error: function(xhr, status, error) {
                 console.error("Score save error:", error);
                 alert("성적 저장 중 오류가 발생했습니다.");
-            }
-        });
-    }
-}
-
-function deleteMatchScore(matchNum) {
-    if (!matchNum) return;
-
-    if (confirm("등록된 경기 성적을 삭제하시겠습니까?\n삭제 시 스코어가 초기화됩니다.")) {
-        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/deleteMatchScore';
-
-        $.ajax({
-            url: reqUrl,
-            type: 'POST',
-            data: { matchNum: matchNum },
-            dataType: 'html',
-            success: function(resp) {
-                alert("경기 성적이 성공적으로 삭제(초기화)되었습니다.");
-                location.reload(); 
-            },
-            error: function(xhr, status, error) {
-                console.error("Score delete error:", error);
-                alert("성적 삭제 중 오류가 발생했습니다.");
             }
         });
     }
@@ -398,29 +414,120 @@ function filterPlayerList() {
    [탭 6] 개인/선수 평점 & 성적 기록 관리
    ========================================================================== */
 
-function saveMatchRecord() {
-    const matchDate = document.getElementById('matchDate').value;
-    const playerSelect = document.getElementById('ratingPlayerSelect');
-    const recordIdx = document.getElementById('recordIdx').value;
+function editMatchRecord(recordId) {
+    const row = document.getElementById('record-row-' + recordId);
+    if (!row) return;
 
-    if (!matchDate) {
-        alert("경기 일자를 선택해 주세요.");
-        return;
-    }
+    document.getElementById('recordIdx').value = recordId;
+    document.getElementById('matchNum').value = row.dataset.match;
+    document.getElementById('ratingPlayerSelect').value = row.dataset.player;
+    document.getElementById('playerRatingScore').value = parseFloat(row.dataset.score).toFixed(1);
 
-    if (!playerSelect.value) {
-        alert("대상 선수를 선택해 주세요.");
-        return;
-    }
+    document.getElementById('statGoal').value = row.dataset.goal;
+    document.getElementById('statAssist').value = row.dataset.assist;
+    document.getElementById('statOwnGoal').value = row.dataset.owngoal;
 
-    alert("성적이 정상적으로 처리되었습니다.");
-    resetRatingForm();
+    document.getElementById('statYellowCard').checked = (row.dataset.yellow > 0);
+    document.getElementById('statRedCard').checked = (row.dataset.red > 0);
+    document.getElementById('statComment').value = row.dataset.comment;
+
+    document.getElementById('btnSubmitRating').innerHTML = '<i class="bi bi-pencil-square me-1"></i>성적 수정하기';
+    document.getElementById('ratingFormTitle').innerHTML = '<i class="bi bi-pencil-square text-warning me-2 fs-5"></i>경기 성적 수정';
+    document.getElementById('btnCancelEdit').classList.remove('d-none');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function resetRatingForm() {
     document.getElementById('playerRatingForm').reset();
-    document.getElementById('recordIdx').value = "";
-    document.getElementById('ratingFormTitle').innerText = "경기 성적 등록 / 수정";
+    document.getElementById('recordIdx').value = '';
+
     document.getElementById('btnSubmitRating').innerHTML = '<i class="bi bi-check-lg me-1"></i>성적 저장하기';
+    document.getElementById('ratingFormTitle').innerHTML = '경기 성적 등록 / 수정';
     document.getElementById('btnCancelEdit').classList.add('d-none');
+}
+
+function saveMatchRecord() {
+    const recordId = document.getElementById('recordIdx').value;
+    const matchSelect = document.getElementById('matchNum');
+    const matchNum = matchSelect.value;
+    const clubJoinNum = document.getElementById('ratingPlayerSelect').value;
+    const inputGoal = parseInt(document.getElementById('statGoal').value) || 0; // 입력한 골
+
+    if (!matchNum || !clubJoinNum) {
+        alert('경기와 대상 선수를 모두 선택해 주세요.');
+        return;
+    }
+
+    const selectedOption = matchSelect.options[matchSelect.selectedIndex];
+    const teamTotalGoals = parseInt(selectedOption.getAttribute('data-homescore')) || 0;
+
+    let existingGoals = 0;
+    const rows = document.querySelectorAll('#matchRecordListBody tr');
+
+    rows.forEach(row => {
+        const rowMatchNum = row.getAttribute('data-match');
+        const rowRecordId = row.id ? row.id.replace('record-row-', '') : '';
+
+        if (rowMatchNum === matchNum && rowRecordId !== recordId) {
+            existingGoals += parseInt(row.getAttribute('data-goal')) || 0;
+        }
+    });
+
+    if ((existingGoals + inputGoal) > teamTotalGoals) {
+        alert(`❌ 등록 실패\n\n해당 경기의 우리 팀 총 득점은 ${teamTotalGoals}골입니다.\n(현재 다른 선수에게 등록된 골: ${existingGoals}골)\n\n입력하신 ${inputGoal}골을 추가하면 팀 총 득점을 초과합니다.`);
+        document.getElementById('statGoal').focus();
+        return;
+    }
+
+    const data = {
+        recordId: recordId,
+        matchNum: matchNum,
+        clubJoinNum: clubJoinNum,
+        rating: document.getElementById('playerRatingScore').value,
+        goal: inputGoal,
+        assist: document.getElementById('statAssist').value,
+        ownGoal: document.getElementById('statOwnGoal').value,
+        yellow: document.getElementById('statYellowCard').checked ? 1 : 0,
+        red: document.getElementById('statRedCard').checked ? 1 : 0,
+        memo: document.getElementById('statComment').value
+    };
+
+    var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/savePlayerRecord';
+
+    $.ajax({
+        url: reqUrl,
+        type: 'POST',
+        data: data,
+        success: function() {
+            alert(recordId ? '성적이 성공적으로 수정되었습니다.' : '새로운 성적이 등록되었습니다.');
+            location.reload();
+        },
+        error: function(xhr, status, error) {
+            console.error("Save record error:", error);
+            alert('성적 저장 중 오류가 발생했습니다.');
+        }
+    });
+}
+
+function deleteMatchRecord(recordId) {
+    if (!recordId) return;
+
+    if (confirm('정말 삭제하시겠습니까?\n삭제 시 해당 선수의 상세 기록이 0으로 반영됩니다.')) {
+        var reqUrl = (typeof contextPath !== 'undefined' ? contextPath : '') + '/clubowner/deletePlayerRecord';
+
+        $.ajax({
+            url: reqUrl,
+            type: 'POST',
+            data: { recordId: recordId },
+            success: function() {
+                alert('기록이 성공적으로 삭제되었습니다.');
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Delete record error:", error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
 }

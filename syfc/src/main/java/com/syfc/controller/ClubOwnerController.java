@@ -9,6 +9,7 @@ import com.syfc.dto.ClubApprovalDTO;
 import com.syfc.dto.ClubDTO;
 import com.syfc.dto.ClubOwnerMatchDTO;
 import com.syfc.dto.ClubOwnerPlayerDTO;
+import com.syfc.dto.ClubOwnerPlayerRecordDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.mvc.annotation.Controller;
 import com.syfc.mvc.annotation.GetMapping;
@@ -19,6 +20,8 @@ import com.syfc.service.ClubApprovalService;
 import com.syfc.service.ClubApprovalServiceImpl;
 import com.syfc.service.ClubOwnerMatchService;
 import com.syfc.service.ClubOwnerMatchServiceImpl;
+import com.syfc.service.ClubOwnerPlayerRecordService;
+import com.syfc.service.ClubOwnerPlayerRecordServiceImpl;
 import com.syfc.service.ClubOwnerPlayerService;
 import com.syfc.service.ClubOwnerPlayerServiceImpl;
 import com.syfc.service.ClubOwnerService;
@@ -37,6 +40,7 @@ public class ClubOwnerController {
 	private ClubOwnerMatchService matchService = new ClubOwnerMatchServiceImpl();
 	private ClubApprovalService approvalService = new ClubApprovalServiceImpl();
 	private ClubOwnerPlayerService playerService = new ClubOwnerPlayerServiceImpl();
+	private ClubOwnerPlayerRecordService recordService = new ClubOwnerPlayerRecordServiceImpl();
 
 	// 1. 구단주 메인 페이지
 	@GetMapping("ownerpage")
@@ -60,6 +64,7 @@ public class ClubOwnerController {
 				// 경기 목록 조회
 				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubOwnerKey);
 				req.setAttribute("matchList", matchList);
+				
 				// 승 / 무 / 패 전적 자동 집계 로직
 				int wins = 0;
 				int losses = 0;
@@ -67,8 +72,8 @@ public class ClubOwnerController {
 				if (matchList != null) {
 					for (ClubOwnerMatchDTO match : matchList) {
 						if (match.getHomeScore() != null && match.getAwayScore() != null) {
-							int myScore = match.getHomeScore();
-							int opScore = match.getAwayScore();
+							int myScore = match.getHomeScore(); 
+							int opScore = match.getAwayScore(); 
 
 							if (myScore > opScore) {
 								wins++;
@@ -95,13 +100,15 @@ public class ClubOwnerController {
 				playerParams.setClubOwner_key(clubOwnerKey);
 				List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(playerParams);
 				req.setAttribute("playerList", playerList);
-
-				// 소속 선수 총원 세팅
 				req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
 
 				// 구단 평균 평점 실제 DB 조회 연동
 				Double avgRating = playerService.getClubAverageRating(clubOwnerKey);
 				req.setAttribute("avgRating", avgRating != null ? avgRating : 0.0);
+				
+				// 선수 성적 목록 조회 연동
+				List<ClubOwnerPlayerRecordDTO> recordList = recordService.getPlayerRecordList(clubOwnerKey);
+				req.setAttribute("recordList", recordList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,7 +144,7 @@ public class ClubOwnerController {
 		return new ModelAndView("clubowner/tab/matchHistoryTable");
 	}
 
-	// [수정] 경기 상세 기록 모달 내용 조회 (스포츠 스코어보드 스타일 디자인 적용)
+	// 2-1. 경기 상세 기록 모달 내용 조회 (원본 디자인 100% 유지 + 실제 DB 선수 기록 연동)
 	@GetMapping("matchDetailModal")
 	public void matchDetailModal(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -155,30 +162,69 @@ public class ClubOwnerController {
 			if (matchNumStr != null) {
 				Long matchNum = Long.parseLong(matchNumStr);
 
+				ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+				ClubOwnerMatchDTO targetMatch = null;
+				List<ClubOwnerPlayerRecordDTO> matchRecords = new java.util.ArrayList<>();
+
+				if (clubDto != null) {
+					// 1. 해당 경기의 기본 정보 조회
+					List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
+					if (matchList != null) {
+						for (ClubOwnerMatchDTO m : matchList) {
+							if (m.getMatchNum().equals(matchNum)) {
+								targetMatch = m;
+								break;
+							}
+						}
+					}
+
+					// 2. 해당 경기에 등록된 선수들의 성적 기록만 필터링
+					List<ClubOwnerPlayerRecordDTO> allRecords = recordService.getPlayerRecordList(clubDto.getClubOwner_key());
+					if (allRecords != null) {
+						for (ClubOwnerPlayerRecordDTO r : allRecords) {
+							if (r.getMatchNum() != null && r.getMatchNum().equals(matchNum)) {
+								matchRecords.add(r);
+							}
+						}
+					}
+				}
+
+				String matchDateStr = "";
+				String stadiumStr = "";
+				String homeName = "울산 HD FC";
+				String awayName = "상대팀";
+				String scoreStr = "- : -";
+
+				if (targetMatch != null) {
+					matchDateStr = targetMatch.getMatchDate() != null ? targetMatch.getMatchDate().substring(0, 10) : "";
+					stadiumStr = targetMatch.getStadiumName() != null ? targetMatch.getStadiumName() : "";
+					if (targetMatch.getHomeClubName() != null) homeName = targetMatch.getHomeClubName();
+					if (targetMatch.getAwayClubName() != null) awayName = targetMatch.getAwayClubName();
+					if (targetMatch.getHomeScore() != null && targetMatch.getAwayScore() != null) {
+						scoreStr = targetMatch.getHomeScore() + " : " + targetMatch.getAwayScore();
+					}
+				}
+
 				StringBuilder html = new StringBuilder();
-				// 1. 상단 매치 요약 배너 (스코어보드 느낌)
+				
+				// 원본 디자인과 CSS 클래스를 그대로 유지한 HTML 템플릿
 				html.append("<div class='p-2'>");
 				html.append("  <div class='bg-light p-3 rounded-3 text-center mb-4 border'>");
-				html.append("    <div class='text-muted small fw-bold mb-1'>2026-08-01 · 쌍용 주 경기장</div>");
-				html.append(
-						"    <div class='d-flex align-items-center justify-content-center gap-3 fs-5 fw-bold text-dark'>");
-				html.append("      <span>울산 HD FC</span>");
-				html.append("      <span class='text-primary fs-4 px-2'>4 : 3</span>");
-				html.append("      <span>전북 현대 모터스</span>");
+				html.append("    <div class='text-muted small fw-bold mb-1'>").append(matchDateStr).append(" · ").append(stadiumStr).append("</div>");
+				html.append("    <div class='d-flex align-items-center justify-content-center gap-3 fs-5 fw-bold text-dark'>");
+				html.append("      <span>").append(homeName).append("</span>");
+				html.append("      <span class='text-primary fs-4 px-2'>").append(scoreStr).append("</span>");
+				html.append("      <span>").append(awayName).append("</span>");
 				html.append("    </div>");
 				html.append("  </div>");
 
-				// 2. 출전 선수 평점 및 기록 테이블
 				html.append("  <div class='d-flex justify-content-between align-items-center mb-2'>");
-				html.append(
-						"    <h6 class='fw-bold mb-0 text-dark'><i class='bi bi-people-fill me-1 text-primary'></i> 출전 선수 평점 및 기록</h6>");
+				html.append("    <h6 class='fw-bold mb-0 text-dark'><i class='bi bi-people-fill me-1 text-primary'></i> 출전 선수 평점 및 기록</h6>");
 				html.append("    <span class='text-muted small'>매치 ID: ").append(matchNum).append("</span>");
 				html.append("  </div>");
 
 				html.append("  <div class='table-responsive'>");
-				// 테이블 전체 너비를 100%로 잡고, 컬럼별 비율을 조정합니다.
-				html.append(
-						"    <table class='table table-hover align-middle text-center small border mb-0' style='width: 100%; table-layout: fixed;'>");
+				html.append("    <table class='table table-hover align-middle text-center small border mb-0' style='width: 100%; table-layout: fixed;'>");
 				html.append("      <thead class='table-light text-muted'>");
 				html.append("        <tr>");
 				html.append("          <th style='width: 12%'>포지션</th>");
@@ -186,27 +232,47 @@ public class ClubOwnerController {
 				html.append("          <th style='width: 13%'>평점</th>");
 				html.append("          <th style='width: 20%'>득점/도움</th>");
 				html.append("          <th style='width: 15%'>카드</th>");
-				html.append("          <th style='width: 25%' class='text-start ps-3'>평가 코멘트</th>"); // 코멘트 헤더 왼쪽 정렬
+				html.append("          <th style='width: 25%' class='text-start ps-3'>평가 코멘트</th>");
 				html.append("        </tr>");
 				html.append("      </thead>");
 				html.append("      <tbody>");
 
-				// [추가 예정 데이터 영역]
-				html.append("        <tr>");
-				html.append(
-						"          <td><span class='badge bg-secondary-subtle text-secondary border'>FW</span></td>");
-				html.append("          <td class='fw-semibold'>손흥민</td>");
-				html.append("          <td class='text-warning fw-bold'>⭐ 5.0</td>");
-				html.append("          <td><span class='text-danger fw-bold'>2득점</span> / 0도움</td>");
-				html.append("          <td><span class='badge bg-warning text-dark'>경고</span></td>");
-				// 코멘트 셀에 text-start와 ps-3(padding-start)를 주어 간격을 확보했습니다.
-				html.append("          <td class='text-muted text-start text-truncate ps-3'>골 결정력 탁월</td>");
-				html.append("        </tr>");
+				if (matchRecords != null && !matchRecords.isEmpty()) {
+					for (ClubOwnerPlayerRecordDTO rec : matchRecords) {
+						String cardBadge = "-";
+						if (rec.getRed() != null && rec.getRed() > 0) {
+							cardBadge = "<span class='badge bg-danger text-white'>퇴장</span>";
+						} else if (rec.getYellow() != null && rec.getYellow() > 0) {
+							cardBadge = "<span class='badge bg-warning text-dark'>경고</span>";
+						}
+
+						double ratingVal = rec.getRating() != null ? rec.getRating() : 0.0;
+						int goalVal = rec.getGoal() != null ? rec.getGoal() : 0;
+						int assistVal = rec.getAssist() != null ? rec.getAssist() : 0;
+						String posVal = rec.getPosition() != null ? rec.getPosition() : "-";
+						String nameVal = rec.getUserName() != null ? rec.getUserName() : "";
+						String memoVal = rec.getMemo() != null ? rec.getMemo() : "";
+
+						html.append("        <tr>");
+						html.append("          <td><span class='badge bg-secondary-subtle text-secondary border'>").append(posVal).append("</span></td>");
+						html.append("          <td class='fw-semibold'>").append(nameVal).append("</td>");
+						html.append("          <td class='text-warning fw-bold'>⭐ ").append(String.format("%.1f", ratingVal)).append("</td>");
+						html.append("          <td><span class='text-danger fw-bold'>").append(goalVal).append("득점</span> / ").append(assistVal).append("도움</td>");
+						html.append("          <td>").append(cardBadge).append("</td>");
+						html.append("          <td class='text-muted text-start text-truncate ps-3'>").append(memoVal).append("</td>");
+						html.append("        </tr>");
+					}
+				} else {
+					html.append("        <tr>");
+					html.append("          <td colspan='6' class='py-4 text-muted text-center'>해당 경기에 등록된 선수 상세 기록이 없습니다.</td>");
+					html.append("        </tr>");
+				}
 
 				html.append("      </tbody>");
 				html.append("    </table>");
 				html.append("  </div>");
 				html.append("</div>");
+
 				resp.getWriter().write(html.toString());
 			}
 		} catch (Exception e) {
@@ -239,6 +305,7 @@ public class ClubOwnerController {
 				req.setAttribute("matchList", matchList);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return new ModelAndView("clubowner/tab/tab_team_result_register");
@@ -375,6 +442,27 @@ public class ClubOwnerController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
+
+	// 11. 선수 경기 성적 기록 삭제 (POST-AJAX) - 404 에러 해결용 추가
+	@PostMapping("deletePlayerRecord")
+	public ModelAndView deletePlayerRecord(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
+
+		try {
+			String recordId = req.getParameter("recordId");
+			if (recordId != null) {
+				recordService.deletePlayerRecord(Long.parseLong(recordId));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 }
