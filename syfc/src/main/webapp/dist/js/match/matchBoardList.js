@@ -241,6 +241,10 @@ function renderApplicantList(applicants, myRequest, board) {
                 stateText = '반려';
                 stateClass = 'bg-danger';
                 break;
+			case -1:
+			    stateText = '취소';
+			    stateClass = 'bg-black';
+			    break;
         }
 
         const item = `
@@ -304,7 +308,7 @@ function renderActionButtons(board, myRequest, isOwner) {
         $('#playerApplyBtn').addClass('d-none');
         $('#playerCancelBtn').removeClass('d-none');
 
-        showMyRequestStatus(myRequest.request_state);
+        //showMyRequestStatus(myRequest.request_state);
 
     } else {
         $('#playerApplyBtn').removeClass('d-none');
@@ -313,7 +317,7 @@ function renderActionButtons(board, myRequest, isOwner) {
 }
 
 
-// 본인 신청 상태
+// 본인 신청 상태 
 function showMyRequestStatus(state) {
 
     let message = '';

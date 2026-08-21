@@ -3,7 +3,11 @@
 
 <script> const contextPath = "${pageContext.request.contextPath}"; </script>
 <!-- 경기 매칭 시스템 전용 JS -->
-<script src="${pageContext.request.contextPath}/dist/js/match/matchApplyTab.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/match/matchApplyTab.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/match/matchBoardList.js"></script>
+    <script src="${pageContext.request.contextPath}/dist/js/match/requestResult.js"></script>  
+	<script src="${pageContext.request.contextPath}/dist/js/match/match.js"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/match/matchHistory.js"></script>
 
 <div class="tab-pane" id="match-apply" role="tabpanel">
     <div class="card border-0 shadow-sm rounded-4 p-4">

@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 
-<script src="${pageContext.request.contextPath}/dist/js/match/matchBoardList.js"></script>
 
 <!-- 상세모달 내부 fragement -->
 <div class="modal fade"
@@ -15,115 +14,62 @@
 
         <div class="modal-content border-0 rounded-4 shadow">
 
-
-            <!-- =========================
-                 HEADER
-                 ========================= -->
-
             <div class="modal-header">
-
-                <h5 class="modal-title fw-bold"
-                    id="detailSubject">
-
+                <h5 class="modal-title fw-bold" id="detailSubject">
                     경기 참가 선수 모집
-
                 </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-
-            <!-- =========================
-                 BODY
-                 ========================= -->
 
             <div class="modal-body">
 
-
                 <!-- 경기 정보 -->
-
                 <div class="card bg-light border-0 rounded-3 p-3 mb-4">
-
                     <h6 class="fw-bold text-primary mb-3">
-
                         <i class="bi bi-info-circle me-1"></i>
                         경기 정보
-
                     </h6>
 
-
                     <div class="row g-2 small">
-
                         <div class="col-md-6">
-
                             📅 경기일
-
                             <strong id="detailDate"></strong>
-
                         </div>
 
-
                         <div class="col-md-6">
-
                             🕐 시간
-
                             <strong id="detailTime"></strong>
-
                         </div>
 
-
                         <div class="col-md-6">
-
                             📍 경기장
-
                             <strong id="detailStadium"></strong>
-
                         </div>
 
-
                         <div class="col-md-6">
-
                             📌 지역
-
                             <strong id="detailRegion"></strong>
-
                         </div>
 
-
                         <div class="col-md-6">
-
                             ⚽ 경기 종류
-
                             <strong id="detailType"></strong>
-
                         </div>
-
 
                         <div class="col-md-6">
-
                             ⚔️ 상대팀
-
                             <strong id="detailOpponent"></strong>
-
                         </div>
-
                     </div>
 
                 </div>
 
 
                 <!-- 지도 -->
-
                 <div class="mb-4">
-
                     <h6 class="fw-bold mb-2">
                         경기장 위치
                     </h6>
-
                     <div id="matchMap"
                          style="width:100%; height:300px;
                                 border-radius:12px;
@@ -135,7 +81,6 @@
 
 
                 <!-- 게시글 내용 -->
-
                 <div class="mb-4">
 
                     <h6 class="fw-bold mb-2">
@@ -180,9 +125,7 @@
             </div>
 
 
-            <!-- =========================
-                 FOOTER
-                 ========================= -->
+            <!-- FOOTER -->
 
             <div class="modal-footer">
 

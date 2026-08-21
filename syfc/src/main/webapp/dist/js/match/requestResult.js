@@ -1,3 +1,7 @@
+$(function() {
+    loadMyParticipation();
+});
+
 function loadMyParticipation() {
 
     const container = document.getElementById("participationList");
@@ -149,7 +153,7 @@ function loadMyParticipation() {
 
                             <div>
                                 <h6 class="fw-bold mb-1">
-                                    ${escapeHtml(dto.cmb_subject || "-")}
+                                    ${escapeHtml(dto.cmb_Subject || "-")}
                                 </h6>
 
                                 <span class="text-muted small">
@@ -202,7 +206,7 @@ function loadMyParticipation() {
                                     </span>
 
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.home_club_name || "-")}
+                                        ${escapeHtml(dto.home_clubName || "-")}
                                     </div>
 
                                 </div>
@@ -214,7 +218,7 @@ function loadMyParticipation() {
                                     </span>
 
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.away_club_name || "-")}
+                                        ${escapeHtml(dto.away_clubName || "-")}
                                     </div>
 
                                 </div>
