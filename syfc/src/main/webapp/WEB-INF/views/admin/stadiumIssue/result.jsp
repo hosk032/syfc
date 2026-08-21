@@ -94,11 +94,11 @@
 								</c:when>
 
 								<c:when test="${dto.applyStatus == 3}">
-									<span class="matchStatus failed">매칭실패</span>
+									<span class="matchStatus failed">매칭대기</span>
 								</c:when>
 
 								<c:when test="${dto.applyStatus == 2}">
-									<span class="matchStatus waiting">신청</span>
+									<span class="matchStatus waiting">매칭신청</span>
 								</c:when>
 
 								<c:when test="${dto.applyStatus == 1}">
