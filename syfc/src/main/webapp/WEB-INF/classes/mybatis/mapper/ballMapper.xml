@@ -43,5 +43,6 @@
 		UPDATE MemberBall_main SET ball_idx = #{ball_idx}
 		WHERE memberIdx = #{memberIdx}
 	</update>
+
 	
 </mapper>

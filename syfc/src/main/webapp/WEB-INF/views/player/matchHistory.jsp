@@ -37,8 +37,23 @@
 					<h5 class="mb-1">
 						<strong>${sessionScope.member.userName}</strong> 님 환영합니다!
 					</h5>
-					<span class="badge bg-primary">구단주</span>
+										
 					<!-- 등급 표시 -->
+					<c:choose>
+						<c:when test="${sessionScope.member.userLevel eq 1}">
+							<span class="badge bg-secondary">일반회원</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 10}">
+							<span class="badge bg-success">선수</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 50}">
+							<span class="badge bg-primary">구단주</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 100}">
+							<span class="badge bg-dark">관리자</span>
+						</c:when>
+					
+					</c:choose>
 				</div>
 			</div>
 		</div>
