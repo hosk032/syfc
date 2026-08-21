@@ -6,11 +6,9 @@ import java.util.Map;
 import com.syfc.dto.ClubInfoPlyDTO;
 import com.syfc.mapper.ClubInfoPlyMapper;
 import com.syfc.mybatis.support.MapperContainer;
-import com.syfc.util.MyUtil;
 
 public class ClubInfoPlyserviceImpl implements ClubInfoPlyservice {
 	private ClubInfoPlyMapper mapper = MapperContainer.get(ClubInfoPlyMapper.class);
-	private MyUtil util = new MyUtil();
 	
 	@Override
 	public List<ClubInfoPlyDTO> listClubInfoPly(Map<String, Object> map) {
@@ -100,6 +98,28 @@ public class ClubInfoPlyserviceImpl implements ClubInfoPlyservice {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public List<ClubInfoPlyDTO> listPlayers(Map<String, Object> map) {
+		List<ClubInfoPlyDTO> list = null;
+		try {
+			list = mapper.listPlayers(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public int playerDataCount(Map<String, Object> map) {
+		int result = 0;
+		try {
+			result = mapper.playerDataCount(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }

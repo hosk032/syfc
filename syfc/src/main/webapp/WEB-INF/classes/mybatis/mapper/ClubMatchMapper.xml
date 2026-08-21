@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.ClubMatchMapper">
+
+<!-- 전체 경기 일정 및 결과 목록 조회 -->
+	<select id="selectAllMatchList" parameterType="map" resultType="com.syfc.dto.ClubOwnerMatchDTO">
+		SELECT 
+			m.match_num AS matchNum,
+			TO_CHAR(m.match_date, 'YYYY-MM-DD') AS matchDate,
+			m.match_time AS matchTime,
+			m.home_score AS homeScore,
+			m.away_score AS awayScore,
+			s.stadium_name AS stadiumName,
+			hc.club_name AS homeClubName,
+			hc.club_logo AS homeClubLogo,
+			ac.club_name AS awayClubName,
+			ac.club_logo AS awayClubLogo
+		FROM Match m
+		LEFT OUTER JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+		LEFT OUTER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+		LEFT OUTER JOIN Club hc ON ma.clubOwner_key = hc.clubOwner_key
+		LEFT OUTER JOIN Club ac ON ma.clubOwner_key2 = ac.clubOwner_key
+		ORDER BY m.match_date DESC, m.match_num DESC
+	</select>
+
+
+
+</mapper>

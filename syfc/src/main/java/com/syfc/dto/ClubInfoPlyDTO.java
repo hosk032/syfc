@@ -20,6 +20,11 @@ public class ClubInfoPlyDTO {
 	
 	private String profile_photo;
 	private double rating;
+	public int goal;
+	public int assist;
+	public int yellow;
+	public int red;
+	public int own_goal;
 	
 	private int userLevel;
 	
@@ -193,6 +198,36 @@ public class ClubInfoPlyDTO {
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+	public int getGoal() {
+		return goal;
+	}
+	public void setGoal(int goal) {
+		this.goal = goal;
+	}
+	public int getAssist() {
+		return assist;
+	}
+	public void setAssist(int assist) {
+		this.assist = assist;
+	}
+	public int getYellow() {
+		return yellow;
+	}
+	public void setYellow(int yellow) {
+		this.yellow = yellow;
+	}
+	public int getRed() {
+		return red;
+	}
+	public void setRed(int red) {
+		this.red = red;
+	}
+	public int getOwn_goal() {
+		return own_goal;
+	}
+	public void setOwn_goal(int own_goal) {
+		this.own_goal = own_goal;
 	}
 	
 }

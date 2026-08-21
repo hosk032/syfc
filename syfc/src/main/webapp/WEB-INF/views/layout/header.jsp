@@ -79,7 +79,7 @@
 					<div class="dropdown-column">
 						<a href="#">캘린더</a> 
 						<a href="#">최근 기록</a> 
-						<a href="#">구단 검색 (연도별 / 구단별)</a>
+						<a href="${pageContext.request.contextPath}/clubmatch/matchInfo">구단 검색 (연도별 / 구단별)</a>
 					</div>
 					<div class="dropdown-column">
 						<a href="${pageContext.request.contextPath}/clubinfoply/clubList">구단 정보</a> 

@@ -19,71 +19,79 @@
 					<h3>선수 목록</h3>
 					<span class="text-muted fs-6">총 ${dataCount}명 선수</span>
 				</div>
-	
-				<div class="player-list-group">
-					<c:choose>
-						<c:when test="${not empty list}">
+				
+				<div class="player-table-responsive">
+					<table class="table table-hover player-table align-middle">
+					<thead>
+					    <tr>
+					        <th width="120">선수명</th>
+					        <th>구단명</th>
+					        <th width="100">포지션</th>
+					        <th width="100">등번호</th>
+					        <th width="110">키</th>
+					        <th width="110">몸무게</th>
+					        <th width="170">생년월일</th>
+					        <th> 
+					    </tr>
+					</thead>
+					
+					<tbody class="">
+					    <c:choose>
+							<c:when test="${not empty list}">
 							<c:forEach var="dto" items="${list}">
-								<div class="player-item-card">
-									<div class="player-backno-wrapper">
-										<span class="player-backno-badge">
-											No. <c:out value="${dto.uniform_no != null ? dto.uniform_no : '-'}"/>
-										</span>
-									</div>
-				
-									<div class="player-info-wrapper">
-										<div class="player-header">
-											<span class="player-name"><c:out value="${dto.userName}"/></span>
-											<span class="player-club-tag"><c:out value="${dto.club_name}"/></span>
-										</div>
-										<div class="player-details">
-											<span>키: <strong>${dto.height != null ? dto.height : '-'}</strong> cm</span>
-											<span class="dot">•</span>
-											<span>몸무게: <strong>${dto.weight != null ? dto.weight : '-'}</strong> kg</span>
-											<span class="dot">•</span>
-											<span>생년월일: <strong><c:out value="${dto.birth != null ? dto.birth : '-'}"/></strong></span>
-										</div>
-									</div>
-								</div>
-							</c:forEach>
-						</c:when>
-				
-						<c:otherwise>
-							<%-- 디자인 확인용 샘플 데이터 1건 --%>
-							<div class="player-item-card">
-								<div class="player-backno-wrapper">
-									<span class="player-backno-badge">
-										No. 7
-									</span>
-								</div>
-				
-								<div class="player-info-wrapper">
-									<div class="player-header">
-										<span class="player-name">손흥민</span>
-										<span class="player-club-tag">쌍용 FC</span>
-									</div>
-									<div class="player-details">
-										<span>키: <strong>183</strong> cm</span>
-										<span class="dot">•</span>
-										<span>몸무게: <strong>78</strong> kg</span>
-										<span class="dot">•</span>
-										<span>생년월일: <strong>1992-07-08</strong></span>
-									</div>
-								</div>
-							</div>
-						</c:otherwise>
-					</c:choose>
+							<tr class=club-center>
+								<td class="col-name">
+								    <strong>
+								        <c:out value="${dto.userName}"/>
+								    </strong>
+								</td>
+								<!-- 구단 -->
+								<td class="col-club">
+								    <c:out value="${dto.club_name}"/>
+								</td>
+								<!-- 포지션 -->
+								<td class="col-position">
+								    <span class="position-badge">
+								        <c:out value="${dto.position != null ? dto.position : '-'}"/>
+								    </span>
+								</td>
+					
+								<!-- 등번호 -->
+								<td class="col-number">
+								    <span class="number-badge">
+								        <c:out value="${dto.uniform_no != null ? dto.uniform_no : '-'}"/>
+								    </span>
+								</td>
+					
+					
+								<!-- 키 -->
+								<td class="col-height">
+								    <c:out value="${dto.height != null ? dto.height : '-'}"/> cm
+								</td>
+					
+								<!-- 몸무게 -->
+								<td class="col-weight">
+								    <c:out value="${dto.weight != null ? dto.weight : '-'}"/> kg
+								</td>
+					
+								<!-- 생년월일 -->
+								<td class="col-birth">
+								    <c:out value="${dto.birth != null ? dto.birth : '-'}"/>
+								</td>
+							</tr>
+								</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<tr>
+										<td colspan="8" class="player-empty">
+											등록된 선수 정보가 없습니다.
+										</td>
+									</tr>
+								</c:otherwise>
+							</c:choose>
+						</tbody>
+					</table>
 				</div>
-
-<%-- 샘플 데이터 지울때 주석 제거할것
-						<c:otherwise>
-							<div class="text-center py-5 text-muted bg-white rounded-3 border">
-								등록된 선수 정보가 없습니다.
-							</div>
-						</c:otherwise>
-					</c:choose>
-				</div>
---%>
 
 			
 			<div class="row board-list-footer">
