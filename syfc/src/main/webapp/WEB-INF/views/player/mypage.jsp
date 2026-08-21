@@ -23,13 +23,36 @@
 		<!-- 상단 간단 요약 프로필 바 -->
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
-				<img src="${pageContext.request.contextPath}/dist/images/user.png" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+			<div class="summary-profile-box me-3">
+				<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+					<c:if test="${not empty mainBall}">
+						<div class="summary-main-ball">
+							<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
+						</div>
+					</c:if>
+			</div>
+
 				<div>
 					<h5 class="mb-1">
 						<strong>${sessionScope.member.userName}</strong> 님 환영합니다!
 					</h5>
-					<span class="badge bg-primary">구단주</span>
+					
 					<!-- 등급 표시 -->
+					<c:choose>
+						<c:when test="${sessionScope.member.userLevel eq 1}">
+							<span class="badge bg-secondary">일반회원</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 10}">
+							<span class="badge bg-success">선수</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 50}">
+							<span class="badge bg-primary">구단주</span>
+						</c:when>
+						<c:when test="${sessionScope.member.userLevel eq 100}">
+							<span class="badge bg-dark">관리자</span>
+						</c:when>
+					
+					</c:choose>
 				</div>
 			</div>
 		</div>
@@ -100,6 +123,12 @@
 													<i id="profileDefaultIcon" class="bi bi-person"></i>
 											</c:otherwise>
 										</c:choose>
+										
+										<c:if test="${not empty mainBall}">
+											<div class="mainBallImage">
+												<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
+											</div>
+										</c:if>
 									</div>
 
 									<label class="form-label profile-photo-label" for="profilePhoto"> 

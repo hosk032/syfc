@@ -20,11 +20,13 @@
 	
 	<!-- 회원이 획득한 공 도감 -->
 	<select id="findMemberBallCollection" parameterType="long" resultType="com.syfc.dto.BallDTO">
-		SELECT DISTINCT b.ball_idx, b.ball_name, 
-		    b.ball_image, b.ball_grade
+		SELECT b.ball_idx, b.ball_name, 
+		    b.ball_image, b.ball_grade, COUNT(*) AS pickCount
 		FROM MemberBall_pick mbp
 		JOIN Ball b ON b.ball_idx = mbp.ball_idx
 		WHERE mbp.memberIdx = #{memberIdx}
+		GROUP BY b.ball_idx, b.ball_name, 
+			b.ball_image,b.ball_grade
 		ORDER BY b.ball_idx
 	</select>
 

@@ -15,4 +15,5 @@ public interface BallMapper {
 	public int insertProfileBall(MemberBallmainDTO dto);
 	
 	public int updateProfileBall(MemberBallmainDTO dto);
+	
 }

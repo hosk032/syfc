@@ -11,6 +11,16 @@ public class BallDTO {
 	private String created_date;
 	private String update_date;
 	
+	// 테이블 목록에 없는 컬럼
+	// 도감 조회할때 중복공을 카운트 및 계산해서 만들어 주는 값
+	private int pickCount;
+	
+	public int getPickCount() {
+		return pickCount;
+	}
+	public void setPickCount(int pickCount) {
+		this.pickCount = pickCount;
+	}
 	public long getBall_idx() {
 		return ball_idx;
 	}
