@@ -65,7 +65,7 @@
     line-height: 1.6;
     resize: vertical;
 }
------------------- 여기 삭제
+
 .clubOwnerRequest-form .form-label,
 .clubOwnerRequest-form label,
 .clubOwnerRequest-reason > span {
@@ -84,7 +84,7 @@
 
 .clubOwnerRequest-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px;
     margin-top: 28px;
     padding-top: 24px;

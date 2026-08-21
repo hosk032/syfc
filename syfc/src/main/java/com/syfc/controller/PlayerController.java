@@ -3,10 +3,13 @@ package com.syfc.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.syfc.dto.BallDTO;
 import com.syfc.dto.ClubInfoDTO;
+import com.syfc.dto.ClubInfoPlyDTO;
 import com.syfc.dto.ClubJoinDTO;
 import com.syfc.dto.ClubOwnerHistoryDTO;
 import com.syfc.dto.ClubOwnerRequestDTO;
@@ -25,6 +28,8 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
 import com.syfc.service.BallService;
 import com.syfc.service.BallServiceImpl;
+import com.syfc.service.ClubInfoPlyservice;
+import com.syfc.service.ClubInfoPlyserviceImpl;
 import com.syfc.service.ClubOwnerHistoryService;
 import com.syfc.service.ClubOwnerHistoryServiceImpl;
 import com.syfc.service.ClubOwnerRequestService;
@@ -65,6 +70,7 @@ public class PlayerController {
 	private ClubOwnerRequestService clubOwnerRequestService = new ClubOwnerRequestServiceImpl();
 	private BallService ballService = new BallServiceImpl();
 	private MemberBallpickService memberBallPickService = new MemberBallpickServiceImpl();
+	private ClubInfoPlyservice clubInfoPlyService = new ClubInfoPlyserviceImpl();
 	
 	private FileManager fileManager = new FileManager();
 	
@@ -493,12 +499,37 @@ public class PlayerController {
 		BallDTO mainBall = ballService.findMainBall(memberIdx);
 		ClubJoinDTO dto = new ClubJoinDTO();
 		
+		// 입단신청 목록 가져오기
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("schType", "all");
+		map.put("kwd", "");
+		map.put("size", 3);
+		map.put("offset", 0);
+		
+		List<ClubInfoPlyDTO> clubList = clubInfoPlyService.listClubInfoPly(map);
+		
+		// 입단신청 하단 SELECT 보기 리스트
+		// 상단에는 3개만 보여주고 하단에는 모든 구단 리스트가 나오게 
+		Map<String, Object> allClubMap = new HashMap<String, Object>();
+		
+		allClubMap.put("schType", "all");
+		allClubMap.put("kwd", "");
+		allClubMap.put("offset", 0);
+
+		int allCount = clubInfoPlyService.dataCount(allClubMap);
+		allClubMap.put("size", allCount);
+		
+		List<ClubInfoPlyDTO> allClubList = clubInfoPlyService.listClubInfoPly(allClubMap);
+		
 		ModelAndView mav = new ModelAndView("player/clubJoin");
 		
 		mav.addObject("list", list);
 		mav.addObject("profileDto", profileDto);
 		mav.addObject("mainBall", mainBall);
 		mav.addObject("dto", dto);
+		mav.addObject("clubList", clubList);
+		mav.addObject("allClubList", allClubList);
 		
 		return mav;
 	}
@@ -506,7 +537,7 @@ public class PlayerController {
 	// 구단주 신청
 	@GetMapping("clubOwnerRequest")
 	public ModelAndView clubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
-	    HttpSession session = req.getSession();
+	    HttpSession session = req.getSession(); 
 	    SessionInfo info = (SessionInfo)session.getAttribute("member");
 	    
 	    if(info == null) {

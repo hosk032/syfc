@@ -85,48 +85,93 @@
 						<a href="${pageContext.request.contextPath}/player/clubOwnerRequestHistory" class="list-group-item list-group-item-action ps-4">구단주 신청 결과 조회/취소</a>
 
 					<!-- 대분류 4 -->
-					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a>
+	                <div class="list-group-item bg-light fw-bold">경기 신청</div>
+	                <a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a> 
 				</div>
 			</div>
 
 			<!-- 2. 오른쪽 메인 콘텐츠 영역 -->
 			<div class="col-md-9">
 				<div class="card p-4 mb-4">
+					<!-- 구단목록 시작 -->
+					<div class="clubList-header">
+						<h4 class="">구단목록</h4>
+							<c:forEach var="club" items="${clubList}">
+								<a href="${pageContext.request.contextPath}/clubinfoply/clubInfo?clubowner_key=${club.clubowner_key}" class="club-list-card">
+									<div class="club-logo-wrapper">
+							            <c:choose>
+							                <c:when test="${not empty club.club_logo}">
+										       <img src="${pageContext.request.contextPath}/uploads/club/${club.club_logo}" 
+											       	onerror="this.outerHTML='<span class=&quot;club-default-logo&quot;>⚽</span>';" 
+											       	alt="${club.club_name}">
+										    </c:when>
+							                <c:otherwise>
+											    <span class="club-default-logo">⚽</span>
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div class="club-info-wrapper">
+										<div class="club-name">
+											<c:out value="${club.club_name}"/>
+										</div>
+											<div class="club-intro-summary">
+												<span><c:out value="${club.club_region}"/></span>
+												<span class="dot">•</span>
+												<span><c:out value="${club.club_content}"/></span>
+											</div>
+									</div>
+								</a>
+							</c:forEach>
+									<a href="${pageContext.request.contextPath}/clubinfoply/clubList" class="club-list-more-btn">더보기</a>
+					</div>
+					<!-- 구단목록 끝 -->
+	
 					<h4 class="border-bottom pb-2 mb-4">입단신청</h4>
 
-					<div class="club-join-form">
-						<div class="row g-3">
-							<div class="col-md-6">
-								<label class="form-label" for="preferredPosition">선호 포지션</label>
-
-								<select id="preferredPosition" class="form-select" name="position">
-									<option value="">선택하세요</option>
-									<option value="GK" ${dto.clubJoinPosition eq 'GK' ? 'selected' : ''}>GK</option>
-									<option value="DF" ${dto.clubJoinPosition eq 'DF' ? 'selected' : ''}>DF</option>
-									<option value="MF" ${dto.clubJoinPosition eq 'MF' ? 'selected' : ''}>MF</option>
-									<option value="FW" ${dto.clubJoinPosition eq 'FW' ? 'selected' : ''}>FW</option>
-								</select>
+						<div class="club-join-form">
+							<div class="row g-3">
+								<div class="col-md-6">
+								
+									<label class="clubJoinName" for="clubJoinInfo">신청할 구단명</label>
+									<select id="clubJoinInfo" class="form-select" name="clubowner_key">
+										<option value="">구단을 선택하세요</option>
+										
+										<c:forEach var="club" items="${allClubList}">
+											<option value="${club.clubowner_key}">${club.club_name}</option>
+										</c:forEach>
+									</select>
+									
+									<label class="form-label" for="preferredPosition">선호 포지션</label>
+	
+									<select id="preferredPosition" class="form-select" name="position">
+										<option value="">선택하세요</option>
+										<option value="GK" ${dto.clubJoinPosition eq 'GK' ? 'selected' : ''}>GK</option>
+										<option value="DF" ${dto.clubJoinPosition eq 'DF' ? 'selected' : ''}>DF</option>
+										<option value="MF" ${dto.clubJoinPosition eq 'MF' ? 'selected' : ''}>MF</option>
+										<option value="FW" ${dto.clubJoinPosition eq 'FW' ? 'selected' : ''}>FW</option>
+									</select>
+								</div>
+	
+								<div class="col-md-6">
+									<label class="form-label">신청일</label> 
+									<input type="date" class="form-control" name="clubJoin-date" value="${dto.clubJoinDate}">
+								</div>
+	
+								<div class="clubJoin-introduction">
+									<span>자기소개</span> 
+									<textarea class="form-control" rows="5" name="clubJoin-info" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요.">${dto.clubJoinIntro}</textarea>
+								</div>
+	
 							</div>
-
-							<div class="col-md-6">
-								<label class="form-label">신청일</label> 
-								<input type="date" class="form-control" name="clubJoin-date" value="${dto.clubJoinDate}">
-							</div>
-
-							<div class="clubJoin-introduction">
-								<span>자기소개</span> 
-								<textarea class="form-control" rows="5" name="clubJoin-info" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요.">${dto.clubJoinIntro}</textarea>
-							</div>
-
+							
 						</div>
-						
-					</div>
-				</div>
-				
+
 					<div class="clubJoin-actions">
 						<button type="button" class="clubJoin-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
 						<button type="reset" class="clubJoin-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
 					</div>
+				</div>
+				
 				<div class="card p-4">
 				<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
 
@@ -158,8 +203,13 @@
 												</c:choose>
 										   </td>
 									
-										   <td>${history.clubJoin_reason}</td>
-									
+											   <td>
+										   		  <c:if test="${history.clubJoin_result eq 0}">
+										   			${history.clubJoin_reason}
+										   		  </c:if>
+										   		  <c:if test="${history.clubJoin_result ne 0}">-</c:if>
+											   </td>
+											   
 										   <td>
 												<c:if test="${history.clubJoin_result eq 2}">
 													<button type="button" class="btn btn-sm btn-outline-danger">
@@ -203,10 +253,9 @@
 						</div>
 					</div>
 
-
-
-
 				</div>
 			</div>
-
 		</div>
+</body>
+
+</html>
