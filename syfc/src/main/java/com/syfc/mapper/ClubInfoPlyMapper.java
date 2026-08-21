@@ -16,4 +16,6 @@ public interface ClubInfoPlyMapper {
 	
 	public List<ClubInfoPlyDTO> listPlayerInfo(Long clubowner_key);
 	public Long getclubowner(long memberIdx);
+	public List<ClubInfoPlyDTO> listPlayers(Map<String, Object> map);
+	public int playerDataCount(Map<String, Object> map);
 }

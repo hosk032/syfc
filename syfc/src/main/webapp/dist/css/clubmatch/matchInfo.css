@@ -1,0 +1,146 @@
+@charset "UTF-8";
+
+/* =========================================
+   K리그 스타일 경기 리스트
+========================================= */
+
+.match-table-responsive {
+  max-width: 1024px;
+  overflow-x: auto;
+  margin: 15px auto;
+}
+
+.match-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+/* 테이블 헤더 */
+.match-table thead th {
+  background-color: #212121;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 10px;
+  white-space: nowrap;
+}
+
+/* 테이블 행 */
+.match-table tbody tr {
+  border-bottom: 1px solid #eeeeee;
+  transition: background-color 0.15s ease;
+}
+
+/* 홀수 행 배경색 (K리그 특유의 짝/홀 줄무늬) */
+.match-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.match-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.match-table tbody td {
+  padding: 10px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #333333;
+}
+
+/* 경기장 컬럼 */
+.col-stadium {
+  font-weight: 600;
+  color: #222222;
+}
+
+.result-badge {
+  display: inline;
+  font-size: 14px;
+  font-weight: 700;
+  background: none;
+}
+
+/* 승리 */
+.result-badge.win {
+  color: #3b82f6;
+}
+
+/* 무승부 */
+.result-badge.draw {
+  color: #6b7280;
+}
+
+/* 패배 */
+.result-badge.lose {
+  color: #ef4444;
+}
+
+/* 대진 레이아웃 */
+.match-teams-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.team-info.home {
+  justify-content: flex-end;
+}
+
+.team-info.away {
+  justify-content: flex-start;
+}
+
+.team-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.team-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+/* 스코어 박스 */
+.score-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.score-num {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  background-color: #4b5563;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  border-radius: 4px;
+}
+
+.colon {
+  font-weight: 800;
+  color: #4b5563;
+}
+
+/* 경기 일정 */
+.col-schedule {
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 600;
+}

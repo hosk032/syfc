@@ -50,23 +50,27 @@
 							<table class="table table-hover player-table align-middle">
 								<thead>
 									<tr>
-										<th width="100">등번호</th>
-										<th width="150">프로필</th>
+										<th width="120">프로필</th>
+										<th width="70">등번호</th>
 										<th>선수명</th>
-										<th width="120">포지션</th>
-										<th width="120">키</th>
-										<th width="120">몸무게</th>
-										<th width="150">생년월일</th>
-										<th width="100">상태</th>
+										<th width="70">포지션</th>
+										<th width="70">키</th>
+										<th width="70">몸무게</th>
+										<th width="130">생년월일</th>
+										<th width="70">득점</th>
+										<th width="70">도움</th>
+										<th width="80">옐로카드</th>
+										<th width="80">레드카드</th>
+										<th width="70">상태</th>
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach var="dto" items="${list}">
 										<tr>
-											<td class="player-backno">${dto.uniform_no != null ? dto.uniform_no : '-'}</td>
 											<td>
 												<img src="#" class="player-img" alt="프로필">
 											</td>
+											<td class="player-backno">${dto.uniform_no != null ? dto.uniform_no : '-'}</td>
 											<td class="fw-bold text-start ps-3">
 												<c:out value="${dto.userName}"/>
 											</td>
@@ -82,6 +86,10 @@
 											<td class="player-stat">${dto.height != null ? dto.height : '-'} cm</td>
 											<td class="player-stat">${dto.weight != null ? dto.weight : '-'} kg</td>
 											<td class="text-secondary">${dto.birth != null ? dto.birth : '-'}</td>
+											<td>${dto.goal}</td>
+											<td>${dto.assist}</td>
+											<td>${dto.yellow}</td>
+											<td>${dto.red}</td>
 											<td>
 												<c:choose>
 													<c:when test="${dto.status == 0}"><span class="status-pill status-injured">탈퇴</span></c:when>

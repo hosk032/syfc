@@ -71,7 +71,8 @@
 	<select id="listPlayerInfo" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
 		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
 			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status,
-			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender
+			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender,
+			goal, assist, yellow, red
 		FROM Player p
 		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
 		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
@@ -91,6 +92,51 @@
 		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
 	    WHERE cj.memberIdx = #{memberIdx}
 	    FETCH FIRST 1 ROWS ONLY
+	</select>
+
+	<select id="listPlayers" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
+			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status, c.club_name,
+			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
+		<where>
+	  	<if test="kwd != null and kwd != '' ">
+				<include refid="where-lists"/>
+		</if>
+		</where>
+		ORDER BY p.clubjoin_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<sql id="where-lists">
+		<choose>
+			<when test="schType == 'all' ">
+				(INSTR(c.club_name, #{kwd}) &gt; 0
+						OR INSTR(m.userName, #{kwd}) &gt; 0)
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="playerDataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				<include refid="where-lists"/>
+			</if>
+		</where>
 	</select>
 
 </mapper>

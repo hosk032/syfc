@@ -200,11 +200,81 @@ public class ClubInfoPlyController {
 		return mav;
     }
 	
+	// 선수 리스트
 	@GetMapping("playerList")
     public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-        return new ModelAndView("clubinfoply/playerList");
-    }
+		ModelAndView mav = new ModelAndView("clubinfoply/playerList");
+		
+		try {
+			// 페이지
+			String page =req.getParameter("page");
+			int current_page = 1;
+			
+			if(page != null) {
+				current_page = Integer.parseInt(page);
+			}
+			
+			// 검색
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if(schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			
+			// 디코딩
+			kwd = util.decodeUrl(kwd);
+			
+			int size = 5;
+			int total_page = 0;
+			int dataCount = 0;
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("schType", schType);
+			map.put("kwd", kwd);
+			
+			// 전체 데이터 개수
+			dataCount = service.playerDataCount(map);
+			
+			total_page = paginateUtil.pageCount(dataCount, size);
+			current_page = Math.min(current_page, total_page);
+			
+			int offset = (current_page - 1) * size;
+			if(offset < 0)offset = 0;
+			
+			map.put("offset", offset);
+			map.put("size", size);
+			
+			List<ClubInfoPlyDTO> list = service.listPlayers(map);
+			
+			String query;
+			String cp = req.getContextPath();
+			String listUrl = cp + "/clubinfoply/playerList";
+			
+			if(! kwd.isBlank()) {
+				query = "schType=" + schType + "&kwd=" +
+						util.encodeUrl(kwd);
+				listUrl += "?" + query;
+			}
+			
+			String paging = paginateUtil.paging(current_page, total_page, listUrl);
+			
+			mav.addObject("list", list);
+			mav.addObject("dataCount", dataCount);
+			mav.addObject("size", size);
+			mav.addObject("page", current_page);
+			mav.addObject("total_page", total_page);
+			mav.addObject("paging", paging);
+			mav.addObject("schType", schType);
+			mav.addObject("kwd", kwd);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mav;
+	}
 	
 	
 	
