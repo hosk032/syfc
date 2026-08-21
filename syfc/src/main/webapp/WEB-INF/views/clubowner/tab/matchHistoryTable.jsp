@@ -3,36 +3,37 @@
 
 <c:forEach var="dto" items="${matchList}">
 	<tr>
-		<td class="text-muted">
-			<c:set var="mDate" value="${dto.matchDate}" />
-			${mDate.substring(0, 10)} 
-			
-			<c:choose>
-				<c:when test="${dto.matchTime == 1}">
-					<span class="badge bg-light text-dark border ms-1">오전 (09:00 ~ 12:00)</span>
-				</c:when>
-				<c:when test="${dto.matchTime == 2}">
-					<span class="badge bg-light text-dark border ms-1">오후 (14:00 ~ 17:00)</span>
-				</c:when>
-			</c:choose>
-		</td>
+		<td class="text-muted">${dto.matchDate.substring(0, 10)}</td>
 		<td class="fw-semibold">${dto.stadiumName}</td>
-		<td>
-			<strong class="text-dark">${dto.homeClubName}</strong> vs ${dto.awayClubName}
-		</td>
-		<td class="fw-bold fs-6 text-primary">${dto.homeScore} : ${dto.awayScore}</td>
+		<td>${dto.awayClubName}</td>
 		<td>
 			<c:choose>
-				<c:when test="${dto.homeScore > dto.awayScore}">
-					<span class="badge bg-primary px-3 py-1">승리</span>
+				<%-- 성적이 등록된 경우 (점수가 null이 아닐 때) --%>
+				<c:when test="${dto.homeScore != null && dto.awayScore != null}">
+					<span class="fw-bold text-primary">${dto.homeScore} : ${dto.awayScore}</span>
+					<c:choose>
+						<c:when test="${dto.homeScore > dto.awayScore}">
+							<span class="badge bg-primary bg-opacity-10 text-primary ms-1">승리</span>
+						</c:when>
+						<c:when test="${dto.homeScore < dto.awayScore}">
+							<span class="badge bg-danger bg-opacity-10 text-danger ms-1">패배</span>
+						</c:when>
+						<c:otherwise>
+							<span class="badge bg-secondary bg-opacity-10 text-secondary ms-1">무승부</span>
+						</c:otherwise>
+					</c:choose>
 				</c:when>
-				<c:when test="${dto.homeScore == dto.awayScore}">
-					<span class="badge bg-secondary px-3 py-1">무승부</span>
-				</c:when>
+				<%-- 성적이 등록되지 않은 경우 (미등록) --%>
 				<c:otherwise>
-					<span class="badge bg-danger px-3 py-1">패배</span>
+					<span class="text-muted">- : -</span>
+					<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1 ms-1">미등록</span>
 				</c:otherwise>
 			</c:choose>
+		</td>
+		<td>
+			<button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" onclick="openMatchDetailModal('${dto.matchNum}')">
+				상세
+			</button>
 		</td>
 	</tr>
 </c:forEach>

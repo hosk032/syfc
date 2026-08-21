@@ -1,9 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
+
+<style>
+    /* 크롬, 사파리, 엣지에서 숫자 input의 화살표 스피너 완벽 제거 */
+    #regAwayScore::-webkit-outer-spin-button,
+    #regAwayScore::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
 
 <div class="tab-pane fade" id="team-result-register">
 	<div class="card border-0 shadow-sm rounded-4 p-4">
-		
+
 		<!-- 탭 헤더 -->
 		<div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
 			<div>
@@ -56,7 +66,7 @@
 					<div class="col-12 mt-4">
 						<div class="p-3 bg-white rounded-3 border">
 							<div class="row align-items-center text-center g-2">
-								
+
 								<!-- 홈팀 (우리팀) -->
 								<div class="col-5 col-md-4">
 									<div class="d-flex align-items-center justify-content-center gap-2 mb-2">
@@ -81,14 +91,16 @@
 									<span class="badge bg-dark rounded-circle fs-6 px-2 py-2 shadow-sm">VS</span>
 								</div>
 
-								<!-- 원정팀 (상대팀) -->
+								<!-- 원정팀 (상대팀) - readonly + 클릭 시 경고 및 포커스 이동 -->
 								<div class="col-5 col-md-4">
 									<div class="d-flex align-items-center justify-content-center gap-2 mb-2">
 										<img src="${pageContext.request.contextPath}/dist/images/default_club.png" class="rounded-circle border" style="width: 32px; height: 32px; object-fit: cover;" id="awayEmblem">
 										<span class="fw-bold text-dark small" id="awayClubTitle">상대팀</span>
 									</div>
 									<div class="input-group input-group-sm">
-										<input type="number" class="form-control text-center fw-bold fs-5 text-danger" id="regAwayScore" name="awayScore" min="0" value="0">
+										<input type="number" class="form-control text-center fw-bold fs-5 text-danger bg-light" 
+											   id="regAwayScore" name="awayScore" value="0" readonly 
+											   onclick="alert('상대팀 점수는 수정할 수 없습니다.'); document.getElementById('regHomeScore').focus();">
 										<span class="input-group-text bg-danger text-white fw-bold">상대팀 점수</span>
 									</div>
 								</div>
@@ -99,9 +111,7 @@
 
 					<!-- 등록 / 취소 버튼 -->
 					<div class="col-12 text-end mt-3 d-flex justify-content-end gap-2">
-						<button type="button" class="btn btn-sm btn-outline-secondary d-none" id="btnCancelEdit" onclick="resetResultForm()">
-							취소
-						</button>
+						<button type="button" class="btn btn-sm btn-outline-secondary d-none" id="btnCancelEdit" onclick="resetResultForm()">취소</button>
 						<button type="button" class="btn btn-dark btn-sm px-4 fw-bold" id="btnSubmitScore" onclick="submitMatchScore()" disabled>
 							<i class="bi bi-check-lg me-1"></i>성적 등록 완료
 						</button>
@@ -110,7 +120,7 @@
 			</form>
 		</div>
 
-		<!-- 2. 구단 매치 경기 목록 (상태별 버튼 분기) -->
+		<!-- 2. 구단 매치 경기 목록 -->
 		<div class="d-flex align-items-center justify-content-between mb-3">
 			<h6 class="fw-bold mb-0 text-dark">
 				<i class="bi bi-list-stars me-1"></i>우리 구단 경기 목록
@@ -149,34 +159,26 @@
 								</c:choose>
 							</td>
 							<td>
-								<!-- 성적 등록 여부에 따른 상태 배지 분기 -->
 								<c:choose>
 									<c:when test="${dto.homeScore != null && dto.awayScore != null}">
 										<span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">등록완료</span>
 									</c:when>
 									<c:otherwise>
-										<span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-2 py-1">미등록</span>
+										<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1">미등록</span>
 									</c:otherwise>
 								</c:choose>
 							</td>
 							<td>
-								<!-- 등록 여부에 따라 [성적 등록] 또는 [수정/삭제] 버튼 분기 -->
 								<c:choose>
 									<c:when test="${dto.homeScore != null && dto.awayScore != null}">
-										<button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 me-1" 
+										<button type="button" class="btn btn-xs btn-outline-primary py-0 px-2" 
 											onclick="selectMatchForEdit('${dto.matchNum}', '${dto.matchDate}', '${dto.stadiumName}', '${dto.homeClubName}', '${dto.awayClubName}', '${dto.homeScore}', '${dto.awayScore}', '${dto.awayClubLogo}')">
-											수정
-										</button>
-										<button type="button" class="btn btn-xs btn-outline-danger py-0 px-2" 
-											onclick="deleteMatchScore('${dto.matchNum}')">
-											삭제
-										</button>
+											수정</button>
 									</c:when>
 									<c:otherwise>
 										<button type="button" class="btn btn-xs btn-primary py-0 px-2 fw-bold" 
 											onclick="selectMatchForRegister('${dto.matchNum}', '${dto.matchDate}', '${dto.stadiumName}', '${dto.homeClubName}', '${dto.awayClubName}', '${dto.awayClubLogo}')">
-											성적 등록
-										</button>
+											성적 등록</button>
 									</c:otherwise>
 								</c:choose>
 							</td>

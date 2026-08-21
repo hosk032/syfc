@@ -223,7 +223,6 @@
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
 
-	<script
-		src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=3.1"></script>
+	<script src="${pageContext.request.contextPath}/dist/js/clubowner/ownerpage.js?v=9.9"></script>
 </body>
 </html>

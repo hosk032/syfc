@@ -28,25 +28,34 @@
 				<input type="hidden" id="recordIdx" value="">
 
 				<div class="row g-3 mb-3">
-					<!-- 경기 일자 선택 -->
+					<!-- 경기 일자 -> 경기 목록 선택으로 변경 -->
 					<div class="col-md-4">
-						<label for="matchDate"
-							class="form-label extra-small fw-bold text-muted">경기 일자</label> <input
-							type="date" class="form-control form-control-sm" id="matchDate"
-							required>
+						<label for="matchNum"
+							class="form-label extra-small fw-bold text-muted">경기 선택</label> <select
+							class="form-select form-select-sm fw-bold" id="matchNum" required>
+							<option value="" selected disabled data-homescore="0">경기를
+								선택하세요</option>
+							<c:forEach var="match" items="${matchList}">
+								<!-- 💡 data-homescore 속성 추가 및 스코어 표시 -->
+								<option value="${match.matchNum}"
+									data-homescore="${match.homeScore != null ? match.homeScore : 0}">
+									${match.matchDate} (vs ${match.awayClubName})
+									[${match.homeScore}:${match.awayScore}]</option>
+							</c:forEach>
+						</select>
 					</div>
 
-					<!-- 대상 선수 선택 -->
+					<!-- 대상 선수 -> 소속 선수 목록 선택으로 변경 -->
 					<div class="col-md-4">
 						<label for="ratingPlayerSelect"
 							class="form-label extra-small fw-bold text-muted">대상 선수</label> <select
 							class="form-select form-select-sm fw-bold"
 							id="ratingPlayerSelect" required>
 							<option value="" selected disabled>선수를 선택하세요</option>
-							<option value="1" data-name="박지성">박지성 (FW)</option>
-							<option value="2" data-name="손흥민">손흥민 (FW)</option>
-							<option value="3" data-name="김민재">김민재 (DF)</option>
-							<option value="4" data-name="홍길동">홍길동 (MF)</option>
+							<c:forEach var="player" items="${playerList}">
+								<option value="${player.clubJoin_num}">${player.userName}
+									(${player.position})</option>
+							</c:forEach>
 						</select>
 					</div>
 
@@ -145,59 +154,53 @@
 						<th style="width: 16%;">득점 / 도움</th>
 						<th style="width: 14%;">카드 / 기타</th>
 						<th>평가 메모</th>
-						<!-- 💡 너비를 18%로 넓히고 text-nowrap 추가 -->
 						<th class="text-end pe-3 text-nowrap" style="width: 18%;">관리</th>
 					</tr>
 				</thead>
 				<tbody class="small text-center" id="matchRecordListBody">
-					<tr id="record-row-101" data-date="2026-08-10" data-player-id="1"
-						data-score="4.9" data-goal="1" data-assist="2" data-owngoal="0"
-						data-yellow="false" data-red="false" data-comment="활동량 최고, 매너 우수">
-						<td class="text-muted">2026-08-10</td>
-						<td class="fw-bold text-dark">박지성</td>
-						<td><span class="fw-bold text-warning">⭐ 4.9</span></td>
-						<td><span class="text-primary fw-bold">1득점</span> / <span
-							class="text-success fw-bold">2도움</span></td>
-						<td><span class="text-muted">-</span></td>
-						<td class="text-muted text-truncate max-width-150"
-							title="활동량 최고, 매너 우수">활동량 최고, 매너 우수</td>
-						<!-- 💡 버튼들을 가로 한 줄(d-inline-flex)로 나란히 정렬 -->
-						<td class="text-end pe-3 text-nowrap">
-							<div class="d-inline-flex gap-1">
-								<button
-									class="btn btn-sm btn-outline-primary extra-small fw-bold px-2 py-1"
-									onclick="editMatchRecord(101)">수정</button>
-								<button
-									class="btn btn-sm btn-outline-danger extra-small fw-bold px-2 py-1"
-									onclick="deleteMatchRecord(101)">삭제</button>
-							</div>
-						</td>
-					</tr>
-					<tr id="record-row-102" data-date="2026-08-01" data-player-id="2"
-						data-score="5.0" data-goal="2" data-assist="0" data-owngoal="0"
-						data-yellow="true" data-red="false" data-comment="골 결정력 탁월">
-						<td class="text-muted">2026-08-01</td>
-						<td class="fw-bold text-dark">손흥민</td>
-						<td><span class="fw-bold text-warning">⭐ 5.0</span></td>
-						<td><span class="text-primary fw-bold">2득점</span> / 0도움</td>
-						<td><span class="badge bg-warning text-dark px-2 py-1">🟨
-								경고</span></td>
-						<td class="text-muted text-truncate max-width-150"
-							title="골 결정력 탁월">골 결정력 탁월</td>
-						<td class="text-end pe-3 text-nowrap">
-							<div class="d-inline-flex gap-1">
-								<button
-									class="btn btn-sm btn-outline-primary extra-small fw-bold px-2 py-1"
-									onclick="editMatchRecord(102)">수정</button>
-								<button
-									class="btn btn-sm btn-outline-danger extra-small fw-bold px-2 py-1"
-									onclick="deleteMatchRecord(102)">삭제</button>
-							</div>
-						</td>
-					</tr>
+					<c:forEach var="record" items="${recordList}">
+						<tr id="record-row-${record.recordId}"
+							data-match="${record.matchNum}"
+							data-player="${record.clubJoinNum}" data-score="${record.rating}"
+							data-goal="${record.goal}" data-assist="${record.assist}"
+							data-owngoal="${record.ownGoal}" data-yellow="${record.yellow}"
+							data-red="${record.red}" data-comment="${record.memo}">
+
+							<td class="text-muted">${record.matchDate}</td>
+							<td class="fw-bold text-dark">${record.userName}</td>
+							<td><span class="fw-bold text-warning">⭐
+									${record.rating}</span></td>
+							<td><span class="text-primary fw-bold">${record.goal}득점</span>
+								/ <span class="text-success fw-bold">${record.assist}도움</span></td>
+							<td><c:choose>
+									<c:when test="${record.yellow > 0}">
+										<span class="badge bg-warning text-dark px-2 py-1">🟨
+											경고</span>
+									</c:when>
+									<c:when test="${record.red > 0}">
+										<span class="badge bg-danger text-white px-2 py-1">🟥
+											퇴장</span>
+									</c:when>
+									<c:otherwise>
+										<span class="text-muted">-</span>
+									</c:otherwise>
+								</c:choose></td>
+							<td class="text-muted text-truncate max-width-150"
+								title="${record.memo}">${record.memo}</td>
+							<td class="text-end pe-3 text-nowrap">
+								<div class="d-inline-flex gap-1">
+									<button
+										class="btn btn-sm btn-outline-primary extra-small fw-bold px-2 py-1"
+										onclick="editMatchRecord(${record.recordId})">수정</button>
+									<button
+										class="btn btn-sm btn-outline-danger extra-small fw-bold px-2 py-1"
+										onclick="deleteMatchRecord(${record.recordId})">삭제</button>
+								</div>
+							</td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>
-
 	</div>
 </div>
