@@ -82,7 +82,8 @@
 					<a href="${pageContext.request.contextPath}/player/clubOwnerRequestHistory" class="list-group-item list-group-item-action ps-4">구단주 신청 결과 조회/취소</a>
 
 					<!-- 대분류 4 -->
-					<a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a>
+	                <div class="list-group-item bg-light fw-bold">경기 신청</div>
+	                <a href="${pageContext.request.contextPath}/match2/playermatchtab" class="list-group-item list-group-item-action ps-4">경기 참가 신청/이력</a> 
 				</div>
 			</div>
 		

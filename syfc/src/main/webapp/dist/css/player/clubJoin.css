@@ -2,34 +2,47 @@
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding-top: 30px;
-    margin-bottom: 28px;
+    margin: 20px 0 28px;
+    padding: 0;
 }
 
 .clubJoin-save-btn,
 .clubJoin-reset-btn {
-    min-width: 112px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-width: 108px;
     min-height: 42px;
-    border-radius: 4px;
+    padding: 0 16px;
+
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 .clubJoin-save-btn {
-    color: #fff;
+    border: 1px solid #1769c2;
     background: #1976d2;
+    color: #ffffff;
 }
 
 .clubJoin-save-btn:hover {
-    background: #1266b5;
+    border-color: #125da9;
+    background: #125da9;
 }
 
 .clubJoin-reset-btn {
     border: 1px solid #cbd5df;
-    color: #53687b;
-    background: #fff;
+    background: #ffffff;
+    color: #526579;
 }
 
 .clubJoin-reset-btn:hover {
-    background: #f4f7fa;
+    border-color: #aebbc8;
+    background: #f6f8fa;
 }
 
 .summary-profile-box {
@@ -57,4 +70,172 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+/* 구단 목록 영역 */
+.clubList-header {
+    margin-bottom: 28px;
+}
+
+.clubList-header > h4 {
+    margin: 0 0 26px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #7454a3;
+    color: #1f2933;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+.club-list-card {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 102px;
+    margin-bottom: 16px;
+    padding: 20px 24px;
+
+    border: 1px solid #e7e9ed;
+    border-radius: 12px;
+    background: #ffffff;
+    text-decoration: none;
+	color: inherit;
+}
+
+.club-list-card:hover {
+    border-color: #cfc4e1;
+    background: #fcfbfe;
+}
+
+
+.club-logo-wrapper {
+    display: flex;
+    flex: 0 0 60px;
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 50%;
+    background: #f5f5f5;
+}
+
+.club-logo-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.club-default-logo {
+    font-size: 22px;
+}
+
+
+.club-info-wrapper {
+    min-width: 0;
+}
+
+.club-name {
+    margin-bottom: 8px;
+    color: #1f2933;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.club-intro-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.club-intro-summary .dot {
+    color: #b1b7c0;
+}
+.club-list-more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+    margin: 20px 0 0 auto;
+    padding: 9px 18px;
+
+    border: 1px solid #7454a3;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #65448f;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.club-list-more-btn:hover {
+    background: #7454a3;
+    color: #ffffff;
+}
+.club-join-form {
+    padding: 4px 0 0;
+}
+
+.club-join-form label,
+.clubJoin-introduction > span {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #344054;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#clubJoinInfo {
+    margin-bottom: 22px;
+}
+
+.club-join-form .form-select,
+.club-join-form .form-control {
+    min-height: 44px;
+    border: 1px solid #d9dee7;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #27303d;
+    font-size: 14px;
+}
+
+.club-join-form .form-select:focus,
+.club-join-form .form-control:focus {
+    border-color: #7454a3;
+    outline: none;
+    box-shadow: none;
+}
+
+.club-join-form .form-select {
+    padding: 0 12px;
+}
+
+.club-join-form input[type="date"] {
+    padding: 0 12px;
+}
+
+.clubJoin-introduction {
+    width: 100%;
+    margin-top: 6px;
+}
+
+.clubJoin-introduction textarea.form-control {
+    min-height: 132px;
+    padding: 12px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.clubJoin-introduction textarea::placeholder {
+    color: #98a2b3;
 }
