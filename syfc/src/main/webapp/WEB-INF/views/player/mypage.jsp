@@ -383,5 +383,64 @@
 			alert("회원정보 수정이 완료되었습니다.");
 		</script>
 	</c:if>
+	
+<!-- 프로필 유효성 검사 -->
+<script type="text/javascript">
+	// 폼 가져오기
+	// 프로필 수정 폼은 하나라서 querySelectorAll 이 아닌 querySelector 로 가져온다
+	const profileForm = document.querySelector(".profile-form");
+	
+	// 폼에 이벤트 등록하기
+	profileForm.addEventListener("submit", function(event) {
+		// 이름, 이메일, 전화번호 입력칸 가져오기
+		// 이름 input 태그
+		const nameInput = profileForm.querySelector('[name="name"]');
+		// 이름이 비어있는지 검사하기
+		const name = nameInput.value.trim();
+		
+		const tel2Input = profileForm.querySelector('[name="tel2"]');
+		const tel2 = tel2Input.value.trim();
+		
+		const tel3Input = profileForm.querySelector('[name="tel3"]');
+		const tel3 = tel3Input.value.trim();
+		
+		const namePattern = /^[가-힣]{2,10}$/;
+		const tel2Pattern = /^[0-9]{3,4}$/;
+		const tel3Pattern = /^[0-9]{3,4}$/;
+		
+		if(name === ""){
+			event.preventDefault();
+			alert("이름은 필수 입력입니다.");
+			nameInput.focus();
+			return;
+		} else if(!namePattern.test(name)){
+			event.preventDefault();
+			alert("이름은 한글 2~10자로 입력해주세요.");
+			nameInput.focus();
+			return;
+		} else if(tel2 === ""){
+			event.preventDefault();
+			alert("전화번호는 필수 입력입니다.");
+			tel2Input.focus();
+			return;
+		} else if(!tel2Pattern.test(tel2)){
+			event.preventDefault();
+			alert("전화번호는 숫자 3~4자리로 입력해주세요.");
+			tel2Input.focus();
+			return;
+		} else if(tel3 === ""){
+			event.preventDefault();
+			alert("전화번호는 필수 입력입니다.");
+			tel3Input.focus();
+			return;
+		} else if(!tel3Pattern.test(tel3)){
+			event.preventDefault();
+			alert("전화번호는 숫자 3~4자리로 입력해주세요.");
+			tel3Input.focus();
+			return;
+		}
+
+	});
+</script>
 </body>
 </html>
