@@ -83,6 +83,10 @@ public class PlayerController {
 			return new ModelAndView("redirect:/member/login");
 		}
 		
+		long memberIdx = info.getMemberIdx();
+		
+		// 유효성 검사
+		
 		if(!Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"))) {
 			return new ModelAndView("redirect:/player/mypage");
 		}
@@ -299,6 +303,8 @@ public class PlayerController {
 		
 		// 경기 참여 횟수 조회
 		// 뽑기에 나올 후보 공 목록들 
+		// 경기 횟수에 따라서 뽑을 수 있는 공 경우의 수가 달라진다 
+		// 테스트용 findEligibleBalls(10);
 		List<BallDTO> eligibleBalls = ballService.findEligibleBalls(playedMatchCount);
 
 		// 조회된 후보 공 목록이 비어 있는지 확인
@@ -307,8 +313,11 @@ public class PlayerController {
 			
 			return new ModelAndView("redirect:/player/miniGame");
 		}
-		
+		//-----------------------------------------
+//		for(int i = 0; i <= 100; i++) { // 테스트용
+
 		// 모든 후보 공의 rating 총 합 계산
+		// 전체 경우의 수를 담아놓은 박스 
 		int totalRating = 0;
 		
 		// 후보 공들의 ball_rating 값을 이용해 확률 랜덤 선택
@@ -325,25 +334,33 @@ public class PlayerController {
 		int randomNumber = (int)(Math.random() * totalRating) + 1;
 		
 		// cumulativeRating : 반복하면서 누적하는 확률 범위
-		int cumulativeRating = 0; // = offset
+		// randomNumber가 cumulativeRating를 어떤 공이냐 골라야 한다
+		int cumulativeRating = 0; 
 		// 랜덤 숫자에 해당하는 볼
 		BallDTO selectedBall = null;
 		
 		// 후보 공들을 다시 한번 반복
 		// 랜덤 숫자에 해당하는 selectBall을 찾는용
 		for(BallDTO ball : eligibleBalls) {
+			// 전체 공에서 몇점짜리냐 
 			cumulativeRating += ball.getBall_rating();
 			
 			// 만약에 랜덤 번호가 누적하는 확률 범위보다
 			// 작거나 같으면
-			                          
+			// 5점 10점 공을 넣었을때 8번 을 뽑은 상황이라고 가정
+			// cumulativeRating 가 5가 되고 8은 5보다 작지 않으니
+			// 다시 for 로 돌아가서 다음 공의 점수를 더하고
+			// 작은 경우의 수가 되면 selectedBall가 되어서 뽑힌다.
 			if(randomNumber <= cumulativeRating) {
 				// 현재 반복중인 공
 				selectedBall = ball;
 				break;
 			}
 		}
+		System.out.println("뽑은공 : " + selectedBall.getBall_name() + " 확률 : " + selectedBall.getBall_rating());
 		
+//	} // 테스트용
+		//-----------------------------------------------
 		// selectBall 의 ball_idx를 dto 에 저장
 		dto.setBall_idx(selectedBall.getBall_idx());
 
