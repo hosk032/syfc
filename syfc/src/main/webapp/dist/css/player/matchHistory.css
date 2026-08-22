@@ -96,6 +96,22 @@
     border-radius: 50%;
 }
 
+.summary-default-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #edf2f6;
+    color: #718096;
+}
+
+.summary-default-profile i {
+    font-size: 30px;
+    line-height: 1;
+}
+
 .summary-main-ball {
     position: absolute;
     right: -7px;

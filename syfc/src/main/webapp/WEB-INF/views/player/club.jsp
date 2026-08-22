@@ -10,7 +10,7 @@
 	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/club.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/club.css?v=20260822-summary-profile" />
 </head>
 <body>
 
@@ -22,8 +22,17 @@
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
 				<div class="summary-profile-box me-3">
-					<img src="${pageContext.request.contextPath}/uploads/member/${profileDto.profile_photo}" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
-					
+					<c:choose>
+						<c:when test="${not empty profileDto.profile_photo}">
+							<img src="${pageContext.request.contextPath}/uploads/member/${profileDto.profile_photo}" alt="프로필 사진" class="summary-profile-image">
+						</c:when>
+						<c:otherwise>
+							<div class="summary-default-profile" aria-label="기본 프로필 이미지">
+								<i class="bi bi-person"></i>
+							</div>
+						</c:otherwise>
+					</c:choose>
+
 						<c:if test="${not empty mainBall}">
 							<div class="summary-main-ball">
 								<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
