@@ -111,9 +111,9 @@
 											<img src="${pageContext.request.contextPath}/uploads/member/${player.profile_photo}"
 												alt="프로필 사진" class="player-profile-image">
 										
-											<c:if test="${not empty mainBall}">
+											<c:if test="${not empty player.ball_image}">
 												<div class="player-main-ball">
-													<img src="${pageContext.request.contextPath}${mainBall.ball_image}"
+													<img src="${pageContext.request.contextPath}${player.ball_image}"
 														alt="대표 공">
 												</div>
 											</c:if>

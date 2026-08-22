@@ -17,18 +17,15 @@
 		SELECT cj.memberIdx, p.clubJoin_Num AS clubJoinNum, p.position, p.uniform_No AS uniformNo,
 		       p.height, p.weight, TO_CHAR(p.join_Date, 'YYYY-MM-DD') AS joinDate,
 		       p.clubOwner_Key AS clubOwnerKey, c.club_Name AS clubName,
-		       p.status, m1.userName, m2.profile_photo
+		       p.status, m1.userName, m2.profile_photo, b.ball_image
 		FROM player p
-		JOIN club c
-		  ON c.clubOwner_Key = p.clubOwner_Key
-		JOIN my_club mc
-		  ON mc.clubOwner_Key = p.clubOwner_Key
-		JOIN clubjoin cj
-		  ON cj.clubJoin_Num = p.clubJoin_Num
-		JOIN member1 m1
-		  ON m1.memberIdx = cj.memberIdx
-		LEFT OUTER JOIN member2 m2
-		  ON m2.memberIdx = cj.memberIdx
+		JOIN club c ON c.clubOwner_Key = p.clubOwner_Key
+		JOIN my_club mc ON mc.clubOwner_Key = p.clubOwner_Key
+		JOIN clubjoin cj ON cj.clubJoin_Num = p.clubJoin_Num
+		JOIN member1 m1 ON m1.memberIdx = cj.memberIdx
+		LEFT OUTER JOIN member2 m2 ON m2.memberIdx = cj.memberIdx
+        LEFT OUTER JOIN MemberBall_main mbm ON mbm.memberIdx = m1.memberIdx
+		LEFT OUTER JOIN Ball b ON b.ball_idx = mbm.ball_idx
 	</select>
 
 

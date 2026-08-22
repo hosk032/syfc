@@ -19,6 +19,16 @@ public class PlayerProfileDTO {
 	private String userName;
 	private String profile_photo;
 	
+	// 회원별 메인 공 이미지
+	private String ball_image;
+	
+
+	public String getBall_image() {
+		return ball_image;
+	}
+	public void setBall_image(String ball_image) {
+		this.ball_image = ball_image;
+	}
 	public String getClubName() {
 		return clubName;
 	}
