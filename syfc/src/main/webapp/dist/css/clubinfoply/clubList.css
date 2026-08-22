@@ -156,3 +156,14 @@
     display: flex;
     justify-content: center;
 }
+
+.club-list-footer a {
+    display: inline-block;
+    margin: 0 10px;
+    text-decoration: none;
+    color: #555;
+}
+
+.club-list-footer a:hover {
+    color: #6f42c1;
+}

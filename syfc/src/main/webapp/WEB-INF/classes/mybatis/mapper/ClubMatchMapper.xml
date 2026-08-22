@@ -3,8 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syfc.mapper.ClubMatchMapper">
 
-<!-- 전체 경기 일정 및 결과 목록 조회 -->
-	<select id="selectAllMatchList" parameterType="map" resultType="com.syfc.dto.ClubOwnerMatchDTO">
+	<select id="selectAllMatchList" parameterType="map" resultType="com.syfc.dto.ClubMatchDTO">
 		SELECT 
 			m.match_num AS matchNum,
 			TO_CHAR(m.match_date, 'YYYY-MM-DD') AS matchDate,
@@ -21,9 +20,158 @@
 		LEFT OUTER JOIN Stadium s ON ma.stadium_id = s.stadium_id
 		LEFT OUTER JOIN Club hc ON ma.clubOwner_key = hc.clubOwner_key
 		LEFT OUTER JOIN Club ac ON ma.clubOwner_key2 = ac.clubOwner_key
+		<where>
+			<if test="kwd != null and kwd != ''">
+				<include refid="where-list"/>
+			</if>
+		</where>
 		ORDER BY m.match_date DESC, m.match_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM Match m
+		LEFT OUTER JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+		LEFT OUTER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+		LEFT OUTER JOIN Club hc ON ma.clubOwner_key = hc.clubOwner_key
+		LEFT OUTER JOIN Club ac ON ma.clubOwner_key2 = ac.clubOwner_key
+		<where>
+ 			<if test="kwd != null and kwd != '' ">
+ 				<include refid="where-list"/>
+ 			</if>
+ 		</where>
+	</select>
 
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'club_name'">
+				(INSTR(hc.club_name, #{kwd}) &gt; 0 OR INSTR(ac.club_name, #{kwd}) &gt; 0)
+			</when>
+			<when test="schType == 'match_date'">
+				(
+				TO_CHAR(m.match_date, 'YYYY-MM-DD') = #{kwd}
+					OR TO_CHAR(m.match_date, 'YYYYMMDD') = #{kwd}
+				)
+			</when>
+		</choose>
+	</sql>
 
+	<!-- 1. 전체 구단 수 조회 (구단주 키 기준 카운트) -->
+	<select id="clubDataCount" parameterType="map" resultType="int">
+		SELECT NVL(COUNT(c.clubOwner_key), 0)
+		FROM Club c
+		WHERE c.club_status = 1
+	</select>
+
+	<!-- 2. 구단 전체 누적 성적 및 순위 목록 조회 -->
+	<select id="selectAllClubList" parameterType="map" resultType="com.syfc.dto.ClubMatchDTO">
+		SELECT 
+			c.clubOwner_key, c.club_name, c.club_logo,
+			NVL(COUNT(am.match_num), 0) AS totalGames,
+			NVL(SUM(CASE WHEN am.result_text = '승' THEN 1 ELSE 0 END), 0) AS winCount,
+			NVL(SUM(CASE WHEN am.result_text = '무' THEN 1 ELSE 0 END), 0) AS drawCount,
+			NVL(SUM(CASE WHEN am.result_text = '패' THEN 1 ELSE 0 END), 0) AS loseCount,
+			NVL(SUM(am.gf), 0) AS goalsFor,
+			NVL(SUM(am.ga), 0) AS goalsAgainst,
+			NVL(SUM(am.gf - am.ga), 0) AS goalDifference
+		FROM Club c
+		LEFT JOIN (
+			SELECT 
+				ma.clubOwner_key AS clubOwner_key, m.match_num, m.match_date,
+				m.home_score AS gf,
+				m.away_score AS ga,
+				CASE 
+					WHEN m.home_score > m.away_score THEN '승'
+					WHEN m.home_score = m.away_score THEN '무'
+					ELSE '패'
+				END AS result_text
+			FROM Match m
+			JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+			WHERE m.home_score IS NOT NULL AND m.away_score IS NOT NULL
+
+			UNION ALL
+
+			SELECT 
+				ma.clubOwner_key2 AS clubOwner_key, m.match_num, m.match_date,
+				m.away_score AS gf,
+				m.home_score AS ga,
+				CASE 
+					WHEN m.away_score > m.home_score THEN '승'
+					WHEN m.away_score = m.home_score THEN '무'
+					ELSE '패'
+				END AS result_text
+			FROM Match m
+			JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+			WHERE ma.clubOwner_key2 IS NOT NULL
+			  AND m.home_score IS NOT NULL AND m.away_score IS NOT NULL
+		) am ON c.clubOwner_key = am.clubOwner_key
+		WHERE c.club_status = 1
+		GROUP BY c.clubOwner_key, c.club_name, c.club_logo
+		ORDER BY (NVL(SUM(CASE WHEN am.result_text = '승' THEN 1 ELSE 0 END), 0) * 3 + 
+				  NVL(SUM(CASE WHEN am.result_text = '무' THEN 1 ELSE 0 END), 0)) DESC,
+				 NVL(SUM(am.gf - am.ga), 0) DESC,
+				 NVL(SUM(am.gf), 0) DESC
+		<if test="offset != null and size != null">
+			OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+		</if>
+	</select>
+
+	<!-- 3. 특정 구단의 최근 3경기 결과 조회 -->
+	<select id="selectClub3Results" parameterType="map" resultType="String">
+		SELECT result_text
+		FROM (
+			SELECT 
+				m.match_date,
+				m.match_num,
+				CASE 
+					WHEN (ma.clubOwner_key = #{clubOwnerKey} AND m.home_score > m.away_score) OR 
+						 (ma.clubOwner_key2 = #{clubOwnerKey} AND m.away_score > m.home_score) THEN '승'
+					WHEN m.home_score = m.away_score THEN '무'
+					ELSE '패'
+				END AS result_text
+			FROM Match m
+			JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+			WHERE (ma.clubOwner_key = #{clubOwnerKey} OR ma.clubOwner_key2 = #{clubOwnerKey})
+			  AND m.home_score IS NOT NULL AND m.away_score IS NOT NULL
+			ORDER BY m.match_date DESC, m.match_num DESC
+		)
+		WHERE ROWNUM &lt;= 3
+	</select>
+	
+	<!-- 특정 연/월 달력 일정 및 결과 목록 조회 -->
+	<select id="selectMonthMatchList" parameterType="map" resultType="com.syfc.dto.ClubMatchDTO">
+		SELECT 
+			m.match_num AS matchNum,
+			TO_CHAR(m.match_date, 'YYYY-MM-DD') AS matchDate,
+			m.match_time AS matchTime,
+			m.home_score AS homeScore,
+			m.away_score AS awayScore,
+			s.stadium_name AS stadiumName,
+			hc.club_name AS homeClubName,
+			hc.club_logo AS homeClubLogo,
+			ac.club_name AS awayClubName,
+			ac.club_logo AS awayClubLogo
+		FROM Match m
+		LEFT OUTER JOIN Match_Apply ma ON m.apply_id = ma.apply_id
+		LEFT OUTER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+		LEFT OUTER JOIN Club hc ON ma.clubOwner_key = hc.clubOwner_key
+		LEFT OUTER JOIN Club ac ON ma.clubOwner_key2 = ac.clubOwner_key
+		WHERE TO_CHAR(m.match_date, 'YYYY-MM') = #{yearMonth}
+		<if test="kwd != null and kwd != ''">
+			<choose>
+				<when test="schType == 'club_name'">
+					AND (INSTR(hc.club_name, #{kwd}) &gt; 0 OR INSTR(ac.club_name, #{kwd}) &gt; 0)
+				</when>
+				<when test="schType == 'match_date'">
+					AND (
+						TO_CHAR(m.match_date, 'YYYY-MM-DD') = #{kwd}
+						OR TO_CHAR(m.match_date, 'YYYYMMDD') = #{kwd}
+					)
+				</when>
+			</choose>
+		</if>
+		ORDER BY m.match_date ASC, m.match_time ASC
+	</select>
+				
 </mapper>
