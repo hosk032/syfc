@@ -169,10 +169,32 @@ nav.main-nav a.active {
   border-bottom: 1px solid #eee;
   text-align: center;
 }
+
 .memo-row span:nth-child(2) {
   text-align: left;
 }
+
+html {
+    overflow-y: scroll;
+}
+
 .board-number {
-	text-align: center;
-	justify-content: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 50px !important;
+    margin-top: 20px !important;
+}
+
+.board-number a, 
+.board-number span,
+.board-number strong {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    line-height: 1 !important;
+    margin: 0 2px !important;
+    box-sizing: border-box !important;
 }

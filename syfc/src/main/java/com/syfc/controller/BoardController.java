@@ -72,7 +72,7 @@ public class BoardController {
 			total_page = paginateUtil.pageCount(dataCount, size);
 			current_page = Math.min(current_page, total_page);
 			
-			int offset = (current_page - 1) * 10;
+			int offset = (current_page - 1) * size;
 			if(offset < 0)offset = 0;
 			
 			map.put("offset", offset);

@@ -72,7 +72,7 @@
 												<span class="score-num"><c:out value="${dto.awayScore != null ? dto.awayScore : 0}"/></span>
 											</div>
 											
-											<!-- 원정팀 (수정완료: awayClubName, awayClubLogo 적용) -->
+											<!-- 원정팀 -->
 											<div class="team-info away">
 												<span class="team-name"><c:out value="${dto.awayClubName}"/></span>
 												<c:if test="${not empty dto.awayClubLogo}">
@@ -104,38 +104,76 @@
 								</tr>
 							</c:forEach>
 						</c:when>
-						
-						<%-- DB 연결 전 또는 데이터가 없을 때 보일 샘플 4개 --%>
-						<c:otherwise>
-							<!-- 샘플 1 -->
-							<tr>
-								<td class="col-stadium text-center">문수경기장</td>
-								<td class="text-center"><span class="result-badge lose">패배</span></td>
-								<td class="col-teams">
-									<div class="match-teams-wrap">
-										<div class="team-info home">
-											<span class="team-name">울산</span>
-										</div>
-										<div class="score-box">
-											<span class="score-num">1</span>
-											<span class="colon">:</span>
-											<span class="score-num">3</span>
-										</div>
-										<div class="team-info away">
-											<span class="team-name">강원</span>
-										</div>
-									</div>
-								</td>
-								<td class="text-center"><span class="result-badge win">승리</span></td>
-								<td class="col-schedule text-center">2026-02-28</td>
-							</tr>
-						</c:otherwise>
 					</c:choose>
 				</tbody>
 			</table>
+			
+			<div class="row align-items-center gx-2 mx-0 w-100">
+				<!-- 왼쪽 새로고침 버튼 -->
+				<div class="col-auto p-0">
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/clubmatch/matchInfo';" title="새로고침">
+						<i class="bi bi-arrow-counterclockwise"></i>
+					</button>
+				</div>
+			
+				<!-- 가운데 검색 폼 -->
+				<div class="col d-flex justify-content-center px-0">
+					<form class="row g-1 m-0 align-items-center" name="searchForm">
+						<div class="col-auto">
+							<select name="schType" class="form-select">
+								<option value="club_name" ${schType=="club_name"?"selected":""}>구단명</option>
+								<option value="match_date" ${schType=="match_date"?"selected":""}>경기일정</option>
+							</select>
+						</div>
+						<div class="col-auto">
+							<input type="text" name="kwd" value="${kwd}" class="form-control" placeholder="검색어 입력">
+						</div>
+						<div class="col-auto">
+							<button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
+						</div>
+					</form>
+				</div>
+			
+				<!-- 중앙 밸런스용 투명 영역 -->
+				<div class="col-auto p-0" style="visibility: hidden;" aria-hidden="true">
+					<button type="button" class="btn btn-light"><i class="bi bi-arrow-counterclockwise"></i></button>
+				</div>
+			</div>
 		</div>
+		<div class="board-number">
+			${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
+		</div>
+		
 	</section>
 </div>
+
+<script type="text/javascript">
+// 검색 키워드 입력란에서 엔터를 누른 경우 서버 전송 막기 
+document.addEventListener('DOMContentLoaded', () => {
+	const inputEL = document.querySelector('form input[name=kwd]'); 
+	inputEL.addEventListener('keydown', function (evt) {
+		if(evt.key === 'Enter') {
+			evt.preventDefault();
+	    	
+			searchList();
+		}
+	});
+});
+
+function searchList() {
+	const f = document.searchForm;
+	if(! f.kwd.value.trim()) {
+		return;
+	}
+	
+	const formData = new FormData(f);
+	let params = new URLSearchParams(formData).toString();
+	
+	let url = '${pageContext.request.contextPath}/clubmatch/matchInfo';
+	location.href = url + '?' + params;
+}
+</script>
+
 
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 

@@ -1,0 +1,182 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   1. 전체 컨테이너 너비 제한 (최대 1024px & 중앙 정렬)
+   ========================================================================== */
+.board-container {
+    max-width: 1024px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* ==========================================================================
+   2. 레이아웃 기본 고정 (화면 흔들림 차단)
+   ========================================================================== */
+html {
+    overflow-y: scroll;
+}
+
+.board-number {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 50px !important;
+    margin-top: 20px !important;
+}
+
+.board-number a, 
+.board-number span,
+.board-number strong {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    line-height: 1 !important;
+    margin: 0 2px !important;
+    box-sizing: border-box !important;
+}
+
+/* ==========================================================================
+   3. 캘린더 컴포넌트 스타일
+   ========================================================================== */
+.calendar-header {
+    background-color: #f8f9fa;
+    padding: 14px 20px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+}
+
+.calendar-table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.calendar-table th {
+    background-color: #f1f3f5;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.calendar-table td {
+    height: 110px;
+    vertical-align: top;
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    position: relative;
+    transition: background-color 0.15s ease;
+}
+
+.calendar-table td:hover {
+    background-color: #f8f9fa;
+}
+
+.calendar-table .day-number {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+/* 이전/다음달 이월 날짜 */
+.calendar-table .other-month {
+    background-color: #fbfbfb;
+    opacity: 0.4;
+}
+
+/* 오늘 날짜 하이라이트 */
+.calendar-table .today {
+    background-color: #f0f7ff;
+}
+
+/* 경기 카드 배지 */
+.match-item {
+    font-size: 0.75rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.match-win {
+    background-color: #e6f4ea;
+    color: #137333;
+    border-left: 3px solid #137333;
+}
+
+.match-draw {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    border-left: 3px solid #5f6368;
+}
+
+.match-lose {
+    background-color: #fce8e6;
+    color: #c5221f;
+    border-left: 3px solid #c5221f;
+}
+
+/* ==========================================================================
+   4. 1024px 이하 디바이스 대응 (선택 사항)
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .calendar-table td {
+        height: 95px;
+        padding: 5px;
+    }
+    
+    .calendar-header {
+        padding: 10px 14px;
+    }
+    
+    .match-item {
+        font-size: 0.7rem;
+        padding: 3px 4px;
+    }
+}
+
+
+/* 달력 셀 기본 높이 및 정렬 설정 */
+.calendar-table td {
+    height: 100px;              /* 셀 기본 높이 */
+    vertical-align: top;       /* 날짜 및 일정 상단 정렬 */
+    padding: 6px;
+    word-break: break-all;      /* 긴 단어도 셀 너비 초과 시 자동 줄바꿈 */
+    overflow-wrap: break-word;  /* 표준 자동 줄바꿈 속성 */
+}
+
+/* 경기 일정 박스 스타일 */
+.match-item {
+    background-color: #f8f9fa;
+    border-left: 3px solid #0d6efd; /* 포인트 라인 */
+    border-radius: 4px;
+    padding: 4px 6px;
+    margin-top: 4px;
+    font-size: 0.825rem;
+    line-height: 1.35;          /* 줄간격 확보 */
+    color: #212529;
+    
+    /* 자동 줄바꿈 필수 속성 */
+    white-space: normal;        /* 한 줄 고정이 아닌 자동 줄바꿈 허용 */
+    word-break: keep-all;       /* 한글 단어 단위 우선 줄바꿈 */
+    overflow-wrap: break-word;  /* 넘치는 긴 텍스트 강제 줄바꿈 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* 스코어 표기 강조 */
+.match-item .match-score {
+    font-weight: bold;
+    color: #dc3545;
+    display: inline-block;
+    margin-left: 2px;
+}
