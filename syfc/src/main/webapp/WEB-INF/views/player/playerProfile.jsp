@@ -108,9 +108,18 @@
 								<div class="player-profile-header">
 									
 										<div class="player-profile-image-box">
-											<img src="${pageContext.request.contextPath}/uploads/member/${player.profile_photo}"
-												alt="프로필 사진" class="player-profile-image">
-										
+											<c:choose>
+												<c:when test="${not empty player.profile_photo}">
+													<img src="${pageContext.request.contextPath}/uploads/member/${player.profile_photo}"
+														alt="프로필 사진" class="player-profile-image">
+												</c:when>
+												<c:otherwise>
+													<div class="player-default-profile" aria-label="기본 프로필 이미지">
+														<i class="bi bi-person"></i>
+													</div>
+												</c:otherwise>
+											</c:choose>
+
 											<c:if test="${not empty player.ball_image}">
 												<div class="player-main-ball">
 													<img src="${pageContext.request.contextPath}${player.ball_image}"
