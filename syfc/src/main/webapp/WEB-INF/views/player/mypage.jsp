@@ -24,7 +24,23 @@
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
 			<div class="summary-profile-box me-3">
+			<!--
 				<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" class="rounded-circle me-3" style="width: 60px; height: 60px" alt="프로필 이미지" />
+					-->
+					  
+					<c:choose>
+
+						<c:when test="${not empty dto.profile_photo}">
+							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="summary-profile-image">
+						</c:when>
+						<c:otherwise>
+							<div class="summary-default-profile" aria-label="기본 프로필 이미지">							
+								<i class="bi bi-person"></i>
+							</div>
+						</c:otherwise>
+					</c:choose>
+
+					
 					<c:if test="${not empty mainBall}">
 						<div class="summary-main-ball">
 							<img alt="대표공 이미지" src="${pageContext.request.contextPath}${mainBall.ball_image}">
@@ -442,5 +458,12 @@
 
 	});
 </script>
+
+<!-- 컨트롤러 유효성 검사 오류 안내문구 출력 -->
+<c:if test="${not empty profileValidationError}">
+	<script type="text/javascript">
+		alert("${profileValidationError}");
+	</script>
+</c:if>
 </body>
 </html>

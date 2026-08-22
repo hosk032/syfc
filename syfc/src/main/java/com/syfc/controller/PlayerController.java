@@ -87,6 +87,23 @@ public class PlayerController {
 		
 		// 유효성 검사
 		
+		// 이름은 null 이 아니고 한글 2~10자
+		String name = req.getParameter("name");
+		String tel2 = req.getParameter("tel2");
+		String tel3 = req.getParameter("tel3");
+		
+		if(name == null || !name.matches("^[가-힣]{2,10}$")) {
+			session.setAttribute("profileValidationError", "이름은 한글 2~10자로 입력해주세요.");
+			return new ModelAndView("redirect:/player/mypage");
+			// tel2, tel3 는 null 이 아니고 숫자 3~4자리
+		} else if(tel2 == null || !tel2.matches("^[0-9]{3,4}$")) {
+			session.setAttribute("profileValidationError", "전화번호는 숫자 3~4자리로 입력해주세요.");
+			return new ModelAndView("redirect:/player/mypage");
+		} else if(tel3 == null || !tel3.matches("^[0-9]{3,4}$")) {
+			session.setAttribute("profileValidationError", "전화번호는 숫자 3~4자리로 입력해주세요.");
+			return new ModelAndView("redirect:/player/mypage");
+		}
+		
 		if(!Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"))) {
 			return new ModelAndView("redirect:/player/mypage");
 		}
@@ -210,6 +227,13 @@ public class PlayerController {
 		
 		ModelAndView mav = new ModelAndView("player/mypage");
 		
+		// 유효성 검사에서 에러 문구를 담아
+		String profileValidationError = (String)session.getAttribute("profileValidationError");
+		
+		// 오류문구 새로고침 했을때 한번만 보여주기 위해서 remove 해준다
+		session.removeAttribute("profileValidationError");
+		// jsp 에 쏴주기 
+		mav.addObject("profileValidationError", profileValidationError);
 		mav.addObject("playerUpdateVerified", playerUpdateVerified);
 		mav.addObject("passwordError", passwordError);
 		mav.addObject("dto", dto);

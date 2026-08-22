@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchHistory.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/matchHistory.css?v=20260822-summary-profile" />
 </head>
 <body>
 
@@ -23,8 +23,16 @@
 		<div class="card mb-4 p-3 bg-light">
 			<div class="d-flex align-items-center">
 				<div class="summary-profile-box me-3">
-					<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}"
-						class="summary-profile-image" alt="프로필 이미지" />
+					<c:choose>
+						<c:when test="${not empty dto.profile_photo}">
+							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="summary-profile-image">
+						</c:when>
+						<c:otherwise>
+							<div class="summary-default-profile" aria-label="기본 프로필 이미지">
+								<i class="bi bi-person"></i>
+							</div>
+						</c:otherwise>
+					</c:choose>
 
 					<c:if test="${not empty mainBall}">
 						<div class="summary-main-ball">
