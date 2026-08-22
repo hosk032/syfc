@@ -126,12 +126,31 @@
 														alt="대표 공">
 												</div>
 											</c:if>
-										</div>
+										</div>																		
 									
 									<div>
 										<h3>${player.userName}</h3>
-										<span class="player-status">${player.status}</span>
+ 
+										<c:choose>
+											<c:when test="${player.status eq '0'}">
+												<span class="player-status">탈퇴</span>
+											</c:when>
+											<c:when test="${player.status eq '1'}">
+												<span class="player-status">활동</span>
+											</c:when>
+											<c:when test="${player.status eq '2'}">
+												<span class="player-status">제적</span>
+											</c:when>
+											<c:otherwise>
+												<span class="player-status">${player.status}</span>
+											</c:otherwise>
+										</c:choose>
+
 									</div>
+									
+									
+									
+									
 								</div>
 
 								<div class="player-profile-info">
