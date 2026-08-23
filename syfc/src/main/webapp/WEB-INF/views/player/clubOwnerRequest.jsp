@@ -118,7 +118,7 @@
 								
 								<div class="clubOwnerRequest-reason">
 									<span>신청사유</span> 
-									<textarea class="form-control" rows="5" name="cor_content" required
+									<textarea class="form-control" rows="5" name="cor_content"
 										placeholder="해당 구단에 구단주로 신청하게된 사유를 간단히 작성해주세요."></textarea>
 								</div>
 	
@@ -147,13 +147,26 @@
 </c:if>
 
 <script type="text/javascript">
-	document.getElementById("clubOwnerRequestForm").addEventListener("submit", function(event){
-			if(!confirm("구단주 신청을 완료하시겠습니까 ? ")){
-				event.preventDefault();
-			}
-		});
-		
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("clubOwnerRequestForm");
+
+    form.addEventListener("submit", function (e) {
+        const cor_content = form.elements["cor_content"];
+
+        if (cor_content.value === "") {
+            alert("신청사유를 입력해주세요.");
+            cor_content.focus();
+            e.preventDefault();
+            return;
+            
+        } else if(!confirm("구단주 신청을 완료하시겠습니까 ? ")){
+     	   	event.preventDefault();
+        }
+
+    });
+});
 </script>
+
 
 </body>
 </html>	
