@@ -12,10 +12,10 @@
 	   		clubJoin_position, clubJoin_reason
 	   	)
 		VALUES(
-		  clubJoin_seq.NEXTVAL, #{memberIdx}, #{clubOwner_key},
-		  #{clubJoin_content}, TO_DATE(#{clubJoin_date}, 'YYYY-MM-DD'),
-		  #{clubJoin_result}, #{clubJoin_intro}, 
-		  #{clubJoin_position}, #{clubJoin_reason})
+		  clubJoin_seq.NEXTVAL, #{memberIdx}, #{clubOwnerKey},
+		  #{clubJoinContent}, TO_DATE(#{clubJoinDate}, 'YYYY-MM-DD'),
+		  #{clubJoinResult}, #{clubJoinIntro}, 
+		  #{clubJoinPosition}, #{clubJoinReason, jdbcType=VARCHAR})
 	</insert>
 
 

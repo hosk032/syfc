@@ -7,7 +7,7 @@ public class ClubJoinDTO {
 	private Long clubOwnerKey;	// 구단주번호 (FK)
 	private String clubJoinContent; // 신청사유
 	private String clubJoinDate;	// 신청일
-	private Integer clubJoinResult;	// 신청결과 ( 대기 2 / 승인 1 / 반려 0 )
+	private int clubJoinResult;	// 신청결과 ( 대기 2 / 승인 1 / 반려 0 )
 	private String clubJoinIntro;	// 자기소개
 	private String clubJoinPosition;	// 선호포지션
 	private String clubJoinReason;	// 반려사유
@@ -54,11 +54,11 @@ public class ClubJoinDTO {
 		this.clubJoinDate = clubJoinDate;
 	}
 
-	public Integer getClubJoinResult() {
+	public int getClubJoinResult() {
 		return clubJoinResult;
 	}
 
-	public void setClubJoinResult(Integer clubJoinResult) {
+	public void setClubJoinResult(int clubJoinResult) {
 		this.clubJoinResult = clubJoinResult;
 	}
 
