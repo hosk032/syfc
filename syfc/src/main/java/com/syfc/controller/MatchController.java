@@ -1,7 +1,6 @@
 package com.syfc.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,6 +267,7 @@ public class MatchController {
         boardMap.put("longitude", board.getLongitude());
         boardMap.put("capacity", board.getCapacity());
         boardMap.put("stadium_cost", board.getStadium_cost());
+        boardMap.put("stadium_img", board.getStadium_img());
 
         // 경기 종류
         boardMap.put("match_type1", board.getMatch_type1());
@@ -491,9 +491,8 @@ public class MatchController {
 
         HttpSession session = req.getSession();
         SessionInfo info = (SessionInfo) session.getAttribute("member");
+           
         
-        String cancel_reason = req.getParameter("cancel_reason");
-        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
 
         if (info == null) {
             result.put("success", false);
@@ -501,11 +500,17 @@ public class MatchController {
 
             return result;
         }
+        int memberidx = info.getMemberIdx();
+        Long clubownerkey = service.findOwnerKeyByMemberIdx(memberidx);
+        String clubname = service.findClubName(clubownerkey);
+        
+        String cancel_reason = req.getParameter("cancel_reason");
+        Long cmb_num = Long.parseLong(req.getParameter("cmb_num"));
 
         Map<String, Object> param = new HashMap<>();
 
         param.put("cmb_num", cmb_num);
-        param.put("cancel_reason", cancel_reason);
+        param.put("cancel_reason", clubname + " : " + cancel_reason);
         param.put("memberIdx", info.getMemberIdx());
 
         int resultCount = service.cancelMatchByOwner(param);

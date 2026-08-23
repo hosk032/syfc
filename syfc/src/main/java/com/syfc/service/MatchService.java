@@ -54,10 +54,6 @@ public interface MatchService {
 	public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> param);
     
 	public List<ClubMatchBoardDTO> listMyMatchRequest(Map<String, Object> param);
-
-
-
-
-
-
+	
+	int cancelExpiredWaitingMatches();
 }

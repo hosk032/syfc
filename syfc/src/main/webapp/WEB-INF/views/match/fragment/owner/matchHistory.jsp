@@ -34,6 +34,24 @@
         </button>
 
     </div>
+    
+    <div class="d-flex justify-content-end mb-3">
+    <select id="matchStatusFilter"
+            class="form-select"
+            style="width: 180px;"
+            onchange="loadMyMatchApply()">
+
+        <option value="">전체</option>
+        <option value="6">상대팀 거절</option>
+        <option value="5">매칭 실패</option>
+        <option value="4">경기장 사정으로 반려</option>
+        <option value="3">매칭 대기</option>
+        <option value="2">상대팀 신청</option>
+        <option value="1">매칭 완료</option>
+        <option value="0">취소</option>
+
+    </select>
+	</div>
 
 
     <div id="matchHistoryList1">

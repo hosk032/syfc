@@ -61,8 +61,15 @@ public class ClubMatchBoardDTO {
     
     private Integer status;
     private Integer stadium_fee;
+    private String stadium_img;
     
 
+	public String getStadium_img() {
+		return stadium_img;
+	}
+	public void setStadium_img(String stadium_img) {
+		this.stadium_img = stadium_img;
+	}
 	public Integer getStadium_fee() {
 		return stadium_fee;
 	}

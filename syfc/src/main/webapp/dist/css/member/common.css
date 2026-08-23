@@ -61,7 +61,7 @@ body {
 
    padding: 40px;
 
-   border-radius: 20px;
+   border-radius: 20px !important;
 
    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 
@@ -130,7 +130,7 @@ select {
 
    border: 1px solid var(--border-color);
 
-   border-radius: 8px;
+   border-radius: 8px !important;
 
    color: #212529;
 
@@ -356,4 +356,245 @@ input[readonly] {
    font-size: 13px;
    font-weight: 600;
    color: #495057;
+}
+
+/* ===== Member 페이지 보조 공통 스타일 ===== */
+
+button,
+input,
+select,
+textarea {
+   font-family: inherit;
+}
+
+button {
+   cursor: pointer;
+}
+
+.login-option {
+   margin-top: 4px;
+}
+
+.checkbox-label {
+   display: inline-flex;
+   align-items: center;
+   gap: 7px;
+   font-size: 13px;
+   color: var(--text-sub);
+   cursor: pointer;
+}
+
+.checkbox-label input {
+   width: 16px;
+   height: 16px;
+   accent-color: var(--main-color);
+}
+
+.message-area {
+   margin-top: 16px;
+   text-align: center;
+   min-height: 20px;
+   color: var(--main-color);
+   font-size: 13px;
+}
+
+.find-card {
+   max-width: 520px;
+}
+
+.find-section .common-header {
+   margin-bottom: 24px;
+}
+
+.result-area {
+   margin-top: 12px;
+   font-size: 13px;
+   text-align: center;
+}
+
+.member-page-container {
+   width: 100%;
+   max-width: 1024px;
+   margin: 0 auto;
+   padding: 40px 16px;
+}
+
+.profile-summary {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+   padding: 20px;
+   margin-bottom: 24px;
+   background: #ffffff;
+   border: 1px solid #e9ecef;
+   border-radius: 16px !important;
+}
+
+.profile-summary-image {
+   width: 60px;
+   height: 60px;
+   object-fit: cover;
+   border-radius: 50%;
+}
+
+.profile-summary h2 {
+   margin: 0 0 7px;
+   font-size: 18px;
+   color: var(--text-main);
+}
+
+.member-level {
+   display: inline-block;
+   padding: 4px 10px;
+   border-radius: 20px !important;
+   background: var(--main-light);
+   color: var(--main-color);
+   font-size: 12px;
+   font-weight: 700;
+}
+
+.mypage-layout {
+   display: grid;
+   grid-template-columns: 220px 1fr;
+   gap: 24px;
+}
+
+.mypage-sidebar {
+   overflow: hidden;
+   background: #ffffff;
+   border: 1px solid #e9ecef;
+   border-radius: 14px !important;
+}
+
+.sidebar-title {
+   padding: 16px;
+   background: var(--main-color);
+   color: #ffffff;
+   font-weight: 700;
+}
+
+.sidebar-category {
+   padding: 13px 16px 8px;
+   background: #f8f9fa;
+   color: #495057;
+   font-size: 13px;
+   font-weight: 700;
+}
+
+.sidebar-link {
+   display: block;
+   padding: 11px 16px;
+   color: #495057;
+   text-decoration: none;
+   font-size: 13px;
+   transition: all 0.2s ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+   color: var(--main-color);
+   background: var(--main-light);
+   font-weight: 700;
+}
+
+.mypage-content {
+   min-height: 300px;
+   padding: 28px;
+   background: #ffffff;
+   border: 1px solid #e9ecef;
+   border-radius: 16px !important;
+}
+
+.mypage-content .section-title {
+   margin-top: 0;
+}
+
+.file-input-hidden {
+   position: absolute;
+   width: 1px;
+   height: 1px;
+   padding: 0;
+   margin: -1px;
+   overflow: hidden;
+   clip: rect(0, 0, 0, 0);
+   white-space: nowrap;
+   border: 0;
+}
+
+.profile-help-text {
+   display: block;
+   margin-top: 8px;
+   color: var(--text-sub);
+   font-size: 12px;
+}
+
+@media (max-width: 700px) {
+   .mypage-layout {
+      grid-template-columns: 1fr;
+   }
+
+   .mypage-sidebar {
+      width: 100%;
+   }
+}
+
+
+/* ===== Custom Login Modal (Bootstrap modal 대체) ===== */
+
+.member-login-modal {
+   display: none;
+   position: fixed;
+   inset: 0;
+   z-index: 2000;
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+   background: rgba(0, 0, 0, 0.35);
+}
+
+.member-login-modal.is-open {
+   display: flex;
+}
+
+.member-login-modal__dialog {
+   width: 100%;
+   max-width: 400px;
+}
+
+.member-login-modal__content {
+   position: relative;
+   padding: 28px;
+   background: #ffffff;
+   border-radius: 20px !important;
+   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.member-login-modal__header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 22px;
+}
+
+.member-login-modal__header h4 {
+   margin: 0;
+   color: var(--text-main);
+   font-size: 20px;
+}
+
+.member-login-modal__body {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+}
+
+.member-login-modal__footer {
+   margin-top: 18px;
+}
+
+.form-section.text-center {
+    display: flex;             /* 레이아웃을 flex로 변경 */
+    flex-direction: column;    /* 내부 요소를 세로로 배치 */
+    align-items: center;       /* 세로 배치된 요소들을 가로 가운데 정렬 */
+    justify-content: center;   /* 세로 정렬 기준 가운데 배치 */
 }

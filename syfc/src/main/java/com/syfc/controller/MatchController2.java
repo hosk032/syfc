@@ -28,7 +28,7 @@ public class MatchController2 {
 	private MatchService service = new MatchServiceImpl();
 
     @ResponseBody
-    @RequestMapping("history")// 1. 경기 신청 이력 조회
+    @RequestMapping("history")//경기 신청 이력 조회 //안 쓰는 컨트롤러. 아래 myMatchApply 씀
     public Map<String, Object> history(HttpServletRequest req, HttpServletResponse resp) {
         Map<String, Object> result = new HashMap<String, Object>();
 

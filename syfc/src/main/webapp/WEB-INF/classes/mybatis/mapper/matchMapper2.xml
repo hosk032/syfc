@@ -246,7 +246,13 @@
 
 </select>
 
-    
-
+<!-- 경기일이 지났는데 상대팀이 매칭되지 않은 경기 자동 취소 -->
+<update id="cancelExpiredWaitingMatches">
+    UPDATE Match_Apply
+       SET status = 5,
+           cancel_reason = '경기일까지 상대팀이 매칭되지 않아 자동 취소되었습니다.'
+     WHERE status in (2, 3)
+       AND apply_date &lt; SYSDATE
+</update>
 
 </mapper>

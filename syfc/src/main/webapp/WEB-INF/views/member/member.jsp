@@ -11,6 +11,7 @@
     <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
     <!-- 회원가입 전용 CSS (dist/css/main/register.css) -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/member/common.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main/register.css" />
 
     <!-- 카카오/다음 우편번호 서비스 API CDN -->
@@ -25,7 +26,7 @@
     <!-- 상단 헤더 조립 -->
     <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
-    <div class="register-container my-4">
+    <div class="register-container">
         <!-- 헤더 -->
         <div class="register-header">
             <h1>쌍용축구<span>예약</span></h1>
@@ -37,7 +38,7 @@
             
             <!-- ★ [신규 추가] 0. 프로필 사진 업로드 영역 ★ -->
             <div class="form-section text-center">
-                <div class="profile-avatar-wrapper mx-auto mb-2">
+                <div class="profile-avatar-wrapper">
                     <div id="profilePreview" class="profile-avatar-preview">
                         <i class="bi bi-person-fill"></i>
                     </div>
@@ -45,8 +46,8 @@
                         <i class="bi bi-camera-fill"></i>
                     </label>
                 </div>
-                <input type="file" class="d-none" id="profileImageInput" name="profile_photo" accept="image/*" onchange="previewProfileImage(this)">
-                <span class="text-muted extra-small d-block">프로필 사진을 등록해 주세요 (선택)</span>
+                <input type="file" class="file-input-hidden" id="profileImageInput" name="profile_photo" accept="image/*" onchange="previewProfileImage(this)">
+                <span class="profile-help-text">프로필 사진을 등록해 주세요 (선택)</span>
             </div>
 
             <!-- 1. 계정 정보 -->
