@@ -30,6 +30,8 @@ import com.syfc.service.BallService;
 import com.syfc.service.BallServiceImpl;
 import com.syfc.service.ClubInfoPlyservice;
 import com.syfc.service.ClubInfoPlyserviceImpl;
+import com.syfc.service.ClubJoinRequestService;
+import com.syfc.service.ClubJoinRequestServiceImpl;
 import com.syfc.service.ClubOwnerHistoryService;
 import com.syfc.service.ClubOwnerHistoryServiceImpl;
 import com.syfc.service.ClubOwnerRequestService;
@@ -71,6 +73,7 @@ public class PlayerController {
 	private BallService ballService = new BallServiceImpl();
 	private MemberBallpickService memberBallPickService = new MemberBallpickServiceImpl();
 	private ClubInfoPlyservice clubInfoPlyService = new ClubInfoPlyserviceImpl();
+	private ClubJoinRequestService clubJoinRequestService = new ClubJoinRequestServiceImpl();
 	
 	private FileManager fileManager = new FileManager();
 	
@@ -522,7 +525,7 @@ public class PlayerController {
 		return mav;
 	}
 	
-	// 입단 신청 + 신청 결과 조회
+	// 입단 신청 결과 조회
 	@GetMapping("clubJoin")
 	public ModelAndView clubJoin(HttpServletRequest req, HttpServletResponse resp) {
 	    HttpSession session = req.getSession();
@@ -563,6 +566,12 @@ public class PlayerController {
 		
 		List<ClubInfoPlyDTO> allClubList = clubInfoPlyService.listClubInfoPly(allClubMap);
 		
+		// 입단신청 결과
+		boolean clubJoinSuccess = Boolean.TRUE.equals(session.getAttribute("clubJoinSuccess"));
+		
+		// 새로고침 시 다시 안뜨게 처리
+		session.removeAttribute("clubJoinSuccess");
+		
 		ModelAndView mav = new ModelAndView("player/clubJoin");
 		
 		mav.addObject("list", list);
@@ -571,8 +580,40 @@ public class PlayerController {
 		mav.addObject("dto", dto);
 		mav.addObject("clubList", clubList);
 		mav.addObject("allClubList", allClubList);
+		mav.addObject("clubJoinSuccess", clubJoinSuccess);
 		
 		return mav;
+	}
+	
+	// 입단신청
+	@PostMapping("clubJoin")
+	public ModelAndView clubJoinRequest(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/player/clubJoin");
+		}
+		
+		long memberIdx = info.getMemberIdx();
+		
+		ClubJoinDTO dto = new ClubJoinDTO();
+		dto.setMemberIdx(memberIdx);
+		dto.setClubJoinContent(req.getParameter("clubJoinIntro"));
+		dto.setClubOwnerKey(Long.parseLong(req.getParameter("clubOwnerKey")));
+		dto.setClubJoinDate(req.getParameter("clubJoinDate"));
+		dto.setClubJoinResult(2);
+		dto.setClubJoinIntro(req.getParameter("clubJoinIntro"));
+		dto.setClubJoinPosition(req.getParameter("clubJoinPosition"));
+		
+		int result = clubJoinRequestService.clubJoinRequest(dto);
+		
+		// 성공 여부 체크, 즉 값이 들어있으면
+		if(result > 0) {
+			session.setAttribute("clubJoinSuccess", true);
+		}
+		
+		return new ModelAndView("redirect:/player/clubJoin");
 	}
 	
 	// 구단주 신청

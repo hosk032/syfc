@@ -137,48 +137,51 @@
 	
 					<h4 class="border-bottom pb-2 mb-4">입단신청</h4>
 
-						<div class="club-join-form">
-							<div class="row g-3">
-								<div class="col-md-6">
-								
-									<label class="clubJoinName" for="clubJoinInfo">신청할 구단명</label>
-									<select id="clubJoinInfo" class="form-select" name="clubowner_key">
-										<option value="">구단을 선택하세요</option>
-										
-										<c:forEach var="club" items="${allClubList}">
-											<option value="${club.clubowner_key}">${club.club_name}</option>
-										</c:forEach>
-									</select>
+						<form action="${pageContext.request.contextPath}/player/clubJoin" method="post" id="clubJoinForm">
+							<div class="club-join-form">
+								<div class="row g-3">
+									<div class="col-md-6">
 									
-									<label class="form-label" for="preferredPosition">선호 포지션</label>
-	
-									<select id="preferredPosition" class="form-select" name="position">
-										<option value="">선택하세요</option>
-										<option value="GK" ${dto.clubJoinPosition eq 'GK' ? 'selected' : ''}>GK</option>
-										<option value="DF" ${dto.clubJoinPosition eq 'DF' ? 'selected' : ''}>DF</option>
-										<option value="MF" ${dto.clubJoinPosition eq 'MF' ? 'selected' : ''}>MF</option>
-										<option value="FW" ${dto.clubJoinPosition eq 'FW' ? 'selected' : ''}>FW</option>
-									</select>
+										<label class="clubJoinName" for="clubJoinInfo">신청할 구단명</label>
+										<select id="clubJoinInfo" class="form-select" name="clubOwnerKey">
+											<option value="">구단을 선택하세요</option>
+											
+											<c:forEach var="club" items="${allClubList}">
+												<option value="${club.clubowner_key}">${club.club_name}</option>
+											</c:forEach>
+										</select>
+										
+										<label class="form-label" for="preferredPosition">선호 포지션</label>
+		
+										<select id="preferredPosition" class="form-select" name="clubJoinPosition">
+											<option value="">선택하세요</option>
+											<option value="GK" ${dto.clubJoinPosition eq 'GK' ? 'selected' : ''}>GK</option>
+											<option value="DF" ${dto.clubJoinPosition eq 'DF' ? 'selected' : ''}>DF</option>
+											<option value="MF" ${dto.clubJoinPosition eq 'MF' ? 'selected' : ''}>MF</option>
+											<option value="FW" ${dto.clubJoinPosition eq 'FW' ? 'selected' : ''}>FW</option>
+										</select>
+									</div>
+		
+									<div class="col-md-6">
+										<label class="form-label">신청일</label> 
+										<input type="date" class="form-control" name="clubJoinDate" value="${dto.clubJoinDate}">
+									</div>
+		
+									<div class="clubJoin-introduction">
+										<span>자기소개</span> 
+										<textarea class="form-control" rows="5" name="clubJoinIntro" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요.">${dto.clubJoinIntro}</textarea>
+									</div>
+		
 								</div>
-	
-								<div class="col-md-6">
-									<label class="form-label">신청일</label> 
-									<input type="date" class="form-control" name="clubJoin-date" value="${dto.clubJoinDate}">
-								</div>
-	
-								<div class="clubJoin-introduction">
-									<span>자기소개</span> 
-									<textarea class="form-control" rows="5" name="clubJoin-info" placeholder="구단에 전달할 간단한 자기소개를 작성해주세요.">${dto.clubJoinIntro}</textarea>
-								</div>
-	
+								
 							</div>
-							
+	
+						<div class="clubJoin-actions">
+							<button type="submit" class="clubJoin-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
+							<button type="reset" class="clubJoin-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
 						</div>
-
-					<div class="clubJoin-actions">
-						<button type="button" class="clubJoin-save-btn"><i class="bi bi-check-lg"></i> 신청하기</button>
-						<button type="reset" class="clubJoin-reset-btn"><i class="bi bi-arrow-counterclockwise"></i> 초기화</button>
-					</div>
+						</form>
+				
 				</div>
 				
 				<div class="card p-4">
@@ -266,5 +269,52 @@
 			</div>
 		</div>
 </body>
+<script type="text/javascript">
+// 유효성 검사 및 alert 창 띄우기
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("clubJoinForm");
+
+    form.addEventListener("submit", function (e) {
+        const clubOwnerKey = form.elements["clubOwnerKey"];
+        const position = form.elements["clubJoinPosition"];
+        const date = form.elements["clubJoinDate"];
+        const intro = form.elements["clubJoinIntro"];
+
+        if (clubOwnerKey.value === "") {
+            alert("신청할 구단을 선택해주세요.");
+            clubOwnerKey.focus();
+            e.preventDefault();
+            return;
+        }
+
+        if (position.value === "") {
+            alert("선호 포지션을 선택해주세요.");
+            position.focus();
+            e.preventDefault();
+            return;
+        }
+
+        if (date.value === "") {
+            alert("신청일을 선택해주세요.");
+            date.focus();
+            e.preventDefault();
+            return;
+        }
+
+        if (intro.value.trim() === "") {
+            alert("자기소개를 입력해주세요.");
+            intro.focus();
+            e.preventDefault();
+        }
+    });
+});
+
+</script>
+
+<c:if test="${clubJoinSuccess}">
+    <script>
+        alert("입단 신청이 완료되었습니다.");
+    </script>
+</c:if>
 
 </html>
