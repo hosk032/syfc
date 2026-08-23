@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
-
+<meta name="contextPath" content="${pageContext.request.contextPath}">
 <!-- 1. 헤더 상단 (로고와 우측 아이콘) -->
 <div class="header_top">
     <div class="container d-flex justify-content-between align-items-center">
@@ -13,8 +13,7 @@
         <div class="header-icons">
         <c:choose>
       <c:when test="${sessionScope.member.userLevel >= 1}">
-         <i class="fa-regular fa-bell" title="알림"
-            onclick="location.href='${pageContext.request.contextPath}/notice';"></i>
+          <i class="fa-regular fa-bell" id="noticeBtn" title="알림"></i>
       </c:when>
        <c:otherwise>
         <i id="singupBtn" class="fa-regular fa-bell" title="로그인/회원가입" data-bs-toggle="modal" data-bs-target="#signupModal"></i> 
@@ -107,5 +106,7 @@
 		</div>
 	</div>
 </div>
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main/modalNotice.css">
+<script src="${pageContext.request.contextPath}/dist/js/main/modalNotice.js"></script>
 <jsp:include page="/WEB-INF/views/layout/loginModal.jsp" />
+<jsp:include page="/WEB-INF/views/main/modalNotice.jsp" />
