@@ -66,18 +66,74 @@
 
 
                 <!-- 지도 -->
-                <div class="mb-4">
-                    <h6 class="fw-bold mb-2">
-                        경기장 위치
-                    </h6>
-                    <div id="matchMap"
-                         style="width:100%; height:300px;
-                                border-radius:12px;
-                                background:#f1f3f5;">
-
-                    </div>
-
-                </div>
+                <!-- 경기장 정보 : 지도 + 경기장 사진 -->
+		<div class="mb-4">
+		
+		    <h6 class="fw-bold mb-2">
+		        <i class="bi bi-geo-alt me-1"></i>
+		        경기장 위치
+		    </h6>
+		
+		    <div class="row g-3">
+		
+		        <!-- 왼쪽 : 카카오 지도 -->
+		        <div class="col-md-6">
+		
+		            <div id="matchMap"
+		                 style="
+		                    width:100%;
+		                    height:300px;
+		                    border-radius:12px;
+		                    background:#f1f3f5;
+		                    overflow:hidden;
+		                 ">
+		            </div>
+		
+		        </div>
+		
+		
+		        <!-- 오른쪽 : 경기장 사진 -->
+		        <div class="col-md-6">
+		
+		            <div id="stadiumImageContainer"
+		                 style="
+		                    width:100%;
+		                    height:300px;
+		                    border-radius:12px;
+		                    background:#f1f3f5;
+		                    overflow:hidden;
+		                 ">
+		
+		                <img id="stadiumImage"
+		                     src=""
+		                     alt="경기장 사진"
+		                     style="
+		                        width:100%;
+		                        height:100%;
+		                        object-fit:cover;
+		                        display:none;
+		                     ">
+		
+		                <!-- 이미지가 없을 때 -->
+		                <div id="stadiumImageEmpty"
+		                     class="d-flex align-items-center justify-content-center
+		                            text-muted h-100"
+		                     style="display:none !important;">
+		
+		                    <div class="text-center">
+		                        <i class="bi bi-image fs-1 d-block mb-2"></i>
+		                        경기장 사진이 없습니다.
+		                    </div>
+		
+		                </div>
+		
+		            </div>
+		
+		        </div>
+		
+		    </div>
+		
+		</div>
 
 
                 <!-- 게시글 내용 -->
@@ -187,3 +243,6 @@
     </div>
 
 </div>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f716aa59f3d960482433e56089cebe0c&libraries=services">
+</script>

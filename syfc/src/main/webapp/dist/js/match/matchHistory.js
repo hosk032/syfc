@@ -43,20 +43,32 @@ function loadMyMatchApply() {
             }
 
             const list = res.list;
+			
+			// 선택된 status 가져오기
+			const filterElement = document.getElementById("matchStatusFilter");
+			const selectedStatus = filterElement? filterElement.value : "";
 
-            if(!list || list.length === 0) {
+			// status 필터링
+			const filteredList = selectedStatus === ""
+			    ? list
+			    : list.filter(function(dto) {
+			        return Number(dto.status) === Number(selectedStatus);
+			    });
 
-                container.innerHTML = `
-                    <div class="text-center text-muted py-5">
-                        아직 경기신청 이력이 없습니다.
-                    </div>
-                `;
-                return;
-            }
+			// 필터 결과가 없는 경우
+			if(!filteredList || filteredList.length === 0) {
+
+			    container.innerHTML = `
+			        <div class="text-center text-muted py-5">
+			            해당 상태의 경기신청 이력이 없습니다.
+			        </div>
+			    `;
+			    return;
+			}
 
             let html = "";
 
-            list.forEach(function(dto) {
+            filteredList.forEach(function(dto) {
 
                 // 홈 / 원정
                 let teamTypeText = "";

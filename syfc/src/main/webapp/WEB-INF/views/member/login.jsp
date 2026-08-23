@@ -2,75 +2,75 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쌍용축구예약</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/member/common.css" />
 </head>
 <body>
 
 <header>
-	<jsp:include page="/WEB-INF/views/layout/header.jsp"/>
+    <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 </header>
 
 <main>
-	<div class="container">
-		<div class="body-container row justify-content-center">
-			<div class="col-md-5 my-3 p-3">
+    <div class="page-container">
+        <div class="common-card login-card">
 
-				<div class="border mt-5 p-4">
-                    <form name="loginForm" action="" method="post" class="row g-3">
-                        <h3 class="text-center"><i class="bi bi-lock"></i> 회원 로그인</h3>
-                        <div class="col-12">
-                            <label class="mb-1">아이디</label>
-                            <input type="text" name="userId" class="form-control" placeholder="아이디">
-                        </div>
-                        <div class="col-12">
-                            <label class="mb-1">패스워드</label>
-                            <input type="password" name="userPwd" class="form-control" autocomplete="off" 
-                            	placeholder="패스워드">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe"> 아이디 저장</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button type="button" class="btn btn-primary float-end" onclick="sendLogin();">&nbsp;Login&nbsp;<i class="bi bi-check2"></i></button>
-                        </div>
-                    </form>
-                    <hr class="mt-4">
-                    <div class="col-12">
-                        <p class="text-center mb-0">
-                        	<a href="${pageContext.request.contextPath}/member/pwdFind" class="text-decoration-none me-2">아이디/패스워드 찾기</a>
-                        	<a href="${pageContext.request.contextPath}/member/account" class="text-decoration-none">회원가입</a>
-                        </p>
-                    </div>
+            <div class="common-header">
+                <h1>⚽ 회원 <span>로그인</span></h1>
+                <p>쌍용축구예약 서비스를 이용하려면 로그인해주세요.</p>
+            </div>
+
+            <form name="loginForm" action="" method="post">
+                <div class="input-group">
+                    <label for="userId">아이디</label>
+                    <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요">
                 </div>
 
-                <div class="d-grid">
-                    <p class="form-control-plaintext text-center text-primary">${message}</p>
-				</div>
+                <div class="input-group">
+                    <label for="userPwd">패스워드</label>
+                    <input type="password" id="userPwd" name="userPwd"
+                           autocomplete="off" placeholder="패스워드를 입력하세요">
+                </div>
 
-			</div>
-		</div>
-	</div>
+                <div class="login-option">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span>아이디 저장</span>
+                    </label>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="sendLogin();">
+                    로그인
+                </button>
+            </form>
+
+            <hr class="common-divider">
+
+            <div class="page-links">
+                <a href="${pageContext.request.contextPath}/member/pwdFind">아이디/패스워드 찾기</a>
+                <a href="${pageContext.request.contextPath}/member/account">회원가입</a>
+            </div>
+
+            <p class="message-area">${message}</p>
+        </div>
+    </div>
 </main>
 
 <script type="text/javascript">
 function sendLogin() {
     const f = document.loginForm;
-	
-    if( ! f.userId.value.trim() ) {
+
+    if (!f.userId.value.trim()) {
         f.userId.focus();
         return;
     }
 
-    if( ! f.userPwd.value.trim() ) {
+    if (!f.userPwd.value.trim()) {
         f.userPwd.focus();
         return;
     }
@@ -81,7 +81,7 @@ function sendLogin() {
 </script>
 
 <footer>
-	<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>
 
 </body>

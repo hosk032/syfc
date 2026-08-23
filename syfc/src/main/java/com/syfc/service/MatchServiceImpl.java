@@ -272,6 +272,9 @@ public class MatchServiceImpl implements MatchService {
     public List<ClubMatchBoardDTO> listMyMatchRequest(Map<String, Object> param) {
        return mapper.listMyMatchRequest(param);
     }
-
-
+    
+    @Override
+    public int cancelExpiredWaitingMatches() {
+        return mapper.cancelExpiredWaitingMatches();
+    }
 }

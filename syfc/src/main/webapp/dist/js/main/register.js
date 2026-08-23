@@ -86,3 +86,70 @@ function checkPasswordMatch() {
 userPwd.addEventListener('input', checkPasswordMatch);
 userPwdCheck.addEventListener('input', checkPasswordMatch);
 
+// 회원가입 추가 유효성 검사
+document.getElementById("joinForm").addEventListener("submit", function(e) {
+
+    const birth = document.getElementById("birth").value;
+    const userId = document.getElementById("userId").value.trim();
+    const userPwd = document.getElementById("userPwd").value;
+    const tel = document.getElementById("tel").value.trim();
+
+    // 1. 만 19세 이상인지 검사
+    if (!birth) {
+        alert("생년월일을 입력해주세요.");
+        e.preventDefault();
+        return;
+    }
+
+    const today = new Date();
+    const birthDate = new Date(birth);
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const birthdayPassed =
+        (today.getMonth() > birthDate.getMonth()) ||
+        (today.getMonth() === birthDate.getMonth() &&
+         today.getDate() >= birthDate.getDate());
+
+    if (!birthdayPassed) {
+        age--;
+    }
+
+    if (age < 19) {
+        alert("만 19세 이상만 가입할 수 있습니다.");
+        e.preventDefault();
+        return;
+    }
+
+    // 2. 아이디 검사 : 영문자 3개 이상 + 숫자 3개 이상
+    const alphabetCount = (userId.match(/[a-zA-Z]/g) || []).length;
+    const numberCount = (userId.match(/[0-9]/g) || []).length;
+
+    if (alphabetCount < 3 || numberCount < 3) {
+        alert("아이디는 영문자 3개 이상과 숫자 3개 이상을 포함해야 합니다.");
+        e.preventDefault();
+        return;
+    }
+
+    // 3. 비밀번호 검사 : 숫자 3개 이상
+    const passwordNumberCount =
+        (userPwd.match(/[0-9]/g) || []).length;
+
+    if (passwordNumberCount < 3) {
+        alert("비밀번호는 숫자를 3개 이상 포함해야 합니다.");
+        e.preventDefault();
+        return;
+    }
+
+    // 4. 전화번호 검사: 선택사항이므로 비어 있으면 통과
+    // 입력했다면 숫자만 11~13자리
+    if (tel !== "") {
+
+        if (!/^[0-9]{11,13}$/.test(tel)) {
+            alert("전화번호는 숫자만 11~13자리로 입력해주세요.");
+            e.preventDefault();
+            return;
+        }
+    }
+
+});

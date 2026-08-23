@@ -74,8 +74,9 @@ public interface MatchMapper {
     
     	//선수 본인의 출전신청 이력
     public List<ClubMatchBoardDTO> listMyMatchRequest(Map<String, Object> param);
-
-
+    
+    //경기일까지 매칭안됐을 시 status 5(매칭실패)로 돌리기
+    int cancelExpiredWaitingMatches(); 
 
 }
 

@@ -114,8 +114,8 @@
 	        a.apply_id, a.apply_date, a.apply_time,
 	        a.status AS match_status, a.cancel_reason, a.stadium_id,
 	
-	        s.stadium_name, s.region, s.addr1, s.addr2, s.zip,
-	        s.latitude, s.longitude, s.capacity, s.stadium_cost,
+	        s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.stadium_img,
+	        s.latitude, s.longitude, s.capacity, s.stadium_cost, 
 	
 	        a.clubOwner_key AS home_clubOwner_key,
 	        a.match_type1, a.match_type2,
@@ -157,8 +157,8 @@
     <select id="listApplicants" parameterType="long"
             resultType="com.syfc.dto.ClubMatchBoardDTO">
         SELECT
-            r.cmb_num, r.clubJoin_num, r.request_date,
-            r.request_state, r.request_intro, r.reject_reason,
+            r.cmb_num, r.clubJoin_num, r.request_date, r.request_state, 
+            r.request_intro, r.reject_reason, r.request_cancel,
 
             m.userName AS playerName
 
@@ -332,7 +332,5 @@
 	    ORDER BY request_date DESC, cmb_num DESC
 
 	</select>
-
-
 
 </mapper>

@@ -197,8 +197,8 @@ function loadMatchBoardDetail(cmb_num) {
                 );
             modal.show();
 
-            // 지도
-            showMatchMap(board);
+            showMatchMap(board); // 지도
+			showStadiumImage(board); //경기장 사진
         },
 
         error: function(xhr) {
@@ -258,6 +258,7 @@ function renderApplicantList(applicants, myRequest, board) {
                         <span class="badge ${stateClass} ms-2">
                             ${stateText}
                         </span>
+						<span> ${escapeHtml(player.request_cancel)} </span>
                     </div>
 
                     <div class="owner-request-buttons"
@@ -535,24 +536,187 @@ function reloadMatchDetail() {
     loadMatchBoardDetail(currentCmbNum);
 }
 
-// 지도
+// 경기장 주소를 이용해서 카카오 지도 표시
 function showMatchMap(board) {
 
-    // 카카오 지도 API를 붙일 자리. DB의 latitude, longitude 사용하기
+    const mapContainer = document.getElementById('matchMap');
 
-    if(board.latitude == null ||board.longitude == null) {
-
-        $('#matchMap').html(`<div class="text-center text-muted p-5">
-                경기장 위치 정보가 없습니다.</div>`);
+    if (!mapContainer) {
         return;
     }
 
-    // 여기에서 실제 지도 API 호출
-    // 예) new kakao.maps.LatLng(
-    //     board.latitude,
-    //     board.longitude );
+    // 기존 지도 영역 초기화
+    mapContainer.innerHTML = "";
+
+    // DB에서 가져온 경기장 주소
+    const addr1 = board.addr1 || "";
+    const addr2 = board.addr2 || "";
+
+    // addr1 + addr2 조합
+    const address = (addr1 + " " + addr2).trim();
+
+    // 주소가 없는 경우
+    if (!address) {
+
+        mapContainer.innerHTML = `
+            <div class="d-flex
+                        justify-content-center
+                        align-items-center
+                        h-100
+                        text-muted">
+                경기장 주소 정보가 없습니다.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // 카카오 주소 → 좌표 변환 객체
+    const geocoder = new kakao.maps.services.Geocoder();
+
+    // 주소 검색
+    geocoder.addressSearch(address, function(result, status) {
+
+        // 정상적으로 검색된 경우
+        if (status === kakao.maps.services.Status.OK) {
+
+            const coords = new kakao.maps.LatLng(
+                result[0].y,
+                result[0].x
+            );
+
+
+            // 지도 옵션
+            const mapOption = {
+                center: coords,
+                level: 3
+            };
+
+
+            // 지도 생성
+            const map = new kakao.maps.Map(
+                mapContainer,
+                mapOption
+            );
+
+            // 마커 생성
+            const marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 경기장 이름
+            const stadiumName = board.stadium_name || "경기장";
+
+            // 인포윈도우
+            const infowindow =
+                new kakao.maps.InfoWindow({
+                    content: `
+                        <div style="
+                            width:180px;
+                            text-align:center;
+                            padding:8px;
+                            font-size:13px;
+                            font-weight:bold;
+                        ">
+                            ${escapeHtml(stadiumName)}
+                        </div>
+                    `
+                });
+
+            // 인포윈도우 표시
+            infowindow.open(map, marker);
+
+        } else {
+
+            // 주소 검색 실패
+            mapContainer.innerHTML = `
+                <div class="d-flex
+                            flex-column
+                            justify-content-center
+                            align-items-center
+                            h-100
+                            text-muted">
+
+                    <i class="bi bi-geo-alt fs-3 mb-2"></i>
+
+                    <div>
+                        경기장 위치를 찾을 수 없습니다.
+                    </div>
+
+                    <small class="mt-1">
+                        ${escapeHtml(address)}
+                    </small>
+
+                </div>
+            `;
+
+        }
+    });
+}
+
+
+function showStadiumImage(board) {
+
+    const imageBox =
+        document.getElementById('stadiumImageBox');
+
+    if (!imageBox) {
+        return;
+    }
+
+    const imageUrl = board.stadium_img;
+
+    if (!imageUrl) {
+
+        imageBox.innerHTML = `
+            <div class="d-flex
+                        flex-column
+                        justify-content-center
+                        align-items-center
+                        h-100
+                        text-muted">
+
+                <i class="bi bi-image fs-2 mb-2"></i>
+
+                <div>경기장 사진이 없습니다.</div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    const img = document.createElement('img');
+
+    img.src = imageUrl;
+    img.alt = board.stadium_name || '경기장';
+
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    img.style.display = 'block';
+
+    img.onerror = function() {
+
+        imageBox.innerHTML = `
+            <div class="d-flex
+                        justify-content-center
+                        align-items-center
+                        h-100
+                        text-muted">
+                경기장 사진을 불러올 수 없습니다.
+            </div>
+        `;
+
+    };
+
+    imageBox.innerHTML = "";
+    imageBox.appendChild(img);
 
 }
+
 
 // HTML escape
 function escapeHtml(value) {
