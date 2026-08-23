@@ -19,15 +19,6 @@
 	<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
 	<div class="board-container my-4">
-		<!-- 왼쪽 서브 메뉴 (사이드바) -->
-		<aside class="community-side-menu">
-			<div class="side-menu-title">커뮤니티</div>
-			<a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a> 
-			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">자유 게시판</a> 
-			<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
-		</aside>
-
-		<!-- 오른쪽 목록 본문 영역 -->
 		<section class="board-list-area">
 			<div class="board-top">
 				<h3>공지사항</h3>
