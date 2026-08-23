@@ -236,7 +236,6 @@ public class BoardController {
 				return new ModelAndView("redirect:/community/board/boardList=" + page);
 			}
 			
-			
 			// 게시글을 올린 사람이 아닌 경우
 			if(dto.getMemberIdx() != info.getMemberIdx()) {
 				return new ModelAndView("redirect:/community/board/boardList=" + page);

@@ -74,7 +74,7 @@
 						<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고</a>
 					</div>
 					<div class="dropdown-column">
-						<a href="${pageContext.request.contextPath}/stadium/stadium_info">경기장 정보 검색</a>
+						<a href="${pageContext.request.contextPath}/stadium/stadiumInfo">경기장 정보 검색</a>
 					</div>
 					<div class="dropdown-column">
 						<a href="${pageContext.request.contextPath}/clubmatch/clubCalendar">캘린더</a> 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.QnaMapper">
+
+	<insert id="insertQna" parameterType="com.syfc.dto.QnaDTO">
+		INSERT INTO QnA(qna_num, q_title, q_question, q_reg_date, q_type, memberIdx)
+			VALUES (qna_seq.NEXTVAL, #{q_title}, #{q_question}, SYSDATE, #{q_type}, #{memberIdx})
+	</insert>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM QnA q
+		JOIN member1 m ON q.memberIdx = m.memberIdx
+		<where>
+			<choose>
+				<!-- 관리자 -->
+				<when test="userLevel >= 100">
+				</when>
+				<!-- 일반회원 -->
+				<otherwise>
+					q.memberIdx = #{memberIdx}
+				</otherwise>
+			</choose>
+			<include refid="where-list"/>
+		</where>
+	</select>
+	
+	<select id="listQna" parameterType="map" resultType="com.syfc.dto.QnaDTO">
+		SELECT qna_num, q_title, q_question, TO_CHAR(q_reg_date, 'YYYY-MM-DD') q_reg_date, q_type,
+			a_answer, TO_CHAR(a_reg_date, 'YYYY-MM-DD') a_reg_date, q.memberIdx, userName
+		FROM QnA q
+		JOIN member1 m ON q.memberIdx = m.memberIdx
+		<where>
+			<choose>
+				<!-- 관리자 -->
+				<when test="userLevel >= 100">
+				</when>
+				<!-- 일반회원 -->
+				<otherwise>
+					q.memberIdx = #{memberIdx}
+				</otherwise>
+			</choose>
+			<include refid="where-list"/>
+		</where>
+		ORDER BY q.qna_num DESC
+		OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<update id="updateQna" parameterType="com.syfc.dto.QnaDTO">
+		UPDATE QnA SET q_title = #{q_title}, q_question = #{q_question}, q_type = #{q_type}
+		WHERE qna_num = #{qna_num} AND memberIdx = #{memberIdx}
+	</update>
+	
+	<delete id="deleteQna" parameterType="map">
+		DELETE FROM QnA
+		<where>
+			<choose>
+				<when test="userLevel >= 100">
+					qna_num = #{qna_num}
+				</when>
+				<otherwise>
+					qna_num = #{qna_num} AND memberIdx = #{memberIdx}
+				</otherwise>
+			</choose>
+		</where>
+	</delete>
+	
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.QnaDTO">
+		SELECT qna_num, q_title, q_question, TO_CHAR(q_reg_date, 'YYYY-MM-DD') q_reg_date, q_type,
+			a_answer, TO_CHAR(a_reg_date, 'YYYY-MM-DD') a_reg_date, memberIdx
+		FROM QnA
+		WHERE qna_num = #{value}
+	</select>
+	
+	<sql id="where-list">
+		<if test="kwd != null and kwd != ''">
+			<choose>
+				<when test="schType == 'all' ">
+					(INSTR(q_title, #{kwd}) &gt; 0
+							OR INSTR(q_question, #{kwd}) &gt; 0)
+				</when>
+				<otherwise>
+					INSTR(${schType}, #{kwd}) &gt; 0
+				</otherwise>
+			</choose>
+		</if>
+	</sql>
+
+	
+</mapper>

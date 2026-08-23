@@ -135,7 +135,7 @@
 		DELETE FROM board 
 		<where>
 			<choose>
-				<when test="userLevel >= 51">
+				<when test="userLevel >= 100">
 					bnum = #{bnum}
 				</when>
 				<otherwise>

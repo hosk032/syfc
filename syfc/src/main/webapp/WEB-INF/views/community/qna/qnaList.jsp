@@ -1,69 +1,114 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-	<title>쌍용축구예약 - 커뮤니티 게시판</title>
 
-	<!-- 1. 공통 CSS/CDN/폰트 리소스 조립 -->
+	<meta charset="UTF-8">
+
+	<title>쌍용축구예약 - 자주하는 질문</title>
+
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-	<!-- 2. 게시판 목록 전용 CSS 연결 (dist/css/community/boardList.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/community/boardList.css" />
+	<link rel="stylesheet"
+		href="${pageContext.request.contextPath}/dist/css/community/qnaList.css">
+
 </head>
+
+
 <body>
 
-	<!-- 상단 헤더/네비게이션 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
-	<div class="board-container my-4">
-		<!-- 왼쪽 서브 메뉴 (사이드바) -->
-		<aside class="community-side-menu">
-			<div class="side-menu-title">커뮤니티</div>
-			<a href="${pageContext.request.contextPath}/community/notify/noticeList">공지사항</a> 
-			<a href="${pageContext.request.contextPath}/community/board/boardList" class="active">자유 게시판</a> 
-			<a href="${pageContext.request.contextPath}/community/qna/qnaList">문의/신고 게시판</a>
-		</aside>
+	<main class="qna-container">
+	
+		<div class="qna-title-wrap">
+			<h2 class="qna-title">
+				<span class="qna-title-icon">📄</span>
+				문의/신고 게시판
+			</h2>
+		</div>
 
-		<!-- 오른쪽 목록 본문 영역 -->
-		<section class="board-list-area">
-			<div class="board-top">
-				<h3>자유 게시판</h3>
+		<div class="qna-category">
+			<button type="button" class="active" data-type="0" onclick="filterQna('0', this);">문의</button>
+			
+			<button type="button" data-type="1" onclick="filterQna('1', this);">신고</button>
+		</div>
+
+		<div class="qna-list">
+			<c:choose>
+				<c:when test="${not empty list}">
+					<c:forEach var="dto" items="${list}" varStatus="status">
+						<div class="qna-item" data-qtype="${dto.q_type}">
+							<!-- 질문 -->
+							<div class="qna-question" onclick="toggleQna(this);">
+								<div class="qna-subject">
+									<c:out value="${dto.q_title}" />
+								</div>
+								<div class="qna-arrow">
+									⌄
+								</div>
+							</div>
+							<!-- 답변 / 내용 -->
+							<div class="qna-answer-box">
+								<!-- 작성자 / 날짜 -->
+								<div class="qna-info">
+									<span class="qna-writer"><c:out value="${dto.userName}"/></span>
+									<span class="qna-date">${dto.q_reg_date}</span>
+								</div>
+								<!-- 문의 내용 -->
+								<div class="qna-question-content">
+									<div class="qna-label">문의 내용</div>
+									<div class="qna-content">
+										<c:out value="${dto.q_question}" />
+									</div>
+								</div>
+								<!-- 관리자 답변 -->
+								<c:choose>
+									<c:when test="${not empty dto.a_answer}">
+										<div class="qna-admin-answer">
+											<div class="qna-label">관리자 답변</div>
+											<div class="qna-content">
+												<c:out value="${dto.a_answer}" />
+											</div>
+											<c:if test="${not empty dto.a_reg_date}">
+												<div class="qna-answer-date">답변일 : ${dto.a_reg_date}</div>
+											</c:if>
+										</div>
+									</c:when>
+									<c:otherwise>
+										<div class="qna-no-answer">아직 관리자 답변이 등록되지 않았습니다.</div>
+									</c:otherwise>
+								</c:choose>
+								<!-- 수정 / 삭제 -->
+								<div class="qna-actions">
+								<!-- 본인 글만 수정 -->
+								<c:if test="${sessionScope.member.memberIdx == dto.memberIdx}">
+									<button type="button" class="qna-action-btn" onclick="location.href='${pageContext.request.contextPath}/community/qna/update?qna_num=${dto.qna_num}&page=${page}';">수정</button>
+								</c:if>
+								<!-- 본인 글 또는 관리자 삭제 -->
+								<c:if test="${sessionScope.member.memberIdx == dto.memberIdx|| sessionScope.member.userLevel >= 100}">
+									<button type="button" class="qna-action-btn delete" onclick="deleteOk(${dto.qna_num});">삭제</button>
+								</c:if>
+							</div>
+						</div>
+					</div>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+					<div class="qna-empty">등록된 문의글이 없습니다.</div>
+			</c:otherwise>
+			</c:choose>
 			</div>
 
-	<table class="table table-hover board-list">
-	    <thead class="table-light">
-	        <tr>
-	            <th width="70">번호</th>
-	            <th>제목</th>
-	            <th width="100">작성자</th>
-	            <th width="120">작성일</th>
-	            <th width="70">조회수</th>
-	        </tr>
-	    </thead>
-	
-	    <tbody>
-	        <c:forEach var="dto" items="${list}" varStatus="status">
-	            <tr>
-	                <td>${dataCount - (page - 1) * size - status.index}</td>
-	                <td class="left">
-	                    <div class="text-wrap">
-	                        <a href="${noticeDetailUrl}&bnum=${dto.bnum}" class="text-reset"> <c:out value="${dto.b_subject}"/><c:if test="${dto.replyCount > 0}">(${dto.replyCount})</c:if></a>
-	                    </div>
-	                </td>
-	                <td> ${dto.userName}</td>
-	                <td>${dto.b_reg_date}</td>
-	                <td>${dto.b_hitCount}</td>
-	            </tr>
-	        </c:forEach>
-	    </tbody>
-	</table>
-			
 			<div class="row board-list-footer">
 				<div class="col">
-					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/board/boardList';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/qna/qnaList';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
 				</div>
 				<div class="col-6 d-flex justify-content-center">
 					<form class="row" name="searchForm">
@@ -71,8 +116,8 @@
 							<select name="schType" class="form-select">
 								<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
 								<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
-								<option value="b_subject" ${schType=="b_subject"?"selected":""}>제목</option>
-								<option value="b_content" ${schType=="b_content"?"selected":""}>내용</option>
+								<option value="q_title" ${schType=="q_title"?"selected":""}>제목</option>
+								<option value="q_question" ${schType=="q_question"?"selected":""}>내용</option>
 							</select>
 						</div>
 						<div class="col-auto p-1">
@@ -85,49 +130,96 @@
 				</div>
 				
 				<div class="col text-end">
-					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/qna/write';">글올리기</button>
+					<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/qna/write';">문의하기</button>
 				</div>
 			</div>
 			<div class="board-number">
 				${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
 			</div>
-		</section>
-	</div>
-
+	</main>
 <script type="text/javascript">
-// 검색 키워드 입력란에서 엔터를 누른 경우 서버 전송 막기 
-document.addEventListener('DOMContentLoaded', () => {
-	const inputEL = document.querySelector('form input[name=kwd]'); 
-	inputEL.addEventListener('keydown', function (evt) {
-		if(evt.key === 'Enter') {
-			evt.preventDefault();
-	    	
-			searchList();
+    function deleteOk(qna_num) {
+        if (!confirm('게시글을 삭제 하시겠습니까?')) {
+            return;
+        }
+
+        const url ='${pageContext.request.contextPath}/community/qna/delete'+ '?qna_num=' + qna_num + '&page=${page}';
+        location.href = url;
+    }
+
+    function filterQna(type, button) {
+        document.querySelectorAll('.qna-category button').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+
+        document.querySelectorAll('.qna-item').forEach(function(item) {
+            const qtype = item.getAttribute('data-qtype');
+            if(qtype === type) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+    
+	// 아코디언 열기 / 닫기
+	function toggleQna(question) {
+		const answerBox = question.nextElementSibling;
+		const isOpen = question.classList.contains('open');
+		
+		// 다른 질문 닫기
+		document.querySelectorAll('.qna-question.open').forEach(function(el) {
+				el.classList.remove('open');
+		});
+		
+		document.querySelectorAll('.qna-answer-box.open').forEach(function(el) {
+			el.classList.remove('open');
+		});
+
+		// 현재 질문 열기
+		if(!isOpen) {
+			question.classList.add('open');
+			answerBox.classList.add('open');
+		}
+	}
+	// 페이지 처음 로딩 시 문의(0)만 표시
+	document.addEventListener('DOMContentLoaded', function() {
+		const defaultButton = document.querySelector('.qna-category button[data-type="0"]');
+
+		if(defaultButton) {
+			filterQna('0', defaultButton);
 		}
 	});
-});
+	
+	// 검색 엔터
+	document.addEventListener('DOMContentLoaded', () => {
+		const inputEL = document.querySelector('form input[name=kwd]'); 
+		inputEL.addEventListener('keydown', function (evt) {
+			if(evt.key === 'Enter') {
+				evt.preventDefault();
+				searchList();
+			}
+		});
+	});
 
-function searchList() {
-	const f = document.searchForm;
-	if(! f.kwd.value.trim()) {
-		return;
+	function searchList() {
+		const f = document.searchForm;
+		if(! f.kwd.value.trim()) {
+			return;
+		}
+		
+		const formData = new FormData(f);
+		let params = new URLSearchParams(formData).toString();
+		
+		let url = '${pageContext.request.contextPath}/community/qna/qnaList';
+		location.href = url + '?' + params;
 	}
-	
-	const formData = new FormData(f);
-	let params = new URLSearchParams(formData).toString();
-	
-	let url = '${pageContext.request.contextPath}/community/board/boardList';
-	location.href = url + '?' + params;
-}
 </script>
 
-
-	<!-- 하단 푸터 조립 -->
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
-	<!-- 3. 게시판 목록 전용 JS 연결 (dist/js/community/boardList.js) -->
-	<!-- 
-	<script src="${pageContext.request.contextPath}/dist/js/community/boardList.js"></script>
-	 -->
+
 </body>
+
 </html>
