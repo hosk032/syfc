@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<!-- 모달 -->
+		<!-- 창설 신청 모달 -->
 		<div class="modal fade" id="clubCreateRequestModal" tabindex="-1" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content border-0 rounded-4 shadow">
@@ -80,13 +80,13 @@
 
 				<hr class="my-3">
 
-				<!-- 구단 정보 수정 Form -->
-				<form name="clubForm" action="${pageContext.request.contextPath}/clubowner/update" method="post" enctype="multipart/form-data">
+				<!-- 구단 정보 수정 Form (id="teamEditForm" 추가로 JS 호환성 확보) -->
+				<form id="teamEditForm" name="clubForm" action="${pageContext.request.contextPath}/clubowner/update" method="post" enctype="multipart/form-data">
 
 					<!-- 구단주 PK (hidden) -->
 					<input type="hidden" name="clubOwner_key" value="${club.clubOwner_key}">
 
-					<!-- ★ 구단 엠블럼 (로고) 등록 및 수정 영역 복구 완료 -->
+					<!-- 구단 엠블럼 (로고) 등록 및 수정 영역 -->
 					<div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center gap-3">
 						<div class="position-relative">
 							<c:choose>
@@ -106,7 +106,7 @@
 						<div>
 							<label class="form-label fw-semibold small mb-1">구단 엠블럼 (로고)</label>
 							<input type="file" name="uploadLogo" id="uploadLogoInput" class="form-control form-control-sm" accept="image/*">
-							<span class="text-muted small" style="font-size: 0.75rem;">이미지를 등록하거나 새로운 파일로 변경하세요. (권장 규격: 300x300px)</span>
+							<span class="text-muted small" style="font-size: 0.75rem;">이미지를 등록하거나 새로운 파일로 변경하세요. (권장 규격: 300x300px) / 5MB 미만</span>
 						</div>
 					</div>
 
