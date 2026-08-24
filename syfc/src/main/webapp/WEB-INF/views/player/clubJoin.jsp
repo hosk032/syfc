@@ -185,7 +185,7 @@
 				</div>
 				
 				<div class="card p-4">
-				<form action="${pageContext.request.contextPath}/member/profile/matchApply" method="post" class="profile-form" enctype="multipart/form-data">
+				
 
 					<h4 class="border-bottom pb-2 mb-4">입단 신청 결과</h4>
 					<div class="clubJoin-responsive">
@@ -224,9 +224,13 @@
 											   
 										   <td>
 												<c:if test="${history.clubJoin_result eq 2}">
-													<button type="button" class="btn btn-sm btn-outline-danger">
-														신청 취소
-													</button>
+													<form action="${pageContext.request.contextPath}/player/cancelClubOwnerRequest" method="post" onsubmit="return confirm('입단신청을 취소하시겠습니까?')">
+														<input type="hidden" name="clubJoin_Num" value="${history.clubJoin_num}">
+														
+														<button type="submit" class="btn btn-sm btn-outline-danger">
+															신청 취소
+														</button>
+													</form>
 												</c:if>
 												
 												<c:if test="${history.clubJoin_result ne 2}">-</c:if>
@@ -237,7 +241,6 @@
 							</tbody>
 						</table>
 					</div>
-				</form>
 
 				</div>
 					
@@ -315,6 +318,12 @@ document.addEventListener("DOMContentLoaded", function () {
     <script>
         alert("입단 신청이 완료되었습니다.");
     </script>
+</c:if>
+
+<c:if test="${clubJoinCancelSuccess}">
+	<script type="text/javascript">
+		alert("입단 신청이 취소되었습니다.");
+	</script>
 </c:if>
 
 </html>

@@ -568,9 +568,11 @@ public class PlayerController {
 		
 		// 입단신청 결과
 		boolean clubJoinSuccess = Boolean.TRUE.equals(session.getAttribute("clubJoinSuccess"));
+		boolean clubJoinCancelSuccess = Boolean.TRUE.equals(session.getAttribute("clubJoinCancelSuccess"));
 		
 		// 새로고침 시 다시 안뜨게 처리
 		session.removeAttribute("clubJoinSuccess");
+		session.removeAttribute("clubJoinCancelSuccess");
 		
 		ModelAndView mav = new ModelAndView("player/clubJoin");
 		
@@ -581,6 +583,7 @@ public class PlayerController {
 		mav.addObject("clubList", clubList);
 		mav.addObject("allClubList", allClubList);
 		mav.addObject("clubJoinSuccess", clubJoinSuccess);
+		mav.addObject("clubJoinCancelSuccess", clubJoinCancelSuccess);
 		
 		return mav;
 	}
@@ -733,6 +736,10 @@ public class PlayerController {
 		Long clubJoin_Num = Long.parseLong(req.getParameter("clubJoin_Num"));
 		
 		int result = historyService.cancelClubOwnerRequest(clubJoin_Num, info.getMemberIdx());
+		
+		if(result > 0) {
+			session.setAttribute("clubJoinCancelSuccess", true);
+		}
 		
 		return new ModelAndView("redirect:/player/clubJoin");
 

@@ -17,8 +17,8 @@ public class AdminStadiumDTO {
 	private String region;
 	private long capacity;
 	private int status;
-	private long latitude;
-	private long longitude;
+	private double latitude;
+	private double longitude;
 	private String addr1;
 	private String addr2;
 	private String zip;
@@ -65,19 +65,19 @@ public class AdminStadiumDTO {
 		this.status = status;
 	}
 
-	public long getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(long latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public long getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(long longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 

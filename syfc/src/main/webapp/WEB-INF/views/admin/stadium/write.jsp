@@ -103,14 +103,18 @@
 
 			<div class="formGroup">
 				<label for="latitude" class="formLabel">위도</label>
-				<input type="number" id="latitude" name="latitude" class="formControl"
-					value="${dto.latitude != 0 ? dto.latitude : ''}" placeholder="위도">
+					<input type="number" id="latitude" name="latitude" class="formControl"
+						value="${dto.latitude != 0 ? dto.latitude : ''}"
+						step="any"
+						placeholder="예: 37.5683">
 			</div>
 
 			<div class="formGroup">
 				<label for="longitude" class="formLabel">경도</label>
-				<input type="number" id="longitude" name="longitude" class="formControl"
-					value="${dto.longitude != 0 ? dto.longitude : ''}" placeholder="경도">
+					<input type="number" id="longitude" name="longitude" class="formControl"
+						value="${dto.longitude != 0 ? dto.longitude : ''}"
+						step="any"
+						placeholder="예: 126.8972">
 			</div>
 		</div>
 
