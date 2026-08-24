@@ -84,20 +84,25 @@ public class ReplyBoardController {
 			service.insertReply(dto);
 			
 			// 등록 후 댓글 목록을 다시 가져옴
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("bnum",req.getParameter("bnum"));
-			map.put("offset", 0);
-            map.put("size", 10);
-            
-            List<ReplyBoardDTO> replyList = service.listReply(map);
-            int replyCount = service.dataCount(map);
+			Map<String, Object> countMap  = new HashMap<String, Object>();
+			countMap.put("bnum", req.getParameter("bnum"));
+
+	        int replyCount = service.dataCount(countMap);
+
+	        // 새 댓글 작성 직후에는 전체 댓글 조회
+	        Map<String, Object> listMap = new HashMap<String, Object>();
+	        listMap.put("bnum", req.getParameter("bnum"));
+	        listMap.put("offset", 0);
+	        listMap.put("size", replyCount);
+	        
+            List<ReplyBoardDTO> replyList = service.listReply(listMap);
             
             ModelAndView mav = new ModelAndView("community/reply/reply");
             
             mav.addObject("replyList", replyList);
             mav.addObject("replyCount", replyCount);
             mav.addObject("offset", 0);
-            mav.addObject("size", size);
+            mav.addObject("size", replyList.size());
             mav.addObject("bnum", req.getParameter("bnum"));
             
             return mav;

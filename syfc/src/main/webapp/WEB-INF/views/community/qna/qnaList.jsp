@@ -1,10 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -27,11 +23,8 @@
 
 	<main class="qna-container">
 	
-		<div class="qna-title-wrap">
-			<h2 class="qna-title">
-				<span class="qna-title-icon">📄</span>
-				문의/신고 게시판
-			</h2>
+		<div class="board-top">
+				<h3>공지사항</h3>
 		</div>
 
 		<div class="qna-category">

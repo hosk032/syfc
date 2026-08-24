@@ -22,11 +22,11 @@
 			<table class="match-table">
 				<thead>
 					<tr>
-						<th width="150">경기장</th>
-						<th width="150">승무패</th>
+						<th width="140">경기장</th>
+						<th width="140">승무패</th>
 						<th >구단</th>
-						<th width="150">승무패</th>
-						<th width="150">일정</th>
+						<th width="140">승무패</th>
+						<th width="140">일정</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -59,9 +59,17 @@
 										<div class="match-teams-wrap">
 											<!-- 홈팀 -->
 											<div class="team-info home">
-												<c:if test="${not empty dto.homeClubLogo}">
-													<img src="${pageContext.request.contextPath}/uploads/club/${dto.homeClubLogo}" class="team-logo" alt="logo">
-												</c:if>
+												<c:choose>
+												    <c:when test="${not empty dto.club_logo}">
+												        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
+												             class="team-logo"
+												             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
+												             alt="${dto.club_name}">
+												    </c:when>
+												    <c:otherwise>
+												        <span class="club-default-logo">⚽</span>
+												    </c:otherwise>
+												</c:choose>
 												<span class="team-name"><c:out value="${dto.homeClubName}"/></span>
 											</div>
 											
@@ -75,9 +83,17 @@
 											<!-- 원정팀 -->
 											<div class="team-info away">
 												<span class="team-name"><c:out value="${dto.awayClubName}"/></span>
-												<c:if test="${not empty dto.awayClubLogo}">
-													<img src="${pageContext.request.contextPath}/uploads/club/${dto.awayClubLogo}" class="team-logo" alt="logo">
-												</c:if>
+												<c:choose>
+												    <c:when test="${not empty dto.club_logo}">
+												        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
+												             class="team-logo"
+												             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
+												             alt="${dto.club_name}">
+												    </c:when>
+												    <c:otherwise>
+												        <span class="club-default-logo">⚽</span>
+												    </c:otherwise>
+												</c:choose>
 											</div>
 										</div>
 									</td>

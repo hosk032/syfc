@@ -9,9 +9,10 @@
 			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
 		FROM Club
 		<where>
-	  	<if test="kwd != null and kwd != '' ">
-				<include refid="where-list"/>
-		</if>
+			club_status = '1'
+		  	<if test="kwd != null and kwd != '' ">
+					<include refid="where-list"/>
+			</if>
 		</where>
 		ORDER BY clubowner_key DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
@@ -34,6 +35,7 @@
 		SELECT COUNT(*)
 		FROM Club
 		<where>
+			club_status = '1'
  			<if test="kwd != null and kwd != '' ">
  				<include refid="where-list"/>
  			</if>
@@ -44,7 +46,7 @@
 		SELECT clubowner_key, club_name, club_logo, club_region, club_status,
 			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
 		FROM Club 
-		WHERE clubowner_key = #{clubowner_key}
+		WHERE clubowner_key = #{clubowner_key} AND club_status = '1'
 	</select>
 
 	<select id="listPlayer" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
@@ -56,7 +58,7 @@
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
-		WHERE p.clubowner_key = #{clubowner_key}
+		WHERE p.clubowner_key = #{clubowner_key} AND club_status = '1'
 		ORDER BY p.clubjoin_num
 	</select>
 	
@@ -79,7 +81,7 @@
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
-		WHERE p.clubowner_key = #{clubowner_key}
+		WHERE p.clubowner_key = #{clubowner_key} AND club_status = '1'
 	</select>
 	
 	<select id="getclubowner" parameterType="Long" resultType="Long">
@@ -90,7 +92,7 @@
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
-	    WHERE cj.memberIdx = #{memberIdx}
+	    WHERE cj.memberIdx = #{memberIdx} AND club_status = '1'
 	    FETCH FIRST 1 ROWS ONLY
 	</select>
 
@@ -105,6 +107,7 @@
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
 		<where>
+		club_status = '1'
 	  	<if test="kwd != null and kwd != '' ">
 				<include refid="where-lists"/>
 		</if>
@@ -133,6 +136,7 @@
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		<where>
+			club_status = '1'
 			<if test="kwd != null and kwd != '' ">
 				<include refid="where-lists"/>
 			</if>
