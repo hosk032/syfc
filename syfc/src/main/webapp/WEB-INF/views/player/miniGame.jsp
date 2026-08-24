@@ -11,7 +11,7 @@
 	<jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
 	<!-- 2. 마이페이지 전용 CSS 연결 (dist/css/member/mypage.css) -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/miniGame.css?v=20260822-summary-profile" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/player/miniGame.css?v=20260824-collection-empty-state" />
 </head>
 <body>
 
@@ -250,7 +250,11 @@
 												</c:when>
 												
 												<c:otherwise>
-													<p>아직 획득한 공이 없습니다.</p>
+													<div class="collection-empty-state" role="status">
+														<span class="collection-empty-icon" aria-hidden="true">⚽</span>
+														<p>아직 획득한 공이 없습니다.</p>
+														<span class="collection-empty-guide">공을 뽑으면 이곳에서 보유한 축구공을 확인할 수 있어요.</span>
+													</div>
 												</c:otherwise>
 											</c:choose>
 										</div>
