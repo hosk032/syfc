@@ -198,11 +198,11 @@ public class AdminStadiumController {
 			}
 
 			if(latitude != null && !latitude.isBlank()) {
-				dto.setLatitude(Long.parseLong(latitude));
+				dto.setLatitude(Double.parseDouble(latitude));
 			}
 
 			if(longitude != null && !longitude.isBlank()) {
-				dto.setLongitude(Long.parseLong(longitude));
+				dto.setLongitude(Double.parseDouble(longitude));
 			}
 
 			if(stadiumCost != null && !stadiumCost.isBlank()) {
@@ -296,11 +296,11 @@ public class AdminStadiumController {
 			}
 
 			if(latitude != null && !latitude.isBlank()) {
-				dto.setLatitude(Long.parseLong(latitude));
+				dto.setLatitude(Double.parseDouble(latitude));
 			}
 
 			if(longitude != null && !longitude.isBlank()) {
-				dto.setLongitude(Long.parseLong(longitude));
+				dto.setLongitude(Double.parseDouble(longitude));
 			}
 
 			if(stadiumCost != null && !stadiumCost.isBlank()) {
