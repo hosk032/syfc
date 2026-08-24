@@ -1,6 +1,8 @@
 package com.syfc.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.syfc.dto.ClubOwnerHistoryDTO;
 import com.syfc.mapper.ClubOwnerHistoryMapper;
@@ -18,8 +20,12 @@ public class ClubOwnerHistoryServiceImpl implements ClubOwnerHistoryService{
 
 	@Override
 	public int cancelClubOwnerRequest(long clubJoin_num, long memberIdx) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		
-		return mapper.cancelClubOwnerRequest(clubJoin_num, memberIdx);
+		map.put("clubJoin_num", clubJoin_num);
+		map.put("memberIdx", memberIdx);
+		
+		return mapper.cancelClubOwnerRequest(map);
 	}
 
 }
