@@ -197,24 +197,44 @@ $(document).on("click", ".stadium-card", function() {
         latitude: $card.data("lat"),
         longitude: $card.data("lng")
     };
+	
+	// 선택된 경기정보 갱신
+	updateSelectedMatchInfo();
+	// 선택정보 영역 표시
+	$("#selectedMatchInfo").removeClass("d-none");
 
-    // 우측 UI 텍스트 갱신
+});
+
+
+function updateSelectedMatchInfo() {
+
+    // 아직 경기장을 선택하지 않았다면 아무것도 하지 않음
+    if (selectedStadium == null) {
+        return;
+    }
+
     const applyDate = $("#searchDate").val();
-    const applyTime = Number($("#applyTime").val()) === 1 ? "오전" : "오후";
+
+    const applyTimeValue = Number($("#applyTime").val());
+
+    let applyTimeText = "";
+
+    if (applyTimeValue === 1) {
+        applyTimeText = "오전";
+    } else if (applyTimeValue === 2) {
+        applyTimeText = "오후";
+    }
+
     const matchType1 = $("#matchTypeMain").val();
     const matchType2 = $("#matchTypeSub").val();
 
     $("#selectedMatchText").html(`
         경기일: ${escapeHtml(applyDate)}<br>
-        시간: ${escapeHtml(applyTime)}<br>
+        시간: ${escapeHtml(applyTimeText)}<br>
         경기장: ${escapeHtml(selectedStadium.stadium_name)}<br>
         경기종류: ${escapeHtml(matchType1)} / ${escapeHtml(matchType2)}
     `);
-
-    $("#selectedMatchInfo").removeClass("d-none");
-});
-
-
+}
 
 // 글 올리는 과정
 //<button type="button" class="btn btn-primary btn-sm px-4 fw-bold"
@@ -580,3 +600,12 @@ function loadWaitingMatches(
         }
     });
 }
+
+
+$(document).on(
+    "change",
+    "#searchDate, #applyTime, #matchTypeMain, #matchTypeSub",
+    function() {
+        updateSelectedMatchInfo();
+    }
+);
