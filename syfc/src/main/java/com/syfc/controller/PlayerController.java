@@ -12,7 +12,7 @@ import com.syfc.dto.ClubInfoDTO;
 import com.syfc.dto.ClubInfoPlyDTO;
 import com.syfc.dto.ClubJoinDTO;
 import com.syfc.dto.ClubOwnerHistoryDTO;
-import com.syfc.dto.ClubRequestDTO;
+import com.syfc.dto.ClubOwnerRequestDTO;
 import com.syfc.dto.MatchHistoryDTO;
 import com.syfc.dto.MatchRecordDTO;
 import com.syfc.dto.MemberBallmainDTO;
@@ -34,8 +34,8 @@ import com.syfc.service.ClubJoinRequestService;
 import com.syfc.service.ClubJoinRequestServiceImpl;
 import com.syfc.service.ClubOwnerHistoryService;
 import com.syfc.service.ClubOwnerHistoryServiceImpl;
-import com.syfc.service.ClubRequestService;
-import com.syfc.service.ClubRequestServiceImpl;
+import com.syfc.service.ClubOwnerRequestService;
+import com.syfc.service.ClubOwnerRequestServiceImpl;
 import com.syfc.service.MatchHistoryImpl;
 import com.syfc.service.MatchHistoryService;
 import com.syfc.service.MatchRecordService;
@@ -69,7 +69,7 @@ public class PlayerController {
 	private MemberService memberService = new MemberServiceImpl();
 	private MyClubInfoService myClubInfoService = new MyClubInfoServiceImpl();
 	private ClubOwnerHistoryService historyService = new ClubOwnerHistoryServiceImpl();
-	private ClubRequestService clubRequestService = new ClubRequestServiceImpl();
+	private ClubOwnerRequestService clubOwnerRequestService = new ClubOwnerRequestServiceImpl();
 	private BallService ballService = new BallServiceImpl();
 	private MemberBallpickService memberBallPickService = new MemberBallpickServiceImpl();
 	private ClubInfoPlyservice clubInfoPlyService = new ClubInfoPlyserviceImpl();
@@ -568,11 +568,9 @@ public class PlayerController {
 		
 		// 입단신청 결과
 		boolean clubJoinSuccess = Boolean.TRUE.equals(session.getAttribute("clubJoinSuccess"));
-		boolean clubJoinCancelSuccess = Boolean.TRUE.equals(session.getAttribute("clubJoinCancelSuccess"));
 		
 		// 새로고침 시 다시 안뜨게 처리
 		session.removeAttribute("clubJoinSuccess");
-		session.removeAttribute("clubJoinCancelSuccess");
 		
 		ModelAndView mav = new ModelAndView("player/clubJoin");
 		
@@ -583,7 +581,6 @@ public class PlayerController {
 		mav.addObject("clubList", clubList);
 		mav.addObject("allClubList", allClubList);
 		mav.addObject("clubJoinSuccess", clubJoinSuccess);
-		mav.addObject("clubJoinCancelSuccess", clubJoinCancelSuccess);
 		
 		return mav;
 	}
@@ -650,77 +647,87 @@ public class PlayerController {
 		return mav;
 	}
 	// 구단주 신청 저장
-		@PostMapping("clubOwnerRequest")
-		public ModelAndView clubOwnerRequestSubmit(HttpServletRequest req, HttpServletResponse resp) {
-			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo)session.getAttribute("member");
-			
-			if(info == null) {
-				return new ModelAndView("redirect:/member/login");
-			}
-			
-			long memberIdx = info.getMemberIdx();
-			String content = req.getParameter("cor_content"); // 뷰에서 넘어온 내용
-			
-			// ★ 변경: ClubOwnerRequestDTO 대신 ClubRequestDTO 사용
-			ClubRequestDTO dto = new ClubRequestDTO();
-			dto.setMemberIdx(memberIdx);
-			dto.setContent(content);
-			// request_status는 XML에서 기본 2(신청/대기)로 인서트됨
-			
-			int result = clubRequestService.insertClubRequest(dto);
-			
-			if(result > 0) {
-				session.setAttribute("clubOwnerRequestSuccess", true);
-			}
-			
-			return new ModelAndView("redirect:/player/clubOwnerRequest");
+	@PostMapping("clubOwnerRequest")
+	public ModelAndView clubOwnerRequestSubmit(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+    			return new ModelAndView("redirect:/member/login");
 		}
 		
-		// 구단주 신청 취소 (삭제)
-		@PostMapping("deleteClubOwnerRequest")
-		public ModelAndView deleteClubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
-			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo)session.getAttribute("member");
-			
-			if(info == null) {
-				return new ModelAndView("redirect:/member/login");
-			}
-			
-			// ★ 주의: Club_Request 테이블의 PK는 request_id 입니다.
-			long requestId = Long.parseLong(req.getParameter("request_id"));
-			
-			// 필요시 삭제 메서드를 ClubRequestService에 추가하거나 아래와 같이 처리
-			// (현재 ClubRequest에는 삭제 기능이 없다면 매퍼와 서비스에 delete 메서드를 하나 더 추가해주시면 깔끔합니다)
-			
-			return new ModelAndView("redirect:/player/clubOwnerRequestHistory");
+		// 사용자가 요청값을 바꿔서 다른 사람 회원번호로 신청할 수 있으니
+		// 로그인 세션값의 아이디로 사용
+		long memberIdx = info.getMemberIdx();
+		
+		// 신청일, 신청사유
+		// 초기 설정상태 = 신청 시 대기 
+		String cor_content = req.getParameter("cor_content");
+		
+		ClubOwnerRequestDTO dto = new ClubOwnerRequestDTO();
+		dto.setMemberIdx(memberIdx);
+		dto.setCor_content(cor_content);
+		dto.setCor_status(2);
+		
+		// dto 다 보여주고, 신청 완료 실행해야 함
+		int result = clubOwnerRequestService.insertClubOwnerRequest(dto);
+		
+		// result 가 0보다 크면
+		if(result > 0) {
+			session.setAttribute("clubOwnerRequestSuccess", true);
 		}
 		
-		// 입단신청 결과조회 (구단 창설 신청 내역 조회)
-		@GetMapping("clubOwnerRequestHistory")
-		public ModelAndView clubOwnerRequestHistory(HttpServletRequest req, HttpServletResponse resp) {
-			HttpSession session = req.getSession();
-			SessionInfo info = (SessionInfo)session.getAttribute("member");
-			
-			if(info == null) {
-				return new ModelAndView("redirect:/member/login");
-			}
-			
-			long memberIdx = info.getMemberIdx();
-			
-			// ★ 변경: 회원의 최신 신청 정보를 가져오거나 목록으로 조회
-			ClubRequestDTO requestVo = clubRequestService.findByMemberIdx(memberIdx);
-			PlayerMypageDTO profileDto = service.findProfile(memberIdx);
-			BallDTO mainBall = ballService.findMainBall(memberIdx);
-			
-			ModelAndView mav = new ModelAndView("player/clubOwnerRequestHistory");
-			
-			mav.addObject("requestVo", requestVo);
-			mav.addObject("profileDto", profileDto);
-			mav.addObject("mainBall", mainBall);
-			
-			return mav;
+		return new ModelAndView("redirect:/player/clubOwnerRequest");
+	}
+	
+	// 구단주 신청 취소
+	@PostMapping("deleteClubOwnerRequest")
+	public ModelAndView deleteClubOwnerRequest(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
 		}
+		
+		long cor_request_num = Long.parseLong(req.getParameter("cor_request_num"));
+		
+		// dto 에 있는 구단주 신청번호, 회원번호
+		ClubOwnerRequestDTO dto = new ClubOwnerRequestDTO();
+		
+		dto.setCor_request_num(cor_request_num);
+		dto.setMemberIdx(info.getMemberIdx());
+		
+		int result = clubOwnerRequestService.deleteClubOwnerRequest(dto);
+		
+		return new ModelAndView("redirect:/player/clubOwnerRequestHistory");
+	}
+	
+	// 입단신청 결과조회
+	@GetMapping("clubOwnerRequestHistory")
+	public ModelAndView clubOwnerRequestHistory(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo)session.getAttribute("member");
+		
+		if(info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+		
+		long memberIdx = info.getMemberIdx();
+		
+		List<ClubOwnerRequestDTO> list = clubOwnerRequestService.listClubOwnerRequest(info.getMemberIdx());
+		PlayerMypageDTO profileDto = service.findProfile(memberIdx);
+		BallDTO mainBall = ballService.findMainBall(memberIdx);
+		
+		ModelAndView mav = new ModelAndView("player/clubOwnerRequestHistory");
+		
+		mav.addObject("list", list);
+		mav.addObject("profileDto", profileDto);
+		mav.addObject("mainBall", mainBall);
+		
+		return mav;
+
+	}
 	
 	// 입단신청 취소
 	@PostMapping("cancelClubOwnerRequest")
@@ -736,10 +743,6 @@ public class PlayerController {
 		Long clubJoin_Num = Long.parseLong(req.getParameter("clubJoin_Num"));
 		
 		int result = historyService.cancelClubOwnerRequest(clubJoin_Num, info.getMemberIdx());
-		
-		if(result > 0) {
-			session.setAttribute("clubJoinCancelSuccess", true);
-		}
 		
 		return new ModelAndView("redirect:/player/clubJoin");
 
