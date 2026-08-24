@@ -12,75 +12,89 @@ if (typeof escapeHtml !== 'function') {
 }
 
 // 경기이력 더보기용 (페이징)
-let myMatchApplyList = [];
-let myMatchApplyPage = 1;
+let matchApplyPage = 1;
+const matchApplyPageSize = 5;
+let matchApplyLoading = false;
+let matchApplyHasMore = true;
 
-const MY_MATCH_APPLY_PAGE_SIZE = 5;
-
-function loadMyMatchApply() {
-
+function loadMyMatchApply(reset = true) {
     const container = document.getElementById("matchHistoryList1");
-
-    if(!container) {
+    if (!container) {
         return;
     }
 
-    container.innerHTML = `
-        <div class="text-center text-muted py-5">
-            <div class="spinner-border spinner-border-sm me-2">
-            </div>
-            경기신청 이력을 불러오는 중입니다.
-        </div>`;
+    // 새로 조회
+    if (reset) {
+        matchApplyPage = 1;
+        matchApplyHasMore = true;
+
+        container.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <div class="spinner-border spinner-border-sm me-2">
+                </div>
+                경기신청 이력을 불러오는 중입니다.
+            </div>`;
+    }
+
+    // 더 이상 데이터가 없으면
+    if (!matchApplyHasMore) {
+        return;
+    }
+    // 중복 요청 방지
+    if (matchApplyLoading) {
+        return;
+    }
+
+    matchApplyLoading = true;
+
+    // status 필터
+    const filterElement = document.getElementById("matchStatusFilter");
+    const selectedStatus = filterElement ? filterElement.value : "";
 
     $.ajax({
         url: `${contextPath}/match2/myMatchApply`,
         type: "GET",
+        data: {
+            page: matchApplyPage,
+            size: matchApplyPageSize,
+            status: selectedStatus
+        },
+
         dataType: "json",
 
         success: function(res) {
-
-            if(!res.success) {
-                container.innerHTML = `
-                    <div class="alert alert-warning">
-                        ${escapeHtml(res.message)}
-                    </div>
-                `;
+			
+            if (!res.success) {
+                if (reset) {
+                    container.innerHTML = `
+                        <div class="alert alert-warning">
+                            ${escapeHtml(res.message)}
+                        </div>`;
+                }
                 return;
             }
 
-            const list = res.list;
-			
-			// 선택된 status 가져오기
-			const filterElement = document.getElementById("matchStatusFilter");
-			const selectedStatus = filterElement? filterElement.value : "";
+            const list = res.list || [];
 
-			// status 필터링
-			const filteredList = selectedStatus === ""
-			    ? list
-			    : list.filter(function(dto) {
-			        return Number(dto.status) === Number(selectedStatus);
-			    });
+            //  첫 페이지인데 데이터 없음
+            if (reset && list.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        해당 상태의 경기신청 이력이 없습니다.
+                    </div>`;
+                matchApplyHasMore = false;
+                return;
+            }
 
-			// 필터 결과가 없는 경우
-			if(!filteredList || filteredList.length === 0) {
-
-			    container.innerHTML = `
-			        <div class="text-center text-muted py-5">
-			            해당 상태의 경기신청 이력이 없습니다.
-			        </div>
-			    `;
-			    return;
-			}
-
+            // 카드 HTML 생성
             let html = "";
 
-            filteredList.forEach(function(dto) {
-
+            list.forEach(function(dto) {
                 // 홈 / 원정
                 let teamTypeText = "";
                 let teamTypeClass = "";
 
-                if(dto.my_team_type === "HOME") {
+                if (dto.my_team_type === "HOME") {
                     teamTypeText = "홈팀";
                     teamTypeClass = "bg-primary";
 
@@ -92,17 +106,17 @@ function loadMyMatchApply() {
                 // 오전 / 오후
                 let timeText = "";
 
-                if(dto.apply_time === 1) {
+                if (dto.apply_time === 1) {
                     timeText = "오전";
-                } else if(dto.apply_time === 2) {
+                } else if (dto.apply_time === 2) {
                     timeText = "오후";
                 }
-				
-                // 매칭 상태
+
+                //상태
                 let statusText = "";
                 let statusClass = "";
 
-                switch(dto.status) {
+                switch (Number(dto.status)) {
                     case 3:
                         statusText = "매칭 대기";
                         statusClass = "bg-warning text-dark";
@@ -115,12 +129,10 @@ function loadMyMatchApply() {
                         statusText = "매칭 완료";
                         statusClass = "bg-success";
                         break;
-
                     case 0:
                         statusText = "취소";
                         statusClass = "bg-secondary";
                         break;
-
                     case 4:
                         statusText = "경기장 사정으로 반려";
                         statusClass = "bg-danger";
@@ -129,12 +141,10 @@ function loadMyMatchApply() {
                         statusText = "매칭 실패";
                         statusClass = "bg-danger";
                         break;
-
                     case 6:
-                        statusText =  "상대팀 거절";
-                        statusClass =  "bg-danger";
+                        statusText = "상대팀 거절";
+                        statusClass = "bg-danger";
                         break;
-
                     default:
                         statusText = "알 수 없음";
                         statusClass = "bg-secondary";
@@ -143,92 +153,114 @@ function loadMyMatchApply() {
                 // 상대팀
                 let opponentHtml = "";
 
-                if(dto.opponent_club_name) {
-                    opponentHtml = `<span class="fw-bold">
-                            ${escapeHtml(dto.opponent_club_name)}
+                if (dto.opponent_club_name) {
+                    opponentHtml = `
+                        <span class="fw-bold">
+                            ${escapeHtml(
+                                dto.opponent_club_name
+                            )}
                         </span>`;
 
                 } else {
-                    opponentHtml = `<span class="text-muted">
-                            아직 상대팀이 없습니다. </span>`;
+                    opponentHtml = `
+                        <span class="text-muted">
+                            아직 상대팀이 없습니다.
+                        </span>`;
+                }
+
+                // 구단주 버튼
+                let opponentButtonHtml = "";
+                const isOwner = res.isOwner === true;
+
+                if (isOwner && dto.my_team_type === "HOME") {
+                    if (
+                        Number(dto.status) === 2 &&
+                        dto.opponent_clubOwner_key != null
+                    ) {
+                        opponentButtonHtml = `
+                            <div class="mt-3 pt-3 border-top">
+                                <div class="d-flex justify-content-end gap-2">
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm px-3"
+                                        onclick="acceptOpponent(${dto.apply_id})">
+                                        수락
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm px-3"
+                                        onclick="rejectOpponent(${dto.apply_id})">
+                                        거절
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary btn-sm px-3"
+                                        onclick="cancelMatch(${dto.apply_id})">
+                                        매칭 취소
+                                    </button>
+
+                                </div>
+                            </div>
+                        `;
+
+                    } else if (
+                        Number(dto.status) === 3
+                    ) {
+                        opponentButtonHtml = `
+                            <div class="mt-3 pt-3 border-top text-end">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary btn-sm px-3"
+                                    onclick="cancelMatch(${dto.apply_id})">
+
+                                    매칭 취소
+
+                                </button>
+
+                            </div>
+                        `;
+                    }
                 }
 
 
-                // 홈팀이고 상대팀이 존재하면서 아직 매칭 완료가 아니라면
-                // 수락 / 거절 버튼 표시
-                let opponentButtonHtml = "";
-
-				const isOwner = res.isOwner === true;
-
-				if(isOwner && dto.my_team_type === "HOME") {
-
-				    if(dto.status === 2 && dto.opponent_clubOwner_key != null) {
-
-				        opponentButtonHtml = `
-				            <div class="mt-3 pt-3 border-top">
-				                <div class="d-flex justify-content-end gap-2">
-
-				                    <button type="button"
-				                        class="btn btn-primary btn-sm px-3"
-				                        onclick="acceptOpponent(${dto.apply_id})">
-				                        수락
-				                    </button>
-
-				                    <button type="button"
-				                        class="btn btn-outline-danger btn-sm px-3"
-				                        onclick="rejectOpponent(${dto.apply_id})">
-				                        거절
-				                    </button>
-
-				                    <button type="button"
-				                        class="btn btn-outline-secondary btn-sm px-3"
-				                        onclick="cancelMatch(${dto.apply_id})">
-				                        매칭 취소
-				                    </button>
-
-				                </div>
-				            </div>`;
-
-				    } else if(dto.status === 3) {
-
-				        opponentButtonHtml = `
-				            <div class="mt-3 pt-3 border-top text-end">
-				                <button type="button"
-				                    class="btn btn-outline-secondary btn-sm px-3"
-				                    onclick="cancelMatch(${dto.apply_id})">
-				                    매칭 취소
-				                </button>
-				            </div>`;
-				    }
-				}
-
-                // 취소사유
+                // 취소 사유
                 let cancelReasonHtml = "";
 
-                if(dto.status === 0 && dto.cancel_reason) {
-
+                if (
+                    Number(dto.status) === 0 &&
+                    dto.cancel_reason
+                ) {
                     cancelReasonHtml = `
                         <div class="alert alert-danger small mt-3 mb-0">
+
                             <div class="fw-bold mb-1">
                                 경기 취소사유
                             </div>
 
                             <div>
-                                ${escapeHtml(dto.cancel_reason)}
+                                ${escapeHtml(
+                                    dto.cancel_reason
+                                )}
                             </div>
-                        </div>`;
+
+                        </div>
+                    `;
                 }
 
-                // 카드
+                //카드
                 html += `
+
                     <div class="card border rounded-4 p-3 mb-3 shadow-sm">
 
-                        <!-- 상단 -->
                         <div class="d-flex justify-content-between
                                     align-items-center mb-3">
-
                             <div>
                                 <div class="mb-1">
+
                                     <span class="badge ${teamTypeClass} me-2">
                                         ${teamTypeText}
                                     </span>
@@ -236,511 +268,221 @@ function loadMyMatchApply() {
                                     <span class="badge ${statusClass}">
                                         ${statusText}
                                     </span>
-                                </div>
 
+                                </div>
                                 <h6 class="fw-bold mb-0">
                                     ${dto.apply_date || "-"}
                                     ·
                                     ${timeText}
                                 </h6>
-
                             </div>
 
                             <span class="text-muted small">
-                                신청번호: ${dto.apply_id}
+                                신청번호:
+                                ${dto.apply_id}
                             </span>
 
                         </div>
 
-
-                        <!-- 경기 정보 -->
                         <div class="bg-light rounded-3 p-3">
-
                             <div class="row g-2 small">
-
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         홈팀
                                     </span>
-
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.home_club_name || "-")}
+                                        ${escapeHtml(
+                                            dto.home_club_name || "-"
+                                        )}
                                     </div>
-
                                 </div>
 
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         원정팀
                                     </span>
-
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.away_club_name || "-")}
+                                        ${escapeHtml(
+                                            dto.away_club_name || "-"
+                                        )}
                                     </div>
-
                                 </div>
 
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         경기장
                                     </span>
-
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.stadium_name || "-")}
+                                        ${escapeHtml(
+                                            dto.stadium_name || "-"
+                                        )}
                                     </div>
-
                                 </div>
 
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         경기시간
                                     </span>
-
                                     <div class="fw-bold">
                                         ${timeText || "-"}
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         경기종류
                                     </span>
-
                                     <div class="fw-bold">
-                                        ${escapeHtml(dto.match_type1 || "-")}
+                                        ${escapeHtml(
+                                            dto.match_type1 || "-"
+                                        )}
                                         /
-                                        ${escapeHtml(dto.match_type2 || "-")}
+                                        ${escapeHtml(
+                                            dto.match_type2 || "-"
+                                        )}
                                     </div>
-
                                 </div>
 
                                 <div class="col-md-6">
-
                                     <span class="text-muted">
                                         상대팀
                                     </span>
-
                                     <div>
                                         ${opponentHtml}
                                     </div>
-
                                 </div>
-
+								
                             </div>
-
                         </div>
 
                         ${cancelReasonHtml}
-                        ${opponentButtonHtml}						
-
-                    </div>`;
+                        ${opponentButtonHtml}
+                    </div>
+                `;
             });
 
-            container.innerHTML = html;
+            // HTML 삽입
+            if (reset) {
+                container.innerHTML = html;
+            } else {
+                container.insertAdjacentHTML(
+                    "beforeend",
+                    html
+                );
+            }
+
+            //더보기 여부
+            matchApplyHasMore = res.hasMore;
+
+            // 현재 페이지 증가
+            matchApplyPage++;
+
+            // 더보기 버튼 갱신
+            renderMatchApplyMoreButton();
         },
 
-        error: function(xhr, status, error) {
+        error: function(
+            xhr,
+            status,
+            error
+        ) {
             console.error(
                 "myMatchApply error:",
                 error
             );
 
-            container.innerHTML = `
-                <div class="alert alert-danger">
-                    경기신청 이력을 불러오지 못했습니다.
-                </div>`;
+            if (reset) {
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        경기신청 이력을 불러오지 못했습니다.
+                    </div>
+                `;
+            }
+        },
+
+        complete: function() {
+            matchApplyLoading = false;
         }
+
     });
 }
 
-function renderMoreMyMatchApply() {
+function renderMatchApplyMoreButton() {
 
-    const container = document.getElementById("matchHistoryList1");
-    const moreArea = document.getElementById("matchHistoryMoreArea");
-    const moreBtn = document.getElementById("matchHistoryMoreBtn");
-
-    if(!container || !moreArea || !moreBtn) {
+    const container =
+        document.getElementById(
+            "matchHistoryList1"
+        );
+    if (!container) {
         return;
     }
 
-    // 현재 페이지까지 보여줄 개수
-    const endIndex =
-        myMatchApplyPage * MY_MATCH_APPLY_PAGE_SIZE;
-
-    const visibleList =
-        myMatchApplyList.slice(0, endIndex);
-
-    let html = "";
-
-    visibleList.forEach(function(dto) {
-
-        // =========================
-        // 홈 / 원정
-        // =========================
-
-        let teamTypeText = "";
-        let teamTypeClass = "";
-
-        if(dto.my_team_type === "HOME") {
-
-            teamTypeText = "홈팀";
-            teamTypeClass = "bg-primary";
-
-        } else {
-
-            teamTypeText = "원정팀";
-            teamTypeClass = "bg-info";
-        }
-
-
-        // =========================
-        // 오전 / 오후
-        // =========================
-
-        let timeText = "";
-
-        if(dto.apply_time === 1) {
-
-            timeText = "오전";
-
-        } else if(dto.apply_time === 2) {
-
-            timeText = "오후";
-        }
-
-
-        // =========================
-        // 매칭 상태
-        // =========================
-
-        let statusText = "";
-        let statusClass = "";
-
-        switch(Number(dto.status)) {
-
-            case 3:
-                statusText = "매칭 대기";
-                statusClass = "bg-warning text-dark";
-                break;
-
-            case 2:
-                statusText = "상대팀 신청";
-                statusClass = "bg-info";
-                break;
-
-            case 1:
-                statusText = "매칭 완료";
-                statusClass = "bg-success";
-                break;
-
-            case 0:
-                statusText = "취소";
-                statusClass = "bg-secondary";
-                break;
-
-            case 4:
-                statusText = "경기장 사정으로 반려";
-                statusClass = "bg-danger";
-                break;
-
-            case 5:
-                statusText = "매칭 실패";
-                statusClass = "bg-danger";
-                break;
-
-            case 6:
-                statusText = "상대팀 거절";
-                statusClass = "bg-danger";
-                break;
-
-            default:
-                statusText = "알 수 없음";
-                statusClass = "bg-secondary";
-        }
-
-
-        // =========================
-        // 상대팀
-        // =========================
-
-        let opponentHtml = "";
-
-        if(dto.opponent_club_name) {
-
-            opponentHtml = `
-                <span class="fw-bold">
-                    ${escapeHtml(dto.opponent_club_name)}
-                </span>`;
-
-        } else {
-
-            opponentHtml = `
-                <span class="text-muted">
-                    아직 상대팀이 없습니다.
-                </span>`;
-        }
-
-
-        // =========================
-        // 홈팀 수락 / 거절 버튼
-        // =========================
-
-        let opponentButtonHtml = "";
-
-        const isOwner = window.myMatchApplyIsOwner === true;
-
-        if(isOwner && dto.my_team_type === "HOME") {
-
-            if(Number(dto.status) === 2 &&
-               dto.opponent_clubOwner_key != null) {
-
-                opponentButtonHtml = `
-                    <div class="mt-3 pt-3 border-top">
-
-                        <div class="d-flex justify-content-end gap-2">
-
-                            <button type="button"
-                                    class="btn btn-primary btn-sm px-3"
-                                    onclick="acceptOpponent(${dto.apply_id})">
-                                수락
-                            </button>
-
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm px-3"
-                                    onclick="rejectOpponent(${dto.apply_id})">
-                                거절
-                            </button>
-
-                            <button type="button"
-                                    class="btn btn-outline-secondary btn-sm px-3"
-                                    onclick="cancelMatch(${dto.apply_id})">
-                                매칭 취소
-                            </button>
-
-                        </div>
-
-                    </div>`;
-
-            } else if(Number(dto.status) === 3) {
-
-                opponentButtonHtml = `
-                    <div class="mt-3 pt-3 border-top text-end">
-
-                        <button type="button"
-                                class="btn btn-outline-secondary btn-sm px-3"
-                                onclick="cancelMatch(${dto.apply_id})">
-                            매칭 취소
-                        </button>
-
-                    </div>`;
-            }
-        }
-
-
-        // =========================
-        // 취소 사유
-        // =========================
-
-        let cancelReasonHtml = "";
-
-        if(Number(dto.status) === 0 &&
-           dto.cancel_reason) {
-
-            cancelReasonHtml = `
-                <div class="alert alert-danger small mt-3 mb-0">
-
-                    <div class="fw-bold mb-1">
-                        경기 취소사유
-                    </div>
-
-                    <div>
-                        ${escapeHtml(dto.cancel_reason)}
-                    </div>
-
-                </div>`;
-        }
-
-
-        // =========================
-        // 카드
-        // =========================
-
-        html += `
-            <div class="card border rounded-4 p-3 mb-3 shadow-sm">
-
-                <!-- 상단 -->
-                <div class="d-flex justify-content-between
-                            align-items-center mb-3">
-
-                    <div>
-
-                        <div class="mb-1">
-
-                            <span class="badge ${teamTypeClass} me-2">
-                                ${teamTypeText}
-                            </span>
-
-                            <span class="badge ${statusClass}">
-                                ${statusText}
-                            </span>
-
-                        </div>
-
-                        <h6 class="fw-bold mb-0">
-
-                            ${dto.apply_date || "-"}
-
-                            ·
-
-                            ${timeText}
-
-                        </h6>
-
-                    </div>
-
-                    <span class="text-muted small">
-                        신청번호: ${dto.apply_id}
-                    </span>
-
-                </div>
-
-
-                <!-- 경기 정보 -->
-
-                <div class="bg-light rounded-3 p-3">
-
-                    <div class="row g-2 small">
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                홈팀
-                            </span>
-
-                            <div class="fw-bold">
-                                ${escapeHtml(
-                                    dto.home_club_name || "-"
-                                )}
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                원정팀
-                            </span>
-
-                            <div class="fw-bold">
-                                ${escapeHtml(
-                                    dto.away_club_name || "-"
-                                )}
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                경기장
-                            </span>
-
-                            <div class="fw-bold">
-                                ${escapeHtml(
-                                    dto.stadium_name || "-"
-                                )}
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                경기시간
-                            </span>
-
-                            <div class="fw-bold">
-                                ${timeText || "-"}
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                경기종류
-                            </span>
-
-                            <div class="fw-bold">
-
-                                ${escapeHtml(
-                                    dto.match_type1 || "-"
-                                )}
-
-                                /
-
-                                ${escapeHtml(
-                                    dto.match_type2 || "-"
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                상대팀
-                            </span>
-
-                            <div>
-                                ${opponentHtml}
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                ${cancelReasonHtml}
-
-                ${opponentButtonHtml}
-
-            </div>`;
-    });
-
-
-    container.innerHTML = html;
-
-
-    // =========================
-    // 더보기 버튼 처리
-    // =========================
-
-    if(visibleList.length < myMatchApplyList.length) {
-
-        moreArea.classList.remove("d-none");
-        moreBtn.disabled = false;
-        moreBtn.textContent = "더보기";
-
-    } else {
-
-        moreArea.classList.add("d-none");
+    // 기존 더보기 버튼 제거
+    const oldButton =
+        document.getElementById(
+            "matchApplyMoreArea"
+        );
+
+    if (oldButton) {
+        oldButton.remove();
     }
+
+    // 더 가져올 데이터가 없으면
+    if (!matchApplyHasMore) {
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+
+    wrapper.id = "matchApplyMoreArea";
+
+    wrapper.className = "text-center mt-3 mb-4";
+
+    wrapper.innerHTML = `
+        <button
+            type="button"
+            class="btn btn-outline-primary px-5"
+            onclick="loadMoreMatchApply()">
+
+            더보기
+
+        </button>
+    `;
+
+    container.appendChild(wrapper);
 }
 
+function loadMoreMatchApply() {
+
+    if (matchApplyLoading) {
+        return;
+    }
+
+    if (!matchApplyHasMore) {
+        return;
+    }
+
+    // 기존 더보기 버튼 제거
+    const moreArea = document.getElementById("matchApplyMoreArea");
+
+    if (moreArea) {
+		
+        moreArea.innerHTML = `
+            <div class="text-muted py-2">
+
+                <div
+                    class="spinner-border spinner-border-sm me-2">
+                </div>
+
+                불러오는 중...
+
+            </div>
+        `;
+    }
+
+    // 기존 데이터 유지하면서 다음 페이지 조회
+    loadMyMatchApply(false);
+}
 
 
 function acceptOpponent(applyId) {
@@ -893,7 +635,6 @@ $(document).on(
     }
 );
 
-$(document).on("click", "#matchHistoryMoreBtn", function() {
-    myMatchApplyPage++;
-    renderMoreMyMatchApply();
+$("#matchStatusFilter").on("change", function() {
+    loadMyMatchApply(true);
 });

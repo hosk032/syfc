@@ -272,10 +272,13 @@ public class MatchServiceImpl implements MatchService {
         }
     }
     
-    
     @Override
-    public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> param) {
-        return mapper.listMyMatchApply(param);
+    public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> map) throws Exception {
+        return mapper.listMyMatchApply(map);
+    }
+    @Override
+    public int countMyMatchApply( Map<String, Object> map) throws Exception {
+        return mapper.countMyMatchApply(map);
     }
     
     @Override
