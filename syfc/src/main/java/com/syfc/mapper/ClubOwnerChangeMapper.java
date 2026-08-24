@@ -1,11 +1,12 @@
 package com.syfc.mapper;
 
 import java.util.List;
+import java.util.Map;
 import com.syfc.dto.ClubOwnerChangeDTO;
 
 public interface ClubOwnerChangeMapper {
-    // 1. 차기 구단주 선택용 선수 목록 조회 (나 자신 제외)
-    public List<ClubOwnerChangeDTO> listTransferCandidates(ClubOwnerChangeDTO dto);
+    // 1. 차기 구단주 선택용 선수 목록 조회 (Map 사용)
+    public List<ClubOwnerChangeDTO> listTransferCandidates(Map<String, Object> map);
 
     // 2. 현재 로그인한 구단주의 비밀번호 확인
     public String getOwnerPassword(Long memberIdx);
