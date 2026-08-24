@@ -55,7 +55,7 @@
 	<!-- 5. 승인 시 소속 선수(clubPlayer) 테이블로 정식 등록 -->
 	<insert id="insertClubPlayer"
 		parameterType="com.syfc.dto.ClubApprovalDTO">
-		INSERT INTO clubPlayer (
+		INSERT INTO Player (
 		clubPlayer_num, clubOwner_key, memberIdx, position, reg_date
 		) VALUES (
 		clubPlayer_seq.NEXTVAL, #{clubOwner_key}, #{memberIdx}, #{position}, SYSDATE

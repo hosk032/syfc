@@ -12,7 +12,7 @@
 		</div>
 
 		<div class="alert alert-warning border-0 p-3 rounded-4 mb-4 small text-secondary d-flex align-items-start gap-2 shadow-sm">
-			<i class="bi bi-exclamation-triangle-fill fs-5 text-warning flex-shrink-0 mt-1"></i>
+			<!-- <i class="bi bi-exclamation-triangle-fill fs-5 text-warning flex-shrink-0 mt-1"></i> -->
 			<div>
 				<strong class="d-block text-dark mb-1">⚠️ 구단주 권한 양도 시 주의사항</strong>
 				1. 권한 양도가 완료되면 현재 계정은 즉시 <strong>일반 소속 선수</strong> 등급으로 변경됩니다.<br>

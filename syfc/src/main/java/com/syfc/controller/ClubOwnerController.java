@@ -64,7 +64,7 @@ public class ClubOwnerController {
 				// 경기 목록 조회
 				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubOwnerKey);
 				req.setAttribute("matchList", matchList);
-				
+
 				// 승 / 무 / 패 전적 자동 집계 로직
 				int wins = 0;
 				int losses = 0;
@@ -72,8 +72,8 @@ public class ClubOwnerController {
 				if (matchList != null) {
 					for (ClubOwnerMatchDTO match : matchList) {
 						if (match.getHomeScore() != null && match.getAwayScore() != null) {
-							int myScore = match.getHomeScore(); 
-							int opScore = match.getAwayScore(); 
+							int myScore = match.getHomeScore();
+							int opScore = match.getAwayScore();
 
 							if (myScore > opScore) {
 								wins++;
@@ -105,7 +105,7 @@ public class ClubOwnerController {
 				// 구단 평균 평점 실제 DB 조회 연동
 				Double avgRating = playerService.getClubAverageRating(clubOwnerKey);
 				req.setAttribute("avgRating", avgRating != null ? avgRating : 0.0);
-				
+
 				// 선수 성적 목록 조회 연동
 				List<ClubOwnerPlayerRecordDTO> recordList = recordService.getPlayerRecordList(clubOwnerKey);
 				req.setAttribute("recordList", recordList);
@@ -179,7 +179,8 @@ public class ClubOwnerController {
 					}
 
 					// 2. 해당 경기에 등록된 선수들의 성적 기록만 필터링
-					List<ClubOwnerPlayerRecordDTO> allRecords = recordService.getPlayerRecordList(clubDto.getClubOwner_key());
+					List<ClubOwnerPlayerRecordDTO> allRecords = recordService
+							.getPlayerRecordList(clubDto.getClubOwner_key());
 					if (allRecords != null) {
 						for (ClubOwnerPlayerRecordDTO r : allRecords) {
 							if (r.getMatchNum() != null && r.getMatchNum().equals(matchNum)) {
@@ -196,22 +197,27 @@ public class ClubOwnerController {
 				String scoreStr = "- : -";
 
 				if (targetMatch != null) {
-					matchDateStr = targetMatch.getMatchDate() != null ? targetMatch.getMatchDate().substring(0, 10) : "";
+					matchDateStr = targetMatch.getMatchDate() != null ? targetMatch.getMatchDate().substring(0, 10)
+							: "";
 					stadiumStr = targetMatch.getStadiumName() != null ? targetMatch.getStadiumName() : "";
-					if (targetMatch.getHomeClubName() != null) homeName = targetMatch.getHomeClubName();
-					if (targetMatch.getAwayClubName() != null) awayName = targetMatch.getAwayClubName();
+					if (targetMatch.getHomeClubName() != null)
+						homeName = targetMatch.getHomeClubName();
+					if (targetMatch.getAwayClubName() != null)
+						awayName = targetMatch.getAwayClubName();
 					if (targetMatch.getHomeScore() != null && targetMatch.getAwayScore() != null) {
 						scoreStr = targetMatch.getHomeScore() + " : " + targetMatch.getAwayScore();
 					}
 				}
 
 				StringBuilder html = new StringBuilder();
-				
+
 				// 원본 디자인과 CSS 클래스를 그대로 유지한 HTML 템플릿
 				html.append("<div class='p-2'>");
 				html.append("  <div class='bg-light p-3 rounded-3 text-center mb-4 border'>");
-				html.append("    <div class='text-muted small fw-bold mb-1'>").append(matchDateStr).append(" · ").append(stadiumStr).append("</div>");
-				html.append("    <div class='d-flex align-items-center justify-content-center gap-3 fs-5 fw-bold text-dark'>");
+				html.append("    <div class='text-muted small fw-bold mb-1'>").append(matchDateStr).append(" · ")
+						.append(stadiumStr).append("</div>");
+				html.append(
+						"    <div class='d-flex align-items-center justify-content-center gap-3 fs-5 fw-bold text-dark'>");
 				html.append("      <span>").append(homeName).append("</span>");
 				html.append("      <span class='text-primary fs-4 px-2'>").append(scoreStr).append("</span>");
 				html.append("      <span>").append(awayName).append("</span>");
@@ -219,12 +225,14 @@ public class ClubOwnerController {
 				html.append("  </div>");
 
 				html.append("  <div class='d-flex justify-content-between align-items-center mb-2'>");
-				html.append("    <h6 class='fw-bold mb-0 text-dark'><i class='bi bi-people-fill me-1 text-primary'></i> 출전 선수 평점 및 기록</h6>");
+				html.append(
+						"    <h6 class='fw-bold mb-0 text-dark'><i class='bi bi-people-fill me-1 text-primary'></i> 출전 선수 평점 및 기록</h6>");
 				html.append("    <span class='text-muted small'>매치 ID: ").append(matchNum).append("</span>");
 				html.append("  </div>");
 
 				html.append("  <div class='table-responsive'>");
-				html.append("    <table class='table table-hover align-middle text-center small border mb-0' style='width: 100%; table-layout: fixed;'>");
+				html.append(
+						"    <table class='table table-hover align-middle text-center small border mb-0' style='width: 100%; table-layout: fixed;'>");
 				html.append("      <thead class='table-light text-muted'>");
 				html.append("        <tr>");
 				html.append("          <th style='width: 12%'>포지션</th>");
@@ -254,17 +262,22 @@ public class ClubOwnerController {
 						String memoVal = rec.getMemo() != null ? rec.getMemo() : "";
 
 						html.append("        <tr>");
-						html.append("          <td><span class='badge bg-secondary-subtle text-secondary border'>").append(posVal).append("</span></td>");
+						html.append("          <td><span class='badge bg-secondary-subtle text-secondary border'>")
+								.append(posVal).append("</span></td>");
 						html.append("          <td class='fw-semibold'>").append(nameVal).append("</td>");
-						html.append("          <td class='text-warning fw-bold'>⭐ ").append(String.format("%.1f", ratingVal)).append("</td>");
-						html.append("          <td><span class='text-danger fw-bold'>").append(goalVal).append("득점</span> / ").append(assistVal).append("도움</td>");
+						html.append("          <td class='text-warning fw-bold'>⭐ ")
+								.append(String.format("%.1f", ratingVal)).append("</td>");
+						html.append("          <td><span class='text-danger fw-bold'>").append(goalVal)
+								.append("득점</span> / ").append(assistVal).append("도움</td>");
 						html.append("          <td>").append(cardBadge).append("</td>");
-						html.append("          <td class='text-muted text-start text-truncate ps-3'>").append(memoVal).append("</td>");
+						html.append("          <td class='text-muted text-start text-truncate ps-3'>").append(memoVal)
+								.append("</td>");
 						html.append("        </tr>");
 					}
 				} else {
 					html.append("        <tr>");
-					html.append("          <td colspan='6' class='py-4 text-muted text-center'>해당 경기에 등록된 선수 상세 기록이 없습니다.</td>");
+					html.append(
+							"          <td colspan='6' class='py-4 text-muted text-center'>해당 경기에 등록된 선수 상세 기록이 없습니다.</td>");
 					html.append("        </tr>");
 				}
 
@@ -285,6 +298,46 @@ public class ClubOwnerController {
 	@PostMapping("update")
 	public ModelAndView updateClubInfo(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+		if (info == null) {
+			return new ModelAndView("redirect:/member/login");
+		}
+
+		try {
+			String clubName = req.getParameter("club_name");
+			String clubCreated = req.getParameter("club_created");
+			String clubRegion = req.getParameter("club_region");
+			String clubContent = req.getParameter("club_content");
+
+			// DB에서 memberIdx로 clubOwner_key 가져오기
+			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
+
+			Long clubOwnerKey = null;
+			if (clubDto != null) {
+				clubOwnerKey = clubDto.getClubOwner_key();
+			} else {
+				// 구단 정보(club)는 없어도 clubOwnerKey는 가져오도록 mapper 직접 호출이 필요했던 부분 보완
+				com.syfc.mapper.ClubOwnerMapper mapper = com.syfc.mybatis.support.MapperContainer
+						.get(com.syfc.mapper.ClubOwnerMapper.class);
+				clubOwnerKey = mapper.findClubOwnerKeyByMemberIdx(info.getMemberIdx());
+			}
+
+			ClubDTO dto = new ClubDTO();
+			dto.setClubOwner_key(clubOwnerKey);
+			dto.setClub_name(clubName);
+			dto.setClub_created(clubCreated);
+			dto.setClub_region(clubRegion);
+			dto.setClub_content(clubContent);
+
+			service.updateClubInfo(dto);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 
@@ -462,7 +515,7 @@ public class ClubOwnerController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 }

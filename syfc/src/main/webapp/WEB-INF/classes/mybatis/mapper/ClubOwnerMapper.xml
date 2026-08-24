@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="com.syfc.mapper.ClubOwnerMapper">
 
 	<!-- 회원번호(memberIdx)로 구단주 키(clubOwnerKey) 조회 -->
 	<select id="findClubOwnerKeyByMemberIdx" parameterType="long" resultType="long">
-		SELECT clubOwner_key 
+		SELECT clubOwner_key
 		FROM clubOwner
 		WHERE memberIdx = #{memberIdx}
 	</select>
 
-	<!-- 1. 구단 정보 조회 (날짜 포맷 YYYY-MM-DD 유지) -->
+	<!-- 1. 구단 정보 조회 -->
 	<select id="selectClubInfo" parameterType="long" resultType="com.syfc.dto.ClubDTO">
 		SELECT 
 			clubOwner_key,
@@ -22,13 +21,38 @@
 			TO_CHAR(club_created, 'YYYY-MM-DD') AS club_created,
 			club_content
 		FROM club
-		WHERE clubOwner_key = #{clubOwn	erKey}
+		WHERE clubOwner_key = #{clubOwnerKey}
 	</select>
 
-	<!-- 2. 구단 정보 수정 -->
+	<!-- 2. 신규 구단 정보 등록 (중복 제거 및 로고 조건 통합) -->
+	<insert id="insertClubInfo" parameterType="com.syfc.dto.ClubDTO">
+		INSERT INTO club (
+			clubOwner_key,
+			club_name,
+			club_region,
+			club_content,
+			club_created,
+			club_status
+			<if test="club_logo != null and club_logo != ''">
+				, club_logo
+			</if>
+		) VALUES (
+			#{clubOwner_key},
+			#{club_name},
+			#{club_region},
+			#{club_content},
+			TO_DATE(#{club_created}, 'YYYY-MM-DD'),
+			1
+			<if test="club_logo != null and club_logo != ''">
+				, #{club_logo}
+			</if>
+		)
+	</insert>
+
+	<!-- 3. 구단 정보 수정 -->
 	<update id="updateClubInfo" parameterType="com.syfc.dto.ClubDTO">
 		UPDATE club
-		SET 
+		SET
 			club_name = #{club_name},
 			club_region = #{club_region},
 			club_content = #{club_content}
