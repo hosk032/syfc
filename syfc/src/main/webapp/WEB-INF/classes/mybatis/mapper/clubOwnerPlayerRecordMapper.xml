@@ -26,25 +26,33 @@
         ORDER BY m.match_date DESC
     </select>
 
-    <!-- 성적 등록 -->
+    <!-- 성적 등록 (DB 수정 없이 record_id 번호 자동 채움) -->
     <insert id="insertPlayerRecord" parameterType="com.syfc.dto.ClubOwnerPlayerRecordDTO">
         INSERT INTO Player_Record (
             record_id, rating, goal, assist, yellow, red, own_goal, Match_num, clubJoin_num
         ) VALUES (
-            #{recordId}, #{rating}, #{goal}, #{assist}, #{yellow}, #{red}, #{ownGoal}, #{matchNum}, #{clubJoinNum}
+            (SELECT NVL(MAX(record_id), 0) + 1 FROM Player_Record), 
+            #{rating, jdbcType=NUMERIC}, 
+            #{goal, jdbcType=NUMERIC}, 
+            #{assist, jdbcType=NUMERIC}, 
+            #{yellow, jdbcType=NUMERIC}, 
+            #{red, jdbcType=NUMERIC}, 
+            #{ownGoal, jdbcType=NUMERIC}, 
+            #{matchNum, jdbcType=NUMERIC}, 
+            #{clubJoinNum, jdbcType=NUMERIC}
         )
     </insert>
 
     <!-- 성적 수정 -->
     <update id="updatePlayerRecord" parameterType="com.syfc.dto.ClubOwnerPlayerRecordDTO">
         UPDATE Player_Record 
-        SET rating = #{rating},
-            goal = #{goal},
-            assist = #{assist},
-            yellow = #{yellow},
-            red = #{red},
-            own_goal = #{ownGoal}
-        WHERE record_id = #{recordId}
+        SET rating = #{rating, jdbcType=NUMERIC},
+            goal = #{goal, jdbcType=NUMERIC},
+            assist = #{assist, jdbcType=NUMERIC},
+            yellow = #{yellow, jdbcType=NUMERIC},
+            red = #{red, jdbcType=NUMERIC},
+            own_goal = #{ownGoal, jdbcType=NUMERIC}
+        WHERE record_id = #{recordId, jdbcType=NUMERIC}
     </update>
 
     <!-- 성적 삭제 -->

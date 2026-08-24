@@ -667,4 +667,73 @@ public class ClubOwnerController {
 
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
+	// 15. 선수 개인 성적/평점 저장 및 수정 (POST-AJAX)
+		@PostMapping("savePlayerRecord")
+		public void savePlayerRecord(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			HttpSession session = req.getSession();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+
+			try {
+				String recordIdStr = req.getParameter("recordId");
+				String matchNumStr = req.getParameter("matchNum");
+				String clubJoinNumStr = req.getParameter("clubJoinNum");
+				String ratingStr = req.getParameter("rating");
+				String goalStr = req.getParameter("goal");
+				String assistStr = req.getParameter("assist");
+				String ownGoalStr = req.getParameter("ownGoal");
+				String yellowStr = req.getParameter("yellow");
+				String redStr = req.getParameter("red");
+				String memo = req.getParameter("memo");
+
+				ClubOwnerPlayerRecordDTO dto = new ClubOwnerPlayerRecordDTO();
+				if (recordIdStr != null && !recordIdStr.trim().isEmpty()) {
+					dto.setRecordId(Long.parseLong(recordIdStr));
+				}
+				if (matchNumStr != null && !matchNumStr.trim().isEmpty()) {
+					dto.setMatchNum(Long.parseLong(matchNumStr));
+				}
+				if (clubJoinNumStr != null && !clubJoinNumStr.trim().isEmpty()) {
+					dto.setClubJoinNum(Long.parseLong(clubJoinNumStr));
+				}
+				if (ratingStr != null && !ratingStr.trim().isEmpty()) {
+					dto.setRating(Double.parseDouble(ratingStr));
+				}
+				if (goalStr != null && !goalStr.trim().isEmpty()) {
+					dto.setGoal(Integer.parseInt(goalStr));
+				}
+				if (assistStr != null && !assistStr.trim().isEmpty()) {
+					dto.setAssist(Integer.parseInt(assistStr));
+				}
+				if (ownGoalStr != null && !ownGoalStr.trim().isEmpty()) {
+					dto.setOwnGoal(Integer.parseInt(ownGoalStr));
+				}
+				if (yellowStr != null && !yellowStr.trim().isEmpty()) {
+					dto.setYellow(Integer.parseInt(yellowStr));
+				}
+				if (redStr != null && !redStr.trim().isEmpty()) {
+					dto.setRed(Integer.parseInt(redStr));
+				}
+				dto.setMemo(memo);
+
+				// Service를 통해 DB에 저장/수정 로직 수행
+				if (dto.getRecordId() != null) {
+					recordService.updatePlayerRecord(dto); // 수정
+				} else {
+					recordService.insertPlayerRecord(dto); // 신규 등록
+				}
+
+				resp.setContentType("text/plain; charset=UTF-8");
+				resp.getWriter().write("OK");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
+		}
 }
