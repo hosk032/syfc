@@ -55,14 +55,6 @@
         </div>
       </div>
 
-      <!-- 첨부파일 -->
-      <div class="formGroup">
-        <label for="boardFile" class="formLabel">첨부파일</label>
-        <div class="formInputWrap">
-          <input type="file" id="boardFile" name="file" class="fileControl" />
-        </div>
-      </div>
-
       <div class="formActions">
         <button type="button" class="btn btnSubmit" onclick="sendOk();">${mode=="update" ? "수정완료" : "등록완료"}&nbsp;</button>
         <button type="reset" class="btn btnReset">다시입력</button>

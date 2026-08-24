@@ -1,6 +1,5 @@
 package com.syfc.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -8,41 +7,30 @@ import java.util.Map;
 
 import com.syfc.dto.ClubApprovalDTO;
 import com.syfc.dto.ClubDTO;
-import com.syfc.dto.ClubOwnerChangeDTO;
 import com.syfc.dto.ClubOwnerMatchDTO;
 import com.syfc.dto.ClubOwnerPlayerDTO;
 import com.syfc.dto.ClubOwnerPlayerRecordDTO;
-import com.syfc.dto.ClubRequestDTO;
 import com.syfc.dto.SessionInfo;
-import com.syfc.mapper.ClubOwnerMapper;
 import com.syfc.mvc.annotation.Controller;
 import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
-import com.syfc.mybatis.support.MapperContainer;
 import com.syfc.service.ClubApprovalService;
 import com.syfc.service.ClubApprovalServiceImpl;
-import com.syfc.service.ClubOwnerChangeService;
-import com.syfc.service.ClubOwnerChangeServiceImpl;
 import com.syfc.service.ClubOwnerMatchService;
 import com.syfc.service.ClubOwnerMatchServiceImpl;
 import com.syfc.service.ClubOwnerPlayerRecordService;
 import com.syfc.service.ClubOwnerPlayerRecordServiceImpl;
 import com.syfc.service.ClubOwnerPlayerService;
 import com.syfc.service.ClubOwnerPlayerServiceImpl;
-import com.syfc.service.ClubRequestService;
-import com.syfc.service.ClubRequestServiceImpl;
 import com.syfc.service.ClubOwnerService;
 import com.syfc.service.ClubOwnerServiceImpl;
-import com.syfc.util.FileManager;
-import com.syfc.util.MyMultipartFile;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Part;
 
 @Controller
 @RequestMapping("/clubowner/*")
@@ -53,10 +41,6 @@ public class ClubOwnerController {
 	private ClubApprovalService approvalService = new ClubApprovalServiceImpl();
 	private ClubOwnerPlayerService playerService = new ClubOwnerPlayerServiceImpl();
 	private ClubOwnerPlayerRecordService recordService = new ClubOwnerPlayerRecordServiceImpl();
-	private ClubOwnerChangeService changeService = new ClubOwnerChangeServiceImpl();
-	private ClubRequestService clubRequestService = new ClubRequestServiceImpl();
-	
-	private FileManager fileManager = new FileManager();
 
 	// 1. 구단주 메인 페이지
 	@GetMapping("ownerpage")
@@ -71,18 +55,17 @@ public class ClubOwnerController {
 		}
 
 		try {
-			ClubRequestDTO requestVo = clubRequestService.findByMemberIdx(info.getMemberIdx());
-			req.setAttribute("requestVo", requestVo);
-
 			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
 			req.setAttribute("club", clubDto);
 
-			if (requestVo != null && requestVo.getRequest_status() == 1 && clubDto != null) {
+			if (clubDto != null) {
 				Long clubOwnerKey = clubDto.getClubOwner_key();
 
+				// 경기 목록 조회
 				List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubOwnerKey);
 				req.setAttribute("matchList", matchList);
 
+				// 승 / 무 / 패 전적 자동 집계 로직
 				int wins = 0;
 				int losses = 0;
 				int draws = 0;
@@ -107,27 +90,25 @@ public class ClubOwnerController {
 				req.setAttribute("draws", draws);
 				req.setAttribute("losses", losses);
 
+				// 입단 신청 대기 목록 조회
 				List<ClubApprovalDTO> approvalList = approvalService.getPendingApprovalList(clubOwnerKey);
 				req.setAttribute("approvalList", approvalList);
 				req.setAttribute("pendingCount", approvalList != null ? approvalList.size() : 0);
 
+				// 구단 소속 선수 목록 조회
 				ClubOwnerPlayerDTO playerParams = new ClubOwnerPlayerDTO();
 				playerParams.setClubOwner_key(clubOwnerKey);
 				List<ClubOwnerPlayerDTO> playerList = playerService.getClubPlayerList(playerParams);
 				req.setAttribute("playerList", playerList);
 				req.setAttribute("playerCount", playerList != null ? playerList.size() : 0);
 
+				// 구단 평균 평점 실제 DB 조회 연동
 				Double avgRating = playerService.getClubAverageRating(clubOwnerKey);
 				req.setAttribute("avgRating", avgRating != null ? avgRating : 0.0);
 
+				// 선수 성적 목록 조회 연동
 				List<ClubOwnerPlayerRecordDTO> recordList = recordService.getPlayerRecordList(clubOwnerKey);
 				req.setAttribute("recordList", recordList);
-
-				Map<String, Object> changeMap = new HashMap<>();
-				changeMap.put("clubOwner_key", clubOwnerKey);
-				changeMap.put("memberIdx", info.getMemberIdx());
-				List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(changeMap);
-				req.setAttribute("candidateList", candidateList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,7 +144,7 @@ public class ClubOwnerController {
 		return new ModelAndView("clubowner/tab/matchHistoryTable");
 	}
 
-	// 2-1. 경기 상세 기록 모달 내용 조회
+	// 2-1. 경기 상세 기록 모달 내용 조회 (원본 디자인 100% 유지 + 실제 DB 선수 기록 연동)
 	@GetMapping("matchDetailModal")
 	public void matchDetailModal(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -186,6 +167,7 @@ public class ClubOwnerController {
 				List<ClubOwnerPlayerRecordDTO> matchRecords = new java.util.ArrayList<>();
 
 				if (clubDto != null) {
+					// 1. 해당 경기의 기본 정보 조회
 					List<ClubOwnerMatchDTO> matchList = matchService.getClubMatchList(clubDto.getClubOwner_key());
 					if (matchList != null) {
 						for (ClubOwnerMatchDTO m : matchList) {
@@ -196,6 +178,7 @@ public class ClubOwnerController {
 						}
 					}
 
+					// 2. 해당 경기에 등록된 선수들의 성적 기록만 필터링
 					List<ClubOwnerPlayerRecordDTO> allRecords = recordService
 							.getPlayerRecordList(clubDto.getClubOwner_key());
 					if (allRecords != null) {
@@ -228,6 +211,7 @@ public class ClubOwnerController {
 
 				StringBuilder html = new StringBuilder();
 
+				// 원본 디자인과 CSS 클래스를 그대로 유지한 HTML 템플릿
 				html.append("<div class='p-2'>");
 				html.append("  <div class='bg-light p-3 rounded-3 text-center mb-4 border'>");
 				html.append("    <div class='text-muted small fw-bold mb-1'>").append(matchDateStr).append(" · ")
@@ -310,7 +294,7 @@ public class ClubOwnerController {
 		}
 	}
 
-	// 3. 구단 정보 수정 (POST) - 구단 엠블럼 파일 업로드 처리 추가
+	// 3. 구단 정보 수정 (POST)
 	@PostMapping("update")
 	public ModelAndView updateClubInfo(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -328,13 +312,16 @@ public class ClubOwnerController {
 			String clubRegion = req.getParameter("club_region");
 			String clubContent = req.getParameter("club_content");
 
+			// DB에서 memberIdx로 clubOwner_key 가져오기
 			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
 
 			Long clubOwnerKey = null;
 			if (clubDto != null) {
 				clubOwnerKey = clubDto.getClubOwner_key();
 			} else {
-				ClubOwnerMapper mapper = MapperContainer.get(ClubOwnerMapper.class);
+				// 구단 정보(club)는 없어도 clubOwnerKey는 가져오도록 mapper 직접 호출이 필요했던 부분 보완
+				com.syfc.mapper.ClubOwnerMapper mapper = com.syfc.mybatis.support.MapperContainer
+						.get(com.syfc.mapper.ClubOwnerMapper.class);
 				clubOwnerKey = mapper.findClubOwnerKeyByMemberIdx(info.getMemberIdx());
 			}
 
@@ -344,28 +331,6 @@ public class ClubOwnerController {
 			dto.setClub_created(clubCreated);
 			dto.setClub_region(clubRegion);
 			dto.setClub_content(clubContent);
-
-			// ★ 구단 로고 파일 업로드 처리
-			String root = session.getServletContext().getRealPath("/");
-			String pathname = root + "uploads" + File.separator + "club";
-
-			Part part = req.getPart("uploadLogo");
-			MyMultipartFile multiPart = fileManager.doFileUpload(part, pathname);
-
-			if (multiPart != null) {
-				String oldFilename = (clubDto != null) ? clubDto.getClub_logo() : null;
-				dto.setClub_logo(multiPart.getSaveFilename());
-
-				// 기존에 등록된 로고 파일이 있다면 삭제
-				if (oldFilename != null && !oldFilename.isEmpty()) {
-					fileManager.doFiledelete(pathname, oldFilename);
-				}
-			} else {
-				// 새 파일을 올리지 않았을 경우 기존 로고 유지
-				if (clubDto != null) {
-					dto.setClub_logo(clubDto.getClub_logo());
-				}
-			}
 
 			service.updateClubInfo(dto);
 
@@ -533,7 +498,7 @@ public class ClubOwnerController {
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 
-	// 11. 선수 경기 성적 기록 삭제 (POST-AJAX)
+	// 11. 선수 경기 성적 기록 삭제 (POST-AJAX) - 404 에러 해결용 추가
 	@PostMapping("deletePlayerRecord")
 	public ModelAndView deletePlayerRecord(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -547,107 +512,6 @@ public class ClubOwnerController {
 			if (recordId != null) {
 				recordService.deletePlayerRecord(Long.parseLong(recordId));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ModelAndView("redirect:/clubowner/ownerpage");
-	}
-
-	// 12. 구단주 위임 신청 페이지 조회 (GET)
-	@GetMapping("transfer")
-	public ModelAndView transferPage(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		if (info == null)
-			return new ModelAndView("redirect:/member/login");
-
-		try {
-			ClubOwnerMapper ownerMapper = MapperContainer.get(ClubOwnerMapper.class);
-			Long clubOwnerKey = ownerMapper.findClubOwnerKeyByMemberIdx((long) info.getMemberIdx());
-
-			Map<String, Object> map = new HashMap<>();
-			map.put("clubOwner_key", clubOwnerKey);
-			map.put("memberIdx", info.getMemberIdx());
-
-			List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(map);
-			req.setAttribute("candidateList", candidateList);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ModelAndView("clubowner/tab/tab_transfer_owner");
-	}
-
-	// 13. 구단주 위임 실행 (POST)
-	@PostMapping("transfer")
-	public ModelAndView transferSubmit(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		if (info == null)
-			return new ModelAndView("redirect:/member/login");
-
-		try {
-			ClubOwnerMapper ownerMapper = MapperContainer.get(ClubOwnerMapper.class);
-			Long clubOwnerKey = ownerMapper.findClubOwnerKeyByMemberIdx((long) info.getMemberIdx());
-
-			String targetMemberIdx = req.getParameter("targetMemberIdx");
-			String userPwd = req.getParameter("userPwd");
-			String reason = req.getParameter("reason");
-
-			ClubOwnerChangeDTO dto = new ClubOwnerChangeDTO();
-			dto.setClubOwner_key(clubOwnerKey);
-			dto.setMemberIdx(Long.valueOf(info.getMemberIdx()));
-			if (targetMemberIdx != null && !targetMemberIdx.trim().isEmpty()) {
-				dto.setTargetMemberIdx(Long.parseLong(targetMemberIdx));
-			}
-			dto.setUserPwd(userPwd);
-			dto.setReason(reason);
-
-			boolean result = changeService.transferClubOwner(dto);
-
-			if (!result) {
-				Map<String, Object> map = new HashMap<>();
-				map.put("clubOwner_key", clubOwnerKey);
-				map.put("memberIdx", info.getMemberIdx());
-				List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(map);
-
-				req.setAttribute("candidateList", candidateList);
-				req.setAttribute("msg", "비밀번호가 일치하지 않습니다.");
-				return new ModelAndView("clubowner/tab/tab_transfer_owner");
-			}
-
-			session.invalidate();
-			return new ModelAndView("redirect:/");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new ModelAndView("redirect:/clubowner/ownerpage");
-	}
-
-	// 14. 구단 창설 신청서 제출 처리 (POST)
-	@PostMapping("request")
-	public ModelAndView createClubRequest(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo) session.getAttribute("member");
-		if (info == null)
-			return new ModelAndView("redirect:/member/login");
-
-		try {
-			String content = req.getParameter("content");
-
-			ClubRequestDTO dto = new ClubRequestDTO();
-			dto.setMemberIdx((long) info.getMemberIdx());
-			dto.setContent(content);
-
-			clubRequestService.insertClubRequest(dto);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
