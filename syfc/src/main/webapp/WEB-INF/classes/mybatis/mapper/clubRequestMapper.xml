@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.ClubRequestMapper">
+
+	<!-- 구단 창설 신청 (초기 request_status = 2 [신청/대기]) -->
+	<insert id="insertClubRequest" parameterType="com.syfc.dto.ClubRequestDTO">
+		INSERT INTO Club_Request (
+			request_id, request_date, request_status, memberIdx, content
+		) VALUES (
+			cr_requestSeq.NEXTVAL, SYSDATE, 2, #{memberIdx}, #{content}
+		)
+	</insert>
+
+	<!-- 회원의 최신 신청 내역 1건 조회 -->
+	<select id="findByMemberIdx" parameterType="long" resultType="com.syfc.dto.ClubRequestDTO">
+		SELECT request_id, 
+		       TO_CHAR(request_date, 'YYYY-MM-DD') AS request_date,
+		       TO_CHAR(approve_date, 'YYYY-MM-DD') AS approve_date,
+		       request_status, 
+		       memberIdx, 
+		       content
+		FROM (
+			SELECT request_id, request_date, approve_date, request_status, memberIdx, content
+			FROM Club_Request
+			WHERE memberIdx = #{memberIdx}
+			ORDER BY request_id DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+</mapper>
