@@ -13,11 +13,12 @@
 
         FROM Notice
         WHERE memberIdx = #{memberIdx}
-        ORDER BY notice_sendDate DESC
+        ORDER BY notice_sendDate DESC, notice_id DESC
+        FETCH FIRST 15 ROWS ONLY
     </select>
 
     <!-- 읽음 처리 -->
-    <update id="updateRead">
+    <update id="updateRead" parameterType="com.syfc.dto.NoticeDTO">
         UPDATE Notice
         SET notice_read = 1, notice_readDate = SYSDATE
         WHERE notice_id = #{notice_id}
@@ -26,7 +27,7 @@
     </update>
     
     
-    <insert id="insertNotice">
+    <insert id="insertNotice" parameterType="com.syfc.dto.NoticeDTO">
     INSERT INTO Notice 
     	(notice_id, notice_content, memberIdx, notice_read, notice_sendDate)
     VALUES (notice_seq.NEXTVAL, #{notice_content}, #{memberIdx}, 0, SYSDATE)

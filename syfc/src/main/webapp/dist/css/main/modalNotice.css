@@ -346,3 +346,48 @@
     }
 
 }
+/* =========================
+   Header Notice Button
+========================= */
+
+.notice-button-wrapper {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+
+/* 알림 안 읽음 표시 */
+
+.notice-badge {
+
+    position: absolute;
+
+    top: -2px;
+    right: -4px;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ff4d4f;
+
+    border: 2px solid #fff;
+
+    display: none;
+}
+
+
+/* 안 읽은 알림이 있을 때 */
+
+.notice-badge.show {
+
+    display: block;
+}

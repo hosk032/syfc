@@ -258,7 +258,10 @@ function renderApplicantList(applicants, myRequest, board) {
                         <span class="badge ${stateClass} ms-2">
                             ${stateText}
                         </span>
-						<span> ${escapeHtml(player.request_cancel)} </span>
+						${ player.request_cancel 
+						    ? `<span> ${escapeHtml(player.request_cancel)} </span>` 
+						    : `<span> ${escapeHtml(player.request_intro)} </span>` 
+						}
                     </div>
 
                     <div class="owner-request-buttons"

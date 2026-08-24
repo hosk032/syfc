@@ -207,8 +207,7 @@
 <!-- 게시글 상세 모달 -->
 <jsp:include page="/WEB-INF/views/match/fragment/board/matchBoardDetail.jsp" />
 
-<!-- 경기 매칭 JS -->
-<script> const contextPath = "${pageContext.request.contextPath}";</script>
+
 
 <!-- footer -->
 <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

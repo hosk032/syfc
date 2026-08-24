@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.syfc.dto.ClubMatchBoardDTO;
 import com.syfc.dto.MatchApplyDTO;
+import com.syfc.dto.NoticeDTO;
 import com.syfc.dto.SessionInfo;
 import com.syfc.dto.StadiumDTO;
 import com.syfc.mvc.annotation.Controller;
@@ -16,6 +17,8 @@ import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.annotation.ResponseBody;
 import com.syfc.service.MatchService;
 import com.syfc.service.MatchServiceImpl;
+import com.syfc.service.NoticeService;
+import com.syfc.service.NoticeServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +29,7 @@ import jakarta.servlet.http.HttpSession;
 public class MatchController {
 
     private MatchService service = new MatchServiceImpl();
+    private NoticeService service2 = new NoticeServiceImpl();
 
     @ResponseBody
     @GetMapping("region") //지역 목록 조회 GET /match/region
@@ -98,6 +102,8 @@ public class MatchController {
     public Map<String, Object> createMatchPost(HttpServletRequest req, HttpServletResponse resp) {
         Map<String, Object> map = new HashMap<>();
         ClubMatchBoardDTO dto = new ClubMatchBoardDTO();
+        NoticeDTO dto2 = new NoticeDTO();
+        
         dto.setCmb_Subject(req.getParameter("cmb_Subject"));
         dto.setCmb_Content(req.getParameter("cmb_Content"));
         dto.setApply_date(LocalDate.parse(req.getParameter("apply_date")));
@@ -125,6 +131,10 @@ public class MatchController {
             map.put("success",true);
             map.put("cmb_num", dto.getCmb_num());
             map.put("message", "경기 참가 선수 모집글이 등록되었습니다.");
+            
+            dto2.setMemberIdx(info.getMemberIdx());
+            dto2.setNotice_content(dto.getCmb_Subject() + ": 선수 모집글이 등록되었습니다.");
+            service2.insertNotice(dto2);
 
         } catch (Exception e) {
 
@@ -314,6 +324,7 @@ public class MatchController {
     public Map<String, Object> request(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
+        NoticeDTO dto2 = new NoticeDTO();
 
         HttpSession session = req.getSession();
         SessionInfo info =(SessionInfo) session.getAttribute("member");
@@ -362,6 +373,14 @@ public class MatchController {
         result.put("success", resultCount > 0);
         result.put("message", resultCount > 0
                     ? "참가 신청되었습니다." : "참가 신청에 실패했습니다.");
+        
+        if(resultCount > 0) {
+        	ClubMatchBoardDTO dto = service.findMatchBoardDetail(cmb_num);
+            
+            dto2.setMemberIdx(info.getMemberIdx());
+            dto2.setNotice_content(dto.getCmb_Subject() + ": 참가 신청을 완료하였습니다.");
+            service2.insertNotice(dto2);
+        }
 
         return result;
     }
@@ -406,6 +425,15 @@ public class MatchController {
         result.put("success", resultCount > 0);
         result.put("message", resultCount > 0
                     ? "참가 신청이 취소되었습니다." : "취소할 신청 정보가 없습니다.");
+        
+        NoticeDTO dto2 = new NoticeDTO();
+        if(resultCount > 0) {
+        	ClubMatchBoardDTO dto = service.findMatchBoardDetail(cmb_num);
+            
+            dto2.setMemberIdx(info.getMemberIdx());
+            dto2.setNotice_content(dto.getCmb_Subject() + ": 참가 신청을 취소하였습니다.");
+            service2.insertNotice(dto2);
+        }
 
         return result;
     }

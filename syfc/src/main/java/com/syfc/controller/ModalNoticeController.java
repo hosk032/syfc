@@ -51,6 +51,7 @@ public class ModalNoticeController {
 
 
 	    // 알림 읽음 처리
+	    @ResponseBody
 	    @PostMapping("/notice/read")
 	    public Map<String, Object> updateRead(
 	    		HttpServletRequest req, HttpServletResponse resp) {
@@ -91,8 +92,11 @@ public class ModalNoticeController {
 	        }
 
 	        int memberIdx = member.getMemberIdx();
+	        NoticeDTO dto = new NoticeDTO();
+	        dto.setMemberIdx(memberIdx);
+	        dto.setNotice_id(notice_id);
 
-	        int result = service.updateRead(notice_id, memberIdx);
+	        int result = service.updateRead(dto);
 
 	        map.put("success", result > 0);
 
