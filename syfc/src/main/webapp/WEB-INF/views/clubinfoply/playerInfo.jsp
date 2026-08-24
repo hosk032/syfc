@@ -68,7 +68,17 @@
 									<c:forEach var="dto" items="${list}">
 										<tr>
 											<td>
-												<img src="#" class="player-img" alt="프로필">
+											    <c:choose>
+											        <c:when test="${not empty dto.profile_photo}">
+											            <img src="${pageContext.request.contextPath}/uploads/player/${dto.profile_photo}"
+											                 class="player-img"
+											                 onerror="this.outerHTML='<span class=\'club-default-logo\'><i class="fa-solid fa-user"></i></span>';"
+											                 alt="프로필">
+											        </c:when>
+											        <c:otherwise>
+											            <span class="club-default-logo"><i class="fa-solid fa-user"></i></span>
+											        </c:otherwise>
+											    </c:choose>
 											</td>
 											<td class="player-backno">${dto.uniform_no != null ? dto.uniform_no : '-'}</td>
 											<td class="fw-bold text-start ps-3">

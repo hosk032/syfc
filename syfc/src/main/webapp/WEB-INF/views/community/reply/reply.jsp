@@ -52,9 +52,11 @@
             </c:otherwise>
         </c:choose>
         
-		<c:if test="${replyCount > offset + size}">
+		<c:if test="${replyCount > fn:length(replyList)}">
 		    <div class="reply-more-wrap">
-		        <button type="button" class="btn btn-light reply-more-btn">댓글 더보기</button>
+		        <button type="button" class="btn btn-light reply-more-btn">
+		            댓글 더보기
+		        </button>
 		    </div>
 		</c:if>
     </div>

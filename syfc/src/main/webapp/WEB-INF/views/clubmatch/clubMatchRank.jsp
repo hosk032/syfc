@@ -42,9 +42,17 @@
 									<!-- DTO의 club_logo, club_name 필드에 맞게 출력 -->
 									<td class="text-start ps-3">
 										<div class="d-flex align-items-center gap-2">
-											<c:if test="${not empty dto.club_logo}">
-												<img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" class="team-logo" alt="logo">
-											</c:if>
+											<c:choose>
+											    <c:when test="${not empty dto.club_logo}">
+											        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
+											             class="team-logo"
+											             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
+											             alt="${dto.club_name}">
+											    </c:when>
+											    <c:otherwise>
+											        <span class="club-default-logo">⚽</span>
+											    </c:otherwise>
+											</c:choose>
 											<span class="fw-bold"><c:out value="${dto.club_name}"/></span>
 										</div>
 									</td>
