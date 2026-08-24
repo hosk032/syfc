@@ -34,7 +34,9 @@
 
 		<c:if test="${not empty dto.stadiumImg}">
 			<div class="stadiumImageWrap">
-				<img src="<c:out value='${dto.stadiumImg}'/>" alt="경기장 이미지" class="stadiumImage">
+				<img src="${pageContext.request.contextPath}${dto.stadiumImg}"
+					alt="${dto.stadiumName}"
+					class="stadiumImage">
 			</div>
 		</c:if>
 
