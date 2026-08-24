@@ -73,7 +73,7 @@
 		<!-- 메인 대시보드 레이아웃 -->
 		<div class="row g-4">
 
-			<!-- 왼쪽 사이드바 (LNB) -->
+			<!-- 왼쪽 사이드바 탭 -->
 			<div class="col-lg-3">
 				<div
 					class="card border-0 shadow-sm rounded-4 p-3 sticky-top owner-sidebar-card">
@@ -133,7 +133,7 @@
 				</div>
 			</div>
 
-			<!-- 오른쪽 콘텐츠 영역 (서브 JSP Include) -->
+			<!-- 오른쪽 콘텐츠 영역 () -->
 			<div class="col-lg-9">
 				<div class="tab-content">
 					<jsp:include page="/WEB-INF/views/clubowner/tab/tab_team_edit.jsp" />
@@ -202,7 +202,7 @@
 		</div>
 	</div>
 
-	<!-- [추가] 경기 상세 이력 조회 모달 -->
+	<!-- 경기 상세 이력 조회 모달 -->
 	<div class="modal fade" id="matchDetailModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content border-0 shadow rounded-4">
@@ -213,7 +213,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body p-4" id="matchDetailContent">
-					<!-- AJAX를 통해 해당 경기의 선수별 득점/어시스트 상세 내용이 여기에 로드됩니다 -->
+					
 				</div>
 			</div>
 		</div>
