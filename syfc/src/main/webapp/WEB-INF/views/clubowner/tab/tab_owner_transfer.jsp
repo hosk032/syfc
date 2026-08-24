@@ -12,7 +12,6 @@
 		</div>
 
 		<div class="alert alert-warning border-0 p-3 rounded-4 mb-4 small text-secondary d-flex align-items-start gap-2 shadow-sm">
-			<!-- <i class="bi bi-exclamation-triangle-fill fs-5 text-warning flex-shrink-0 mt-1"></i> -->
 			<div>
 				<strong class="d-block text-dark mb-1">⚠️ 구단주 권한 양도 시 주의사항</strong>
 				1. 권한 양도가 완료되면 현재 계정은 즉시 <strong>일반 소속 선수</strong> 등급으로 변경됩니다.<br>
@@ -21,30 +20,39 @@
 		</div>
 
 		<div class="bg-light p-4 rounded-4 border mx-auto w-100 transfer-form-max-width">
-			<form id="ownerTransferForm">
+			<form id="ownerTransferForm" action="${pageContext.request.contextPath}/clubowner/transfer" method="post">
 				<div class="mb-3">
 					<label class="form-label small fw-bold text-dark mb-1">차기 구단주 선택 <span class="text-danger">*</span></label>
-					<select class="form-select form-select-sm fw-bold" name="nextOwnerId" id="nextOwnerSelect">
+					<!-- 백엔드 파라미터명 targetMemberIdx 와 일치 -->
+					<select class="form-select form-select-sm fw-bold" name="targetMemberIdx" id="nextOwnerSelect">
 						<option value="" selected disabled>위임받을 선수를 선택하세요</option>
-						<option value="user02" data-name="박지성">박지성 (FW | 가입 2025-03-10 | 010-1234-****)</option>
-						<option value="user03" data-name="손흥민">손흥민 (FW | 가입 2025-01-20 | 010-9876-****)</option>
-						<option value="user04" data-name="김민재">김민재 (DF | 가입 2025-05-12 | 010-5555-****)</option>
+						<c:forEach var="vo" items="${candidateList}">
+							<option value="${vo.targetMemberIdx}">
+								${vo.userName} (${vo.positionName} | 가입 ${vo.join_date} | ${vo.tel})
+							</option>
+						</c:forEach>
 					</select>
 				</div>
+				
 				<div class="mb-3">
 					<label class="form-label small fw-bold text-dark mb-1">양도 사유</label>
-					<textarea class="form-control form-control-sm" name="transferReason" id="transferReason" rows="3" placeholder="차기 구단주 지정 사유나 전달 메시지를 작성해 주세요. (예: 개인 사정으로 인한 리더십 이양)"></textarea>
+					<!-- 백엔드 파라미터명 reason 과 일치 -->
+					<textarea class="form-control form-control-sm" name="reason" id="transferReason" rows="3" placeholder="차기 구단주 지정 사유나 전달 메시지를 작성해 주세요. (예: 개인 사정으로 인한 리더십 이양)"></textarea>
 				</div>
+				
 				<div class="mb-3">
 					<label class="form-label small fw-bold text-dark mb-1">현재 비밀번호 재확인 <span class="text-danger">*</span></label>
-					<input type="password" class="form-control form-control-sm" name="currentPassword" id="transferPassword" placeholder="현재 계정의 비밀번호를 입력하세요">
+					<!-- 백엔드 파라미터명 userPwd 와 일치 -->
+					<input type="password" class="form-control form-control-sm" name="userPwd" id="transferPassword" placeholder="현재 계정의 비밀번호를 입력하세요">
 				</div>
+				
 				<div class="form-check mb-4 p-2 bg-white rounded border ps-4">
 					<input class="form-check-input ms-0 me-2" type="checkbox" id="transferAgree">
 					<label class="form-check-label extra-small text-dark fw-bold cursor-pointer" for="transferAgree">
 						위 주의사항을 모두 확인하였으며, 구단주 권한 위임에 동의합니다.
 					</label>
 				</div>
+				
 				<button type="button" class="btn btn-danger w-100 fw-bold py-2 shadow-sm" onclick="submitOwnerTransfer()">
 					<i class="bi bi-shield-lock-fill me-1"></i> 구단주 변경 신청 확정
 				</button>
@@ -52,3 +60,29 @@
 		</div>
 	</div>
 </div>
+
+<script>
+function submitOwnerTransfer() {
+	const form = document.getElementById("ownerTransferForm");
+	const targetMemberIdx = document.getElementById("nextOwnerSelect").value;
+	const password = document.getElementById("transferPassword").value;
+	const agree = document.getElementById("transferAgree").checked;
+
+	if (!targetMemberIdx) {
+		alert("위임받을 차기 구단주(선수)를 선택해 주세요.");
+		return;
+	}
+	if (!password) {
+		alert("현재 계정의 비밀번호를 입력해 주세요.");
+		return;
+	}
+	if (!agree) {
+		alert("주의사항 확인 및 동의 체크박스에 동의해 주세요.");
+		return;
+	}
+
+	if (confirm("정말로 구단주 권한을 위임하시겠습니까?\n위임 후에는 즉시 일반회원으로 변경되며 로그아웃 처리됩니다.")) {
+		form.submit();
+	}
+}
+</script>

@@ -7,17 +7,22 @@ import java.util.Map;
 
 import com.syfc.dto.ClubApprovalDTO;
 import com.syfc.dto.ClubDTO;
+import com.syfc.dto.ClubOwnerChangeDTO;
 import com.syfc.dto.ClubOwnerMatchDTO;
 import com.syfc.dto.ClubOwnerPlayerDTO;
 import com.syfc.dto.ClubOwnerPlayerRecordDTO;
 import com.syfc.dto.SessionInfo;
+import com.syfc.mapper.ClubOwnerMapper;
 import com.syfc.mvc.annotation.Controller;
 import com.syfc.mvc.annotation.GetMapping;
 import com.syfc.mvc.annotation.PostMapping;
 import com.syfc.mvc.annotation.RequestMapping;
 import com.syfc.mvc.view.ModelAndView;
+import com.syfc.mybatis.support.MapperContainer;
 import com.syfc.service.ClubApprovalService;
 import com.syfc.service.ClubApprovalServiceImpl;
+import com.syfc.service.ClubOwnerChangeService;
+import com.syfc.service.ClubOwnerChangeServiceImpl;
 import com.syfc.service.ClubOwnerMatchService;
 import com.syfc.service.ClubOwnerMatchServiceImpl;
 import com.syfc.service.ClubOwnerPlayerRecordService;
@@ -41,6 +46,7 @@ public class ClubOwnerController {
 	private ClubApprovalService approvalService = new ClubApprovalServiceImpl();
 	private ClubOwnerPlayerService playerService = new ClubOwnerPlayerServiceImpl();
 	private ClubOwnerPlayerRecordService recordService = new ClubOwnerPlayerRecordServiceImpl();
+	private ClubOwnerChangeService changeService = new ClubOwnerChangeServiceImpl();
 
 	// 1. 구단주 메인 페이지
 	@GetMapping("ownerpage")
@@ -109,6 +115,13 @@ public class ClubOwnerController {
 				// 선수 성적 목록 조회 연동
 				List<ClubOwnerPlayerRecordDTO> recordList = recordService.getPlayerRecordList(clubOwnerKey);
 				req.setAttribute("recordList", recordList);
+
+				// ★ 구단주 위임 차기 후보 목록 연동 (정식 소속 선수 기준)
+				Map<String, Object> changeMap = new HashMap<>();
+				changeMap.put("clubOwner_key", clubOwnerKey);
+				changeMap.put("memberIdx", info.getMemberIdx());
+				List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(changeMap);
+				req.setAttribute("candidateList", candidateList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -144,7 +157,7 @@ public class ClubOwnerController {
 		return new ModelAndView("clubowner/tab/matchHistoryTable");
 	}
 
-	// 2-1. 경기 상세 기록 모달 내용 조회 (원본 디자인 100% 유지 + 실제 DB 선수 기록 연동)
+	// 2-1. 경기 상세 기록 모달 내용 조회
 	@GetMapping("matchDetailModal")
 	public void matchDetailModal(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -211,7 +224,6 @@ public class ClubOwnerController {
 
 				StringBuilder html = new StringBuilder();
 
-				// 원본 디자인과 CSS 클래스를 그대로 유지한 HTML 템플릿
 				html.append("<div class='p-2'>");
 				html.append("  <div class='bg-light p-3 rounded-3 text-center mb-4 border'>");
 				html.append("    <div class='text-muted small fw-bold mb-1'>").append(matchDateStr).append(" · ")
@@ -312,16 +324,13 @@ public class ClubOwnerController {
 			String clubRegion = req.getParameter("club_region");
 			String clubContent = req.getParameter("club_content");
 
-			// DB에서 memberIdx로 clubOwner_key 가져오기
 			ClubDTO clubDto = service.selectClubInfoByMemberIdx(info.getMemberIdx());
 
 			Long clubOwnerKey = null;
 			if (clubDto != null) {
 				clubOwnerKey = clubDto.getClubOwner_key();
 			} else {
-				// 구단 정보(club)는 없어도 clubOwnerKey는 가져오도록 mapper 직접 호출이 필요했던 부분 보완
-				com.syfc.mapper.ClubOwnerMapper mapper = com.syfc.mybatis.support.MapperContainer
-						.get(com.syfc.mapper.ClubOwnerMapper.class);
+				ClubOwnerMapper mapper = MapperContainer.get(ClubOwnerMapper.class);
 				clubOwnerKey = mapper.findClubOwnerKeyByMemberIdx(info.getMemberIdx());
 			}
 
@@ -498,7 +507,7 @@ public class ClubOwnerController {
 		return new ModelAndView("redirect:/clubowner/ownerpage");
 	}
 
-	// 11. 선수 경기 성적 기록 삭제 (POST-AJAX) - 404 에러 해결용 추가
+	// 11. 선수 경기 성적 기록 삭제 (POST-AJAX)
 	@PostMapping("deletePlayerRecord")
 	public ModelAndView deletePlayerRecord(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -512,6 +521,83 @@ public class ClubOwnerController {
 			if (recordId != null) {
 				recordService.deletePlayerRecord(Long.parseLong(recordId));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("redirect:/clubowner/ownerpage");
+	}
+
+	// 12. 구단주 위임 신청 페이지 조회 (GET)
+	@GetMapping("transfer")
+	public ModelAndView transferPage(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
+
+		try {
+			ClubOwnerMapper ownerMapper = MapperContainer.get(ClubOwnerMapper.class);
+			Long clubOwnerKey = ownerMapper.findClubOwnerKeyByMemberIdx((long) info.getMemberIdx());
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("clubOwner_key", clubOwnerKey);
+			map.put("memberIdx", info.getMemberIdx());
+
+			List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(map);
+			req.setAttribute("candidateList", candidateList);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("clubowner/tab/tab_transfer_owner");
+	}
+
+	// 13. 구단주 위임 실행 (POST)
+	@PostMapping("transfer")
+	public ModelAndView transferSubmit(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		if (info == null)
+			return new ModelAndView("redirect:/member/login");
+
+		try {
+			ClubOwnerMapper ownerMapper = MapperContainer.get(ClubOwnerMapper.class);
+			Long clubOwnerKey = ownerMapper.findClubOwnerKeyByMemberIdx((long) info.getMemberIdx());
+
+			String targetMemberIdx = req.getParameter("targetMemberIdx");
+			String userPwd = req.getParameter("userPwd");
+			String reason = req.getParameter("reason");
+
+			ClubOwnerChangeDTO dto = new ClubOwnerChangeDTO();
+			dto.setClubOwner_key(clubOwnerKey);
+			dto.setMemberIdx(Long.valueOf(info.getMemberIdx()));
+			if (targetMemberIdx != null && !targetMemberIdx.trim().isEmpty()) {
+				dto.setTargetMemberIdx(Long.parseLong(targetMemberIdx));
+			}
+			dto.setUserPwd(userPwd);
+			dto.setReason(reason);
+
+			boolean result = changeService.transferClubOwner(dto);
+
+			if (!result) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("clubOwner_key", clubOwnerKey);
+				map.put("memberIdx", info.getMemberIdx());
+				List<ClubOwnerChangeDTO> candidateList = changeService.listTransferCandidates(map);
+
+				req.setAttribute("candidateList", candidateList);
+				req.setAttribute("msg", "비밀번호가 일치하지 않습니다.");
+				return new ModelAndView("clubowner/tab/tab_transfer_owner");
+			}
+
+			// 위임 성공 시 세션 무효화 후 메인 페이지 이동
+			session.invalidate();
+			return new ModelAndView("redirect:/");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
