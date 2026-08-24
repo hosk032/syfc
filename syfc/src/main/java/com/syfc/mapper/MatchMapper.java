@@ -68,6 +68,7 @@ public interface MatchMapper {
     	//기존 홈팀과 동일한 팀이 원정팀으로 신청하는지
     public int countSameClubApply(Map<String, Object> map);
     public int insertAwayMatchApply(MatchApplyDTO dto);//원정팀 매칭 신청
+    public int insertAwayClubMatchBoard(ClubMatchBoardDTO dto); //원정팀 선수모집 게시글
     
     //홈/원정 통합 경기신청 이력
     public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> param);
