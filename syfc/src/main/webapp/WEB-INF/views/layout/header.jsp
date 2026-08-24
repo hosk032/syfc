@@ -13,8 +13,11 @@
         <div class="header-icons">
         <c:choose>
       <c:when test="${sessionScope.member.userLevel >= 1}">
-          <i class="fa-regular fa-bell" id="noticeBtn" title="알림"></i>
-      </c:when>
+    	<span id="noticeButtonWrapper" class="notice-button-wrapper">
+        	<i class="fa-regular fa-bell" id="noticeBtn" title="알림"></i>
+        	<span id="noticeBadge" class="notice-badge"></span>
+    	</span>
+		</c:when>
        <c:otherwise>
         <i id="singupBtn" class="fa-regular fa-bell" title="로그인/회원가입" data-bs-toggle="modal" data-bs-target="#signupModal"></i> 
      </c:otherwise>

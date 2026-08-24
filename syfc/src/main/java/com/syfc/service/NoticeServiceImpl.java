@@ -16,8 +16,8 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public int updateRead(long notice_id, int memberIdx) {
-        return mapper.updateRead(notice_id, memberIdx);
+    public int updateRead(NoticeDTO dto) {
+        return mapper.updateRead(dto);
     }
     
     @Override
