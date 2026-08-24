@@ -93,20 +93,55 @@
 		</nav>
 
 		<!-- 필터 태그 바 -->
-		<div class="tag-bar">
-			<button class="tag-btn" onclick="location.href='${pageContext.request.contextPath}/player/mypage';">
-				<i class="bi bi-person me-1"></i>내 프로필
-			</button>
-			<button class="tag-btn">
-				<i class="bi bi-trophy me-1"></i>경기정보
-			</button>
-			<button class="tag-btn" onclick="location.href='${pageContext.request.contextPath}/clubowner/ownerpage';">
-				<i class="bi bi-shield me-1"></i>내 구단정보
-			</button>
-			<button class="tag-btn">
-				<i class="bi bi-calendar-check me-1"></i>경기 신청
-			</button>
-		</div>
+	<c:choose>
+
+   <c:when test="${sessionScope.member.userLevel < 50}">
+
+      <div class="tag-bar">
+
+         <button class="tag-btn"
+                 onclick="location.href='${pageContext.request.contextPath}/player/mypage';">
+
+            <i class="bi bi-person me-1"></i>
+            내 프로필
+
+         </button>
+
+
+         <button class="tag-btn"
+                 onclick="location.href='${pageContext.request.contextPath}/player/matchHistory';">
+
+            <i class="bi bi-trophy me-1"></i>
+            경기정보
+
+         </button>
+
+
+         <button class="tag-btn"
+                 onclick="location.href='${pageContext.request.contextPath}/player/club';">
+
+            <i class="bi bi-shield me-1"></i>
+            내 구단정보
+
+         </button>
+
+
+         <button class="tag-btn"
+                 onclick="location.href='${pageContext.request.contextPath}/match2/playermatchtab';">
+
+            <i class="bi bi-calendar-check me-1"></i>
+            경기 신청
+
+         </button>
+
+      </div>
+
+   </c:when>
+
+   
+
+	</c:choose>
+
 	</div>
 </div>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main/modalNotice.css">
