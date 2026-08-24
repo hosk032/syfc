@@ -84,55 +84,109 @@
             <a href="#" class="text-decoration-none small text-muted fw-bold">전체 경기 일정 보기 ></a>
         </div>
 
+
+
         <div class="match_section">
-            <div class="match_box">
-                <div class="match_date">2026-08-01 (토)</div>
-                <div class="match_inner_box">
-                    <div class="team">A팀</div>
-                    <span class="vs-text">VS</span>
-                    <div class="team">B팀</div>
-                </div>
-                <div class="stadium-name">쌍용축구경기장</div>
-                <div class="match-time"><i class="bi bi-clock me-1"></i>19:30</div>
-                <button class="btn btn-sm btn-outline-primary w-100 mt-2" style="font-size: 11px;">신청 가능</button>
+
+    <c:forEach var="dto" items="${matchList}">
+
+        <div class="match_box">
+
+            <!-- 경기 날짜 -->
+            <div class="match_date">
+                ${dto.matchDate}
             </div>
 
-            <div class="match_box">
-                <div class="match_date">2026-08-01 (토)</div>
-                <div class="match_inner_box">
-                    <div class="team">FC쌍용</div>
-                    <span class="vs-text">VS</span>
-                    <div class="team">드림FC</div>
+
+            <!-- 구단 -->
+            <div class="match_inner_box">
+
+                <div class="team">
+                    ${dto.homeClubName}
                 </div>
-                <div class="stadium-name">쌍용축구경기장</div>
-                <div class="match-time"><i class="bi bi-clock me-1"></i>20:30</div>
-                <button class="btn btn-sm btn-outline-primary w-100 mt-2" style="font-size: 11px;">신청 가능</button>
+
+                <span class="vs-text">VS</span>
+
+                <div class="team">
+                    ${dto.awayClubName}
+                </div>
+
             </div>
 
-            <div class="match_box">
-                <div class="match_date">2026-08-02 (일)</div>
-                <div class="match_inner_box">
-                    <div class="team">C팀</div>
-                    <span class="vs-text">VS</span>
-                    <div class="team">D팀</div>
-                </div>
-                <div class="stadium-name">마포구민센터</div>
-                <div class="match-time"><i class="bi bi-clock me-1"></i>18:00</div>
-                <button class="btn btn-sm btn-secondary w-100 mt-2 disabled" style="font-size: 11px;">마감 완료</button>
+
+            <!-- 경기장 -->
+            <div class="stadium-name">
+                ${dto.stadiumName}
             </div>
 
-            <div class="match_box">
-                <div class="match_date">2026-08-02 (일)</div>
-                <div class="match_inner_box">
-                    <div class="team">E팀</div>
-                    <span class="vs-text">VS</span>
-                    <div class="team">F팀</div>
-                </div>
-                <div class="stadium-name">쌍용축구경기장</div>
-                <div class="match-time"><i class="bi bi-clock me-1"></i>21:00</div>
-                <button class="btn btn-sm btn-outline-primary w-100 mt-2" style="font-size: 11px;">신청 가능</button>
+
+            <!-- 경기 시간 -->
+            <div class="match-time">
+
+                <i class="bi bi-clock me-1"></i>
+
+                ${dto.matchTime}
+
             </div>
+
+
+            <!-- 상태 -->
+            <c:choose>
+
+                <c:when test="${dto.status == 1}">
+
+                    <button
+                        class="btn btn-sm btn-outline-primary w-100 mt-2"
+                        style="font-size: 11px;">
+                        신청 가능
+                    </button>
+
+                </c:when>
+
+
+                <c:when test="${dto.status == 0}">
+
+                    <button
+                        class="btn btn-sm btn-secondary w-100 mt-2 disabled"
+                        style="font-size: 11px;">
+                        마감 완료
+                    </button>
+
+                </c:when>
+
+
+                <c:otherwise>
+
+                    <button
+                        class="btn btn-sm btn-secondary w-100 mt-2 disabled"
+                        style="font-size: 11px;">
+                        신청 불가
+                    </button>
+
+                </c:otherwise>
+
+            </c:choose>
+
         </div>
+
+    </c:forEach>
+
+
+    <!-- 데이터가 없을 경우 -->
+    <c:if test="${empty matchList}">
+
+        <div class="text-center py-5">
+            등록된 경기가 없습니다.
+        </div>
+
+    </c:if>
+
+</div>
+        
+        
+        
+        
+        
     </div>
 
     <!-- 4. 공통 푸터 조립 -->
