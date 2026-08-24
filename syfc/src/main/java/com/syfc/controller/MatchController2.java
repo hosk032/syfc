@@ -432,58 +432,111 @@ public class MatchController2 {
     public Map<String, Object> myMatchApply(HttpServletRequest req, HttpServletResponse resp) {
 
         Map<String, Object> result = new HashMap<>();
-
+        
         try {
+            //1. 세션 확인
             HttpSession session = req.getSession();
             SessionInfo info = (SessionInfo) session.getAttribute("member");
-
             if (info == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
 
+            //2. 페이지 정보
+            int page = 1;
+            int size = 5;
+
+            String pageParam = req.getParameter("page");
+
+            if (pageParam != null && !pageParam.isBlank()) {
+                page = Integer.parseInt(pageParam);
+            }
+
+            String sizeParam = req.getParameter("size");
+
+            if (sizeParam != null && !sizeParam.isBlank()) {
+                size = Integer.parseInt(sizeParam);
+            }
+
+            // 잘못된 값 방어
+            if (page < 1) {
+                page = 1;
+            }
+            
+            if (size < 1 || size > 20) {
+                size = 5;
+            }
+
+            // 3. 로그인 사용자
             int memberIdx = info.getMemberIdx();
-            		// 1순위: 구단주인지
+
+            // 1순위 : 구단주
             Long clubOwnerKey = service.findOwnerKeyByMemberIdx(memberIdx);
 
-            // 2순위 : 선수라면 clubJoin에서 소속 구단주 번호 조회
+            // 2순위 : 선수
             if (clubOwnerKey == null) {
                 clubOwnerKey = service.findClubOwnerKeyByMemberIdx(memberIdx);
             }
 
             if (clubOwnerKey == null) {
+
                 result.put("success", false);
                 result.put("message", "소속 구단 정보를 찾을 수 없습니다.");
                 return result;
             }
 
+            // 4. Mapper 파라미터
             Map<String, Object> param = new HashMap<>();
-            param.put("clubOwner_key",clubOwnerKey);
+            param.put("clubOwner_key", clubOwnerKey);
 
-            // 홈 + 원정 통합 조회
+            // 상태 필터
+            String status = req.getParameter("status");
+
+            if (status != null && !status.isBlank()) {
+                param.put("status", status);
+            }
+
+            //  5. offset 계산
+            int offset = (page - 1) * size;
+
+            param.put("offset", offset);
+            param.put("size", size);
+
+            // 6. DB 조회
             List<MatchApplyDTO> list = service.listMyMatchApply(param);
 
-            // 구단주인지 여부
-            Long ownerKey = service.findOwnerKeyByMemberIdx(memberIdx);
+            int totalCount = service.countMyMatchApply(param);
 
+            //  7. 더보기 여부
+            boolean hasMore = offset + list.size() < totalCount;
+
+            // 8. 구단주 여부
+            Long ownerKey = service.findOwnerKeyByMemberIdx(memberIdx);
             boolean isOwner = ownerKey != null;
 
+            // 9. 응답
             result.put("success", true);
             result.put("list", list);
             result.put("count", list.size());
-            result.put("clubOwnerKey",clubOwnerKey);
-            result.put("isOwner",isOwner);
+            result.put("totalCount", totalCount);
+            result.put("page", page);
+            result.put("size", size);
+            result.put("hasMore", hasMore);
+            result.put("clubOwnerKey", clubOwnerKey);
+            result.put("isOwner", isOwner);
 
         } catch (Exception e) {
 
             e.printStackTrace();
+
             result.put("success", false);
-            result.put("message","경기신청 이력을 불러오는 중 오류가 발생했습니다.");
+            result.put("message", "경기신청 이력을 불러오는 중 오류가 발생했습니다.");
         }
 
         return result;
     }
+
     
     
 	@GetMapping("playermatchtab")

@@ -117,6 +117,7 @@
 	    )
 	    WHERE rn = 1
 	    ORDER BY cmb_Reg_date DESC
+	    FETCH FIRST 100 ROWS ONLY
 	</select>
 
 
@@ -347,7 +348,7 @@
 	    
 	    WHERE rn = 1
 	    ORDER BY request_date DESC, cmb_num DESC
-
+	    FETCH FIRST 100 ROWS ONLY
 	</select>
 
 </mapper>

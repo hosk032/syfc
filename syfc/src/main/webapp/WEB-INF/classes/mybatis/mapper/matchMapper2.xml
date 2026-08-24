@@ -192,50 +192,65 @@
 	</insert>
     
     
-    <!-- ③ 홈/원정 통합 경기신청 이력 조회 -->
+    <!-- ③ 홈/원정 통합 경기신청 이력 조회 (페이징 기능 추가) -->
 	<select id="listMyMatchApply" parameterType="map"
-        resultType="com.syfc.dto.MatchApplyDTO">
-    SELECT ma.apply_id, ma.apply_date, ma.apply_time, ma.status, ma.cancel_reason, 
-    	ma.stadium_id, ma.clubOwner_key, ma.match_type1, ma.match_type2,
-        ma.clubOwner_key2, ma.stadium_fee, ma.cmb_num,
-
-        s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.latitude, s.longitude,
-
-        home.club_name AS home_club_name,
-        away.club_name AS away_club_name,
-
-        CASE
-            WHEN ma.clubOwner_key = #{clubOwner_key} THEN 'HOME'
-            WHEN ma.clubOwner_key2 = #{clubOwner_key} THEN 'AWAY'
-        END AS my_team_type,
-
-        <!-- 상대팀 번호 -->
-        CASE
-            WHEN ma.clubOwner_key = #{clubOwner_key}
-                THEN ma.clubOwner_key2
-            WHEN ma.clubOwner_key2 = #{clubOwner_key}
-                THEN ma.clubOwner_key
-        END AS opponent_clubOwner_key,
-
-        <!-- 상대팀 이름 -->
-        CASE
-            WHEN ma.clubOwner_key = #{clubOwner_key}
-                THEN away.club_name
-            WHEN ma.clubOwner_key2 = #{clubOwner_key}
-                THEN home.club_name
-        END AS opponent_club_name
-
-    FROM Match_Apply ma
-
-    INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
-    <!-- 홈팀 -->
-    INNER JOIN Club home ON ma.clubOwner_key = home.clubOwner_key
-    <!-- 원정팀  아직 상대팀이 없는 경우가 있으므로 LEFT JOIN -->
-    LEFT JOIN Club away ON ma.clubOwner_key2 = away.clubOwner_key
-    WHERE(ma.clubOwner_key = #{clubOwner_key} OR
-    		ma.clubOwner_key2 = #{clubOwner_key})
-    ORDER BY ma.apply_date DESC, ma.apply_time ASC, ma.apply_id DESC
-
+	        resultType="com.syfc.dto.MatchApplyDTO">
+	
+	    SELECT
+	        ma.apply_id, ma.apply_date, ma.apply_time, ma.status,
+	        ma.cancel_reason, ma.stadium_id, ma.clubOwner_key,
+	        ma.match_type1, ma.match_type2, ma.clubOwner_key2,
+	        ma.stadium_fee, ma.cmb_num,
+	        s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.latitude, s.longitude,
+	        home.club_name AS home_club_name,
+	        away.club_name AS away_club_name,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key} THEN 'HOME'
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key} THEN 'AWAY'
+	        END AS my_team_type,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key}
+	                THEN ma.clubOwner_key2
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key}
+	                THEN ma.clubOwner_key
+	        END AS opponent_clubOwner_key,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key}
+	                THEN away.club_name
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key}
+	                THEN home.club_name
+	        END AS opponent_club_name
+	
+	    FROM Match_Apply ma
+	    INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+	    INNER JOIN Club home ON ma.clubOwner_key = home.clubOwner_key
+	    LEFT JOIN Club away ON ma.clubOwner_key2 = away.clubOwner_key
+	
+	    WHERE (ma.clubOwner_key = #{clubOwner_key}
+	            OR ma.clubOwner_key2 = #{clubOwner_key})
+	
+	    <if test="status != null and status != ''">
+	        AND ma.status = #{status}
+	    </if>
+	
+	    ORDER BY
+	        ma.apply_date DESC, ma.apply_time ASC, ma.apply_id DESC
+	    OFFSET #{offset} ROWS
+	    FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<!-- 경기신청 이력 전체 개수 -->
+	<select id="countMyMatchApply" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM Match_Apply ma
+	    WHERE (ma.clubOwner_key = #{clubOwner_key}
+	            OR ma.clubOwner_key2 = #{clubOwner_key})
+	    <if test="status != null and status != ''">
+	        AND ma.status = #{status}
+	    </if>
 	</select>
 	
 	<!-- 원정팀으로 참여하기 위해 기존 status3 경기 검색 -->
