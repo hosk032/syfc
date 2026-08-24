@@ -69,39 +69,56 @@
 
 
 		<!-- 1. 경기 참가 선수 모집 게시판 목록 -->
-    <select id="listMatchBoard" parameterType="map"
-            resultType="com.syfc.dto.ClubMatchBoardDTO">
-        SELECT 
-        	b.cmb_num, b.cmb_Subject, b.cmb_Content, b.cmb_HitCount,
-            b.cmb_Reg_date, b.clubOwner_key,
-            
-            a.apply_id, a.apply_date, a.apply_time, a.status AS match_status,
-			 a.stadium_id,
-			 
-            s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.latitude,
-            s.longitude, s.capacity, s.stadium_cost,
+	<select id="listMatchBoard" parameterType="map"
+	        resultType="com.syfc.dto.ClubMatchBoardDTO">
+	    SELECT cmb_num, cmb_Subject, cmb_Content, cmb_HitCount, 
+	    	cmb_Reg_date, clubOwner_key, apply_id, apply_date, apply_time, 
+	    	match_status, stadium_id, stadium_name, region, addr1, addr2,
+	        zip, latitude, longitude, capacity, stadium_cost,
+	        home_clubOwner_key, match_type1, match_type2, away_clubOwner_key,
+	        applicantCount, targetCount
+	    FROM (
+	        SELECT
+	            b.cmb_num, b.cmb_Subject, b.cmb_Content, b.cmb_HitCount,
+	            b.cmb_Reg_date, b.clubOwner_key,
+	            a.apply_id, a.apply_date, a.apply_time, a.status AS match_status, 
+	            a.stadium_id, s.stadium_name, s.region, s.addr1, s.addr2,
+	            s.zip, s.latitude, s.longitude, s.capacity, s.stadium_cost,
+	            a.clubOwner_key AS home_clubOwner_key,
+	            a.match_type1, a.match_type2,
+	            a.clubOwner_key2 AS away_clubOwner_key,
+	
+	            (SELECT COUNT(*) FROM clubMatchRequest r
+	                WHERE r.cmb_num = b.cmb_num AND r.request_state IN (1, 2)
+	            ) AS applicantCount,
+	
+	            CASE
+	                WHEN a.match_type1 = '11' THEN 11
+	                WHEN a.match_type1 = '6' THEN 6
+	                ELSE 0
+	            END AS targetCount,
+	
+	            ROW_NUMBER() OVER (
+	                PARTITION BY b.cmb_num
+	                ORDER BY
+	                    CASE
+	                        WHEN a.status = 1 THEN 1
+	                        WHEN a.status = 2 THEN 2
+	                        WHEN a.status = 3 THEN 3
+	                        ELSE 4
+	                    END,
+	                    a.apply_id DESC
+	            ) AS rn
+	        FROM clubMatchBoard b
+	        INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
+	        INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
+	        WHERE a.status IN (1, 2, 3)
+	          AND b.clubOwner_key = #{clubOwnerKey}
+	    )
+	    WHERE rn = 1
+	    ORDER BY cmb_Reg_date DESC
+	</select>
 
-            a.clubOwner_key AS home_clubOwner_key,
-            a.match_type1, a.match_type2, a.clubOwner_key2 AS away_clubOwner_key,
-
-            (SELECT COUNT(*) FROM clubMatchRequest r
-                WHERE r.cmb_num = b.cmb_num AND r.request_state IN (1, 2)
-            ) AS applicantCount,
-
-            CASE
-                WHEN a.match_type1 = '11' THEN 11
-                WHEN a.match_type1 = '6' THEN 6
-                ELSE 0
-            END AS targetCount
-
-        FROM clubMatchBoard b
-        INNER JOIN Match_Apply a ON b.cmb_num = a.cmb_num
-        INNER JOIN Stadium s ON a.stadium_id = s.stadium_id
-
-        WHERE a.status = 3 AND b.clubOwner_key = #{clubOwnerKey}
-        ORDER BY b.cmb_Reg_date DESC
-
-    </select>
 
     	<!-- 2. 게시글 상세 + Match_Apply + Stadium -->
 	<select id="findMatchBoardDetail" parameterType="long"

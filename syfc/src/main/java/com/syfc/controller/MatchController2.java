@@ -377,9 +377,24 @@ public class MatchController2 {
             }
             //2. 요청 파라미터
             String applyIdStr = req.getParameter("apply_id");
+            String cmb_Subject = req.getParameter("cmb_Subject");
+            String cmb_Content = req.getParameter("cmb_Content");
+
             if (applyIdStr == null || applyIdStr.isBlank()) {
                 result.put("success", false);
                 result.put("message", "매칭 정보가 없습니다.");
+                return result;
+            }
+
+            if (cmb_Subject == null || cmb_Subject.isBlank()) {
+                result.put("success", false);
+                result.put("message", "모집글 제목을 입력해주세요.");
+                return result;
+            }
+
+            if (cmb_Content == null || cmb_Content.isBlank()) {
+                result.put("success", false);
+                result.put("message", "모집글 내용을 입력해주세요.");
                 return result;
             }
 
@@ -388,6 +403,9 @@ public class MatchController2 {
             Map<String, Object> map = new HashMap<>();
             map.put("memberIdx", info.getMemberIdx());
             map.put("apply_id", apply_id);
+            	// ★ 원정팀이 작성한 모집글 정보
+            map.put("cmb_Subject", cmb_Subject);
+            map.put("cmb_Content", cmb_Content);
 
             // 4. 서비스 호출
             service.applyAwayMatch(map);

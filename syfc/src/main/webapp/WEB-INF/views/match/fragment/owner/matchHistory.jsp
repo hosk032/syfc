@@ -65,6 +65,17 @@
         </div>
 
     </div>
+    <div id="matchHistoryMoreArea"
+     class="text-center mt-3 d-none">
+
+    <button type="button"
+            id="matchHistoryMoreBtn"
+            class="btn btn-outline-primary px-4">
+        더보기
+    </button>
+
+	</div>
+    
 
 </div>
 <!-- 매치 취소 모달 -->
