@@ -31,7 +31,8 @@
 					<c:choose>
 
 						<c:when test="${not empty dto.profile_photo}">
-							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진" class="summary-profile-image">
+							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진"
+     							class="summary-profile-image">
 						</c:when>
 						<c:otherwise>
 							<div class="summary-default-profile" aria-label="기본 프로필 이미지">							
