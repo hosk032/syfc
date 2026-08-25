@@ -29,20 +29,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 💡 [최종 해결] 사이드바 메뉴 클릭 시 강제로 탭을 활성화하고 데이터 로드 (이벤트 위임 방식)
-    $(document).on('click', '.owner-sidebar a[data-bs-toggle="list"]', function (e) {
+    $(document).on('click', '.owner-sidebar a[data-bs-toggle="list"]', function(e) {
         e.preventDefault();
-        
+
         // 1. 사이드바 active 이동
         $('.owner-sidebar a[data-bs-toggle="list"]').removeClass('active');
         $(this).addClass('active');
-        
+
         // 2. 대상 탭 ID 추출 (#team-history 등)
         var target = $(this).attr('href');
-        
+
         // 3. 모든 탭 컨텐츠 숨기고 선택한 탭만 강제 노출
         $('.tab-content .tab-pane').removeClass('show active');
         $(target).addClass('show active');
-        
+
         // 4. 구단 경기 이력 탭이면 AJAX 데이터 로드 실행
         if (target === '#team-history') {
             loadTeamHistory();
@@ -527,6 +527,31 @@ function deleteMatchRecord(recordId) {
             error: function(xhr, status, error) {
                 console.error("Delete record error:", error);
                 alert('삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
+}
+
+$(function() {
+    // 1. 페이지가 처음 로드될 때 '프로필 수정' 탭 영역에 상대방 폼 불러오기
+    loadUserProfileForm();
+
+    // 2. 만약 다른 메뉴에 갔다 오거나 탭 클릭 시 다시 불러오도록 이벤트 연결
+    $('a[href="#profile-edit"]').on('click', function() {
+        loadUserProfileForm();
+    });
+});
+
+// 상대방 프로필 수정 폼을 불러오는 함수
+function loadUserProfileForm() {
+    // #profile-edit 패널의 내용이 아직 비어있을 때만 불러옴 (중복 요청 방지)
+    if ($('#profile-edit').children().length === 0) {
+        $('#profile-edit').load('${pageContext.request.contextPath}/player/profile .profile-form', function(response, status, xhr) {
+            if (status === "error") {
+                console.error("프로필 수정 폼 로드 실패:", xhr.statusText);
+                $('#profile-edit').html('<p class="text-danger p-3">프로필 수정 정보를 불러오는데 실패했습니다.</p>');
             }
         });
     }
