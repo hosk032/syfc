@@ -161,3 +161,111 @@ body {
     font-size: 13px;
   }
 }
+
+
+/* 경기장 정보 페이지 */
+
+.stadium-page-container {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+
+/* 카드 */
+
+.custom-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+}
+
+
+/* 지도 */
+
+#map-wrapper {
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    overflow: hidden;
+    position: relative;
+}
+
+#map {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 400px !important;
+    z-index: 1;
+}
+
+
+/* 경기장 정보 테이블 */
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-table th {
+    width: 30%;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f3f5;
+    text-align: left;
+}
+
+.info-table td {
+    width: 70%;
+    color: #212529;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+
+/* 예약 가능 / 불가 상태 */
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-available {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+
+.badge-unavailable {
+    background-color: #fce8e6;
+    color: #c5221f;
+}
+
+
+/* 검색 / 예약 버튼 */
+
+.btn-purple {
+    background-color: #6b4ba1;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-purple:hover {
+    background-color: #553a83;
+    color: #ffffff;
+}

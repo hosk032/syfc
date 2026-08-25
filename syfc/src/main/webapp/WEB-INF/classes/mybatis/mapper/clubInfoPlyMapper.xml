@@ -120,7 +120,6 @@
 		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
-		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
 		<where>
 		club_status = '1'
 	  	<if test="kwd != null and kwd != '' ">

@@ -73,6 +73,7 @@
 										<div class="qna-no-answer">아직 관리자 답변이 등록되지 않았습니다.</div>
 									</c:otherwise>
 								</c:choose>
+								</div>
 								<!-- 수정 / 삭제 -->
 								<div class="qna-actions">
 								<!-- 본인 글만 수정 -->
