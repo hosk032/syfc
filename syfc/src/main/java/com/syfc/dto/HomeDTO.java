@@ -10,6 +10,7 @@ public class HomeDTO {
     private int status;
 
     // 경기장
+    private Long stadiumId;
     private String stadiumName;
 
     // 홈 구단
@@ -19,6 +20,22 @@ public class HomeDTO {
     // 원정 구단
     private String awayClubName;
     private String awayClubLogo;
+    
+    // 매칭 종류
+    private String match_type1;
+    
+    public Long getStadiumId() {
+		return stadiumId;
+	}
+	public void setStadiumId(Long stadiumId) {
+		this.stadiumId = stadiumId;
+	}
+	public String getMatch_type1() {
+		return match_type1;
+	}
+	public void setMatch_type1(String match_type1) {
+		this.match_type1 = match_type1;
+	}
     
 	public Long getMatchNum() {
 		return matchNum;
