@@ -173,10 +173,14 @@ function loadMatchBoardDetail(cmb_num) {
             $('#detailType').text(board.match_type1 + ' / '
                     + board.match_type2);
 
-            if(board.away_clubOwner_key) {
-                $('#detailOpponent').text( board.away_clubName || '상대팀');
+            if(board.home_clubOwner_key) {
+                $('#detailhome').text( board.home_clubName || '홈팀');
 
-            } else {
+            } 
+			if(board.away_clubOwner_key) {
+				$('#detailOpponent').text( board.away_clubName || '원정팀');
+
+			} else {
                 $('#detailOpponent').text('매칭 대기중');
             }
 
@@ -662,62 +666,74 @@ function showMatchMap(board) {
 
 function showStadiumImage(board) {
 
-    const imageBox =
-        document.getElementById('stadiumImageBox');
+    console.log("🔥 showStadiumImage 호출");
+    console.log("board =", board);
 
-    if (!imageBox) {
+    // HTML에 이미 존재하는 이미지와 빈 상태 영역 가져오기
+    const image = document.getElementById('stadiumImage');
+    const emptyBox = document.getElementById('stadiumImageEmpty');
+
+    if (!image || !emptyBox) {
+        console.log("❌ stadiumImage 또는 stadiumImageEmpty를 찾을 수 없습니다.");
         return;
     }
 
-    const imageUrl = board.stadium_img;
+    // DB에 경기장 이미지 경로가 없는 경우
+    if (!board.stadium_img) {
 
-    if (!imageUrl) {
+        console.log("📷 경기장 사진 없음");
 
-        imageBox.innerHTML = `
-            <div class="d-flex
-                        flex-column
-                        justify-content-center
-                        align-items-center
-                        h-100
-                        text-muted">
+        image.src = "";
+        image.style.display = "none";
 
-                <i class="bi bi-image fs-2 mb-2"></i>
-
-                <div>경기장 사진이 없습니다.</div>
-
-            </div>
-        `;
+        emptyBox.style.setProperty("display", "flex", "important");
 
         return;
     }
 
-    const img = document.createElement('img');
+    // header.jsp의 meta 태그에서 contextPath 가져오기
+    const contextPathElement =
+        document.querySelector('meta[name="contextPath"]');
 
-    img.src = imageUrl;
-    img.alt = board.stadium_name || '경기장';
+    if (!contextPathElement) {
+        console.log("❌ contextPath meta 태그를 찾을 수 없습니다.");
+        return;
+    }
 
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    img.style.display = 'block';
+    const contextPath = contextPathElement.content;
 
-    img.onerror = function() {
+    // contextPath와 DB의 이미지 경로를 안전하게 결합
+    // 예: contextPath = /syfc, stadium_img = /dist/images/stadium/IncheonStadium.JPG
+    //최종: /syfc/dist/images/stadium/IncheonStadium.JPG
+    const imageUrl =
+        contextPath.replace(/\/$/, '') +
+        '/' +
+        board.stadium_img.replace(/^\//, '');
 
-        imageBox.innerHTML = `
-            <div class="d-flex
-                        justify-content-center
-                        align-items-center
-                        h-100
-                        text-muted">
-                경기장 사진을 불러올 수 없습니다.
-            </div>
-        `;
+    console.log("📁 contextPath =", contextPath);
+    console.log("📁 stadium_img =", board.stadium_img);
+    console.log("🌐 최종 imageUrl =", imageUrl);
 
+    // 이미지 설정
+    image.src = imageUrl;
+    image.alt = board.stadium_name || "경기장 사진";
+
+    // 이미지 표시
+    image.style.display = "block";
+
+    // "경기장 사진이 없습니다." 영역 숨기기
+    emptyBox.style.setProperty("display", "none", "important");
+
+    // 이미지 로딩 실패 처리
+    image.onerror = function () {
+
+        console.log("❌ 경기장 이미지 로딩 실패:", imageUrl);
+
+        image.src = "";
+        image.style.display = "none";
+
+        emptyBox.style.setProperty("display", "flex", "important");
     };
-
-    imageBox.innerHTML = "";
-    imageBox.appendChild(img);
-
 }
 
 
