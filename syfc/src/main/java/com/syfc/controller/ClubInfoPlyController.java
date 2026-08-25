@@ -159,46 +159,68 @@ public class ClubInfoPlyController {
 	}
 	
 	@GetMapping("playerInfo")
-	public ModelAndView playerInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		if (info == null) {
+	public ModelAndView playerInfo(HttpServletRequest req, HttpServletResponse resp)
+	        throws ServletException, IOException {
+
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+	    if (info == null) {
 	        return new ModelAndView("redirect:/member/login");
 	    }
-		
-		ModelAndView mav = new ModelAndView("clubinfoply/playerInfo");
-		
-		try {
-			Long clubowner_key = service.getclubowner(info.getMemberIdx());
-			
-			if (clubowner_key != null && clubowner_key > 0L) {
-				List<ClubInfoPlyDTO> list = service.listPlayerInfo(clubowner_key);
-				
-				int fwCount = 0, mfCount = 0, dfCount = 0, gkCount = 0;
-				if(list != null) {
-					for(ClubInfoPlyDTO dto : list) {
-						if("FW".equalsIgnoreCase(dto.getPosition())) fwCount++;
-						else if("MF".equalsIgnoreCase(dto.getPosition())) mfCount++;
-						else if("DF".equalsIgnoreCase(dto.getPosition())) dfCount++;
-						else if("GK".equalsIgnoreCase(dto.getPosition())) gkCount++;
-					}
-				}
-		        
-		        mav.addObject("list", list);
-		        mav.addObject("fwCount", fwCount);
-		        mav.addObject("mfCount", mfCount);
-		        mav.addObject("dfCount", dfCount);
-		        mav.addObject("gkCount", gkCount);
-		        mav.addObject("clubowner_key", clubowner_key);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	   
-		return mav;
-    }
+
+	    ModelAndView mav = new ModelAndView("clubinfoply/playerInfo");
+
+	    try {
+	        Long clubowner_key = service.getclubowner(info.getMemberIdx());
+
+	        // 구단이 없는 경우에만 구단 없음 처리
+	        if (clubowner_key == null || clubowner_key <= 0L) {
+	            mav.addObject("hasClub", false);
+	            return mav;
+	        }
+
+	        // 구단은 존재함
+	        mav.addObject("hasClub", true);
+	        mav.addObject("clubowner_key", clubowner_key);
+
+	        // 선수 목록 조회
+	        List<ClubInfoPlyDTO> list = service.listPlayerInfo(clubowner_key);
+
+	        // null 방지
+	        if (list == null) {
+	            list = new java.util.ArrayList<>();
+	        }
+
+	        int fwCount = 0;
+	        int mfCount = 0;
+	        int dfCount = 0;
+	        int gkCount = 0;
+
+	        for (ClubInfoPlyDTO dto : list) {
+	            if ("FW".equalsIgnoreCase(dto.getPosition())) {
+	                fwCount++;
+	            } else if ("MF".equalsIgnoreCase(dto.getPosition())) {
+	                mfCount++;
+	            } else if ("DF".equalsIgnoreCase(dto.getPosition())) {
+	                dfCount++;
+	            } else if ("GK".equalsIgnoreCase(dto.getPosition())) {
+	                gkCount++;
+	            }
+	        }
+
+	        mav.addObject("list", list);
+	        mav.addObject("fwCount", fwCount);
+	        mav.addObject("mfCount", mfCount);
+	        mav.addObject("dfCount", dfCount);
+	        mav.addObject("gkCount", gkCount);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return mav;
+	}
 	
 	// 선수 리스트
 	@GetMapping("playerList")

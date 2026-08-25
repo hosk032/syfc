@@ -55,3 +55,10 @@
 .reply-more-btn:hover {
     background-color: #f8f9fa;
 }
+
+.qna-question-content .content {
+    text-align: left;
+    white-space: pre-line;
+    font-weight: 500;
+    line-height: 1.6;
+}

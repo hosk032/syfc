@@ -71,29 +71,45 @@
 
 	<select id="listPlayerInfo" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
 		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
-			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status,
-			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender,
-			goal, assist, yellow, red
+        	TO_CHAR(p.join_date, 'YYYY-MM-DD') AS join_date, p.status,
+			m.userName, TO_CHAR(m2.birth, 'YYYY-MM-DD') AS birth, tel, gender, profile_photo,
+			NVL(pr.goal, 0) AS goal, NVL(pr.assist, 0) AS assist, NVL(pr.yellow, 0) AS yellow, NVL(pr.red, 0) AS red
 		FROM Player p
-		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
-		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
-		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
-		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
-		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
-		WHERE p.clubowner_key = #{clubowner_key} AND club_status = '1'
-	</select>
-	
+ 		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+	    JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+	    LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+	    LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+	    LEFT JOIN (
+	        SELECT
+	            clubjoin_num,
+	            SUM(NVL(goal, 0)) AS goal,
+	            SUM(NVL(assist, 0)) AS assist,
+	            SUM(NVL(yellow, 0)) AS yellow,
+	            SUM(NVL(red, 0)) AS red
+	        FROM Player_Record
+	        GROUP BY clubjoin_num
+	    ) pr ON p.clubJoin_num = pr.clubjoin_num
+	    WHERE p.clubowner_key = #{clubowner_key} AND c.club_status = '1'
+		ORDER BY p.clubjoin_num
+</select>
+	 
 	<select id="getclubowner" parameterType="Long" resultType="Long">
+		SELECT clubowner_key
+		FROM clubOwner
+		WHERE memberIdx = #{memberIdx}
+    
+		UNION
+    
 		SELECT p.clubowner_key
-	    FROM Player p
-	    JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
-		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
-		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
-		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
-		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
-	    WHERE cj.memberIdx = #{memberIdx} AND club_status = '1'
-	    FETCH FIRST 1 ROWS ONLY
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num
+		JOIN Club c ON c.clubOwner_key = p.clubowner_key
+		WHERE cj.memberIdx = #{memberIdx}
+		AND c.club_status = '1'
+		FETCH FIRST 1 ROWS ONLY
 	</select>
+	 
+	 
 
 	<select id="listPlayers" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
 		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,

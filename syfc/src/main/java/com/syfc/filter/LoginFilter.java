@@ -91,7 +91,7 @@ public class LoginFilter implements Filter {
 				"/member/login", "/member/logout",
 				"/member/account", "/member/userIdCheck", "/member/complete",
 				"/member/pwdFind", "/member/idFind",
-				"/uploads/photo/**",
+				"/uploads/photo/**", "/uploads/club/**",
 				"/dist/**"
 		}; //로그인하지 않아도 들어올 수 있는 주소들
 		

@@ -57,18 +57,13 @@
 								<!-- 문의 내용 -->
 								<div class="qna-question-content">
 									<div class="qna-label">문의 내용</div>
-									<div class="qna-content">
-										<c:out value="${dto.q_question}" />
-									</div>
-								</div>
+									<div class="qna-content" style="white-space: pre-wrap;"><c:out value="${dto.q_question}" /></div>
 								<!-- 관리자 답변 -->
 								<c:choose>
 									<c:when test="${not empty dto.a_answer}">
 										<div class="qna-admin-answer">
 											<div class="qna-label">관리자 답변</div>
-											<div class="qna-content">
-												<c:out value="${dto.a_answer}" />
-											</div>
+											<div class="qna-content" style="white-space: pre-wrap;"><c:out value="${dto.a_answer}" /></div>
 											<c:if test="${not empty dto.a_reg_date}">
 												<div class="qna-answer-date">답변일 : ${dto.a_reg_date}</div>
 											</c:if>
@@ -127,7 +122,7 @@
 				</div>
 			</div>
 			<div class="board-number">
-				${dataCount == 0 ? "등록된 게시물이 없습니다." : paging}
+				${dataCount == 0 ? "" : paging}
 			</div>
 	</main>
 <script type="text/javascript">

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>쌍용축구예약프로그램</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main/index.css" />
     
     <!-- 1. 공통 헤더 리소스(CSS, CDN 등) 조립 -->
     <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
@@ -43,8 +44,10 @@
             </div>
         </div>
     </div>
-
-    <!-- 메인 검색 필터 바 -->
+    
+ 
+    <!--
+     메인 검색 필터 바 
     <div class="search-filter-section">
         <div class="search-card">
             <form class="row g-2 align-items-end" onsubmit="return false;">
@@ -76,12 +79,14 @@
             </form>
         </div>
     </div>
+     -->
+
 
     <!-- 실시간/다가오는 매치 목록 영역 -->
     <div class="container match_section_wrapper">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="fw-bold mb-0"><i class="bi bi-fire text-danger me-1"></i> 마감 임박 매치 목록</h5>
-            <a href="#" class="text-decoration-none small text-muted fw-bold">전체 경기 일정 보기 ></a>
+            <a href="${pageContext.request.contextPath}/clubmatch/clubCalendar" class="text-decoration-none small text-muted fw-bold">전체 경기 일정 보기 ></a>
         </div>
 
 
@@ -101,17 +106,43 @@
             <!-- 구단 -->
             <div class="match_inner_box">
 
-                <div class="team">
-                    ${dto.homeClubName}
-                </div>
-
-                <span class="vs-text">VS</span>
-
-                <div class="team">
-                    ${dto.awayClubName}
-                </div>
-
-            </div>
+			    <!-- 홈 구단 -->
+			    <div class="team">
+			        <c:choose>
+			            <c:when test="${not empty dto.homeClubLogo}">
+			                <img src="${pageContext.request.contextPath}/uploads/club/${dto.homeClubLogo}"
+			                     class="team-logo"
+			                     alt="${dto.homeClubName}"
+			                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+			                <span class="club-default-logo" style="display:none;">⚽</span>
+			            </c:when>
+			            <c:otherwise>
+			                <span class="club-default-logo">⚽</span>
+			            </c:otherwise>
+			        </c:choose>
+			    </div>
+			        <div>${dto.homeScore}</div>
+			
+			    <span class="vs-text">VS</span>
+			
+			    <!-- 원정 구단 -->
+			        <div>${dto.awayScore}</div>
+			    <div class="team">
+			        <c:choose>
+			            <c:when test="${not empty dto.awayClubLogo}">
+			                <img src="${pageContext.request.contextPath}/uploads/club/${dto.awayClubLogo}"
+			                     class="team-logo"
+			                     alt="${dto.awayClubName}"
+			                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+			                <span class="club-default-logo" style="display:none;">⚽</span>
+			            </c:when>
+			            <c:otherwise>
+			                <span class="club-default-logo">⚽</span>
+			            </c:otherwise>
+			        </c:choose>
+			    </div>
+			
+			</div>
 
 
             <!-- 경기장 -->
