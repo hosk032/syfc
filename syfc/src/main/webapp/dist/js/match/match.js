@@ -46,6 +46,7 @@ function loadRegions() {
     });
 }
 
+let awayApplyTarget = null; // 원정팀 신청을 위해 현재 선택한 홈팀 경기
 
 function searchStadiums1() {
 
@@ -196,29 +197,55 @@ $(document).on("click", ".stadium-card", function() {
         latitude: $card.data("lat"),
         longitude: $card.data("lng")
     };
+	
+	// 선택된 경기정보 갱신
+	updateSelectedMatchInfo();
+	// 선택정보 영역 표시
+	$("#selectedMatchInfo").removeClass("d-none");
 
-    // 우측 UI 텍스트 갱신
+});
+
+
+function updateSelectedMatchInfo() {
+
+    // 아직 경기장을 선택하지 않았다면 아무것도 하지 않음
+    if (selectedStadium == null) {
+        return;
+    }
+
     const applyDate = $("#searchDate").val();
-    const applyTime = Number($("#applyTime").val()) === 1 ? "오전" : "오후";
+
+    const applyTimeValue = Number($("#applyTime").val());
+
+    let applyTimeText = "";
+
+    if (applyTimeValue === 1) {
+        applyTimeText = "오전";
+    } else if (applyTimeValue === 2) {
+        applyTimeText = "오후";
+    }
+
     const matchType1 = $("#matchTypeMain").val();
     const matchType2 = $("#matchTypeSub").val();
 
     $("#selectedMatchText").html(`
         경기일: ${escapeHtml(applyDate)}<br>
-        시간: ${escapeHtml(applyTime)}<br>
+        시간: ${escapeHtml(applyTimeText)}<br>
         경기장: ${escapeHtml(selectedStadium.stadium_name)}<br>
         경기종류: ${escapeHtml(matchType1)} / ${escapeHtml(matchType2)}
     `);
-
-    $("#selectedMatchInfo").removeClass("d-none");
-});
-
-
+}
 
 // 글 올리는 과정
 //<button type="button" class="btn btn-primary btn-sm px-4 fw-bold"
 //    onclick="submitMatchPost1()">모집글 등록하기</button> 에 연결
 function submitMatchPost1() {
+	
+	if (awayApplyTarget != null) {
+	       submitAwayMatchPost();
+	       return;
+	   } // ★ 원정팀 신청 모드
+	   
 	if (window.matchPostSubmitting) {
 	    return;
 	}
@@ -232,8 +259,11 @@ function submitMatchPost1() {
     const matchType1 = $("#matchTypeMain").val();
     const matchType2 = $("#matchTypeSub").val();
 
-    if (selectedStadium == null) { alert("경기장을 선택해주세요."); return; }
-
+	if (selectedStadium == null) {
+	    alert("경기장을 선택해주세요.");
+	    window.matchPostSubmitting = false;
+	    return;
+	}
     const stadiumId = selectedStadium.stadium_id;
 
     if (!cmb_Subject) {alert( "모집글 제목을 입력해주세요.");
@@ -319,36 +349,172 @@ function openWriteModal() {
 }
 
 
-function applyAwayMatch(applyId) {
+function openAwayApplyModal(applyId) {
 
-    if (!confirm("이 경기에 원정팀으로 신청하시겠습니까?")) {
+	var dto = window.waitingMatchData ? window.waitingMatchData[applyId] : undefined;
+
+    if (!dto) {
+        alert("경기 정보를 찾을 수 없습니다.");
         return;
     }
+    awayApplyTarget = dto;
+
+    const timeText = dto.apply_time === 1 ? "오전" : "오후";
+
+    // 게시글 작성 모달에 기존 홈팀 경기 정보를 보여줌
+    $("#writeMatchSummary").html(`
+        <div class="fw-bold mb-2">
+            원정팀 경기 참가신청
+        </div>
+
+        <div>
+            홈팀 :
+            <strong>
+                ${escapeHtml(dto.home_club_name || "-")}
+            </strong>
+        </div>
+
+        <div>
+            경기일 :
+            ${escapeHtml(dto.apply_date || "-")}
+        </div>
+
+        <div>
+            시간 :
+            ${timeText}
+        </div>
+
+        <div>
+            경기장 :
+            ${escapeHtml(dto.stadium_name || "-")}
+        </div>
+
+        <div>
+            경기종류 :
+            ${escapeHtml(dto.match_type1 || "-")}
+            /
+            ${escapeHtml(dto.match_type2 || "-")}
+        </div>
+
+        <div class="text-primary mt-2">
+            ※ 우리 구단의 선수 모집글을 작성한 후
+            원정팀으로 신청합니다.
+        </div>
+    `);
+
+    // 제목 / 내용 초기화
+    $("#postTitle").val("");
+    $("#postContent").val("");
+
+    // 모달 버튼 문구 변경
+    $("#writeModal .modal-footer .btn-primary")
+        .text("모집글 등록 및 원정팀 신청");
+
+    const modalElement = document.getElementById("writeModal");
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    modal.show();
+}
+
+function submitAwayMatchPost() {
+
+    if (window.matchPostSubmitting) {
+        return;
+    }
+	
+    window.matchPostSubmitting = true;
+
+    const cmb_Subject = $("#postTitle").val().trim();
+    const cmb_Content = $("#postContent").val().trim();
+
+    if (!awayApplyTarget) {
+        alert("원정팀 신청 경기 정보가 없습니다.");
+        window.matchPostSubmitting = false;
+        return;
+    }
+
+    if (!cmb_Subject) {
+        alert("모집글 제목을 입력해주세요.");
+        $("#postTitle").focus();
+        window.matchPostSubmitting = false;
+        return;
+    }
+
+    if (!cmb_Content) {
+        alert("모집글 내용을 입력해주세요.");
+        $("#postContent").focus();
+        window.matchPostSubmitting = false;
+        return;
+    }
+
+    const applyId = awayApplyTarget.apply_id;
 
     $.ajax({
         url: contextPath + "/match2/awayApply",
         type: "POST",
         data: {
-            apply_id: applyId
+            // 기존 홈팀 경기의 apply_id
+            apply_id: applyId,
+            // ★ 원정팀이 새로 작성한 게시글
+            cmb_Subject: cmb_Subject,
+            cmb_Content: cmb_Content
         },
+
         dataType: "json",
 
         success: function(res) {
-            if (res.success) {
-                alert(res.message);
+            if (!res.success) {
+                alert(res.message || "원정팀 신청에 실패했습니다.");
+                return;
+            }
+            alert(res.message);
 
-                loadMyMatchApply(); //경기신청 후 이력 새로 조회
+            // 모달 닫기
+            const modalElement = document.getElementById("writeModal");
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
 
-            } else {
-                alert(res.message);
+            // 입력값 초기화
+            $("#postTitle").val("");
+            $("#postContent").val("");
+
+            // 원정팀 신청 상태 초기화
+            awayApplyTarget = null;
+
+            // 버튼 문구 원상복구
+            $("#writeModal .modal-footer .btn-primary").text("모집글 등록");
+
+            // 경기신청 이력 다시 조회
+            loadMyMatchApply();
+
+            // 대기 경기 목록 다시 조회
+            const applyDate = $("#searchDate").val();
+            const region = $("#searchRegion").val();
+            const applyTime = Number($("#applyTime").val());
+            const matchType1 = $("#matchTypeMain").val();
+            const matchType2 = $("#matchTypeSub").val();
+
+            if (applyDate && region && applyTime &&
+                matchType1 && matchType2) {
+                loadWaitingMatches(
+                    applyDate, region, applyTime, matchType1, matchType2);
             }
         },
 
         error: function(xhr) {
-            alert("원정팀 매칭 신청 중 오류가 발생했습니다.");
+            console.error("awayApply error:", xhr);
+            alert("원정팀 신청 중 오류가 발생했습니다.");
+        },
+
+        complete: function() {
+            window.matchPostSubmitting = false;
         }
     });
 }
+
 
 function loadWaitingMatches(
     applyDate, region, applyTime, matchType1, matchType2) {
@@ -392,6 +558,9 @@ function loadWaitingMatches(
             let html = "";
 
             res.list.forEach(function(dto) {
+				window.waitingMatchData = window.waitingMatchData || {};
+				window.waitingMatchData[dto.apply_id] = dto;
+				
                 const timeText = dto.apply_time === 1
                     ? "오전" : "오후";
 
@@ -413,7 +582,7 @@ function loadWaitingMatches(
                             </div>
 
                             <button type="button" class="btn btn-primary btn-sm"
-                                onclick=" applyAwayMatch( ${dto.apply_id})">
+                                onclick="openAwayApplyModal(${dto.apply_id})">
                                 원정팀 신청
                             </button>
                         </div>
@@ -431,3 +600,12 @@ function loadWaitingMatches(
         }
     });
 }
+
+
+$(document).on(
+    "change",
+    "#searchDate, #applyTime, #matchTypeMain, #matchTypeSub",
+    function() {
+        updateSelectedMatchInfo();
+    }
+);

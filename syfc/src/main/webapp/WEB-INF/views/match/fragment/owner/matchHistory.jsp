@@ -17,7 +17,7 @@
 
             <p class="text-muted small mb-0">
                 우리 구단이 신청한 홈·원정 경기의
-                매칭 진행상황을 확인할 수 있습니다.
+                매칭 진행상황을 확인할 수 있습니다. 
             </p>
 
         </div>
@@ -65,6 +65,17 @@
         </div>
 
     </div>
+    <div id="matchHistoryMoreArea"
+     class="text-center mt-3 d-none">
+
+    <button type="button"
+            id="matchHistoryMoreBtn"
+            class="btn btn-outline-primary px-4">
+        더보기
+    </button>
+
+	</div>
+    
 
 </div>
 <!-- 매치 취소 모달 -->
