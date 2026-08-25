@@ -38,7 +38,7 @@ public class MailController {
 			Mail dto = new Mail();
 			
 			dto.setSenderName(info.getUserName());
-			dto.setSenderEmail("zvvcxxz@gmail.com"); //MailSender.java에서 입력한 아이디, 도메인과 일치해야함
+			dto.setSenderEmail("gmailid@gmail.com"); //MailSender.java에서 입력한 아이디, 도메인과 일치해야함
 			
 			dto.setReceiverEmail(req.getParameter("receiverEmail"));
 			dto.setSubject(req.getParameter("subject"));
