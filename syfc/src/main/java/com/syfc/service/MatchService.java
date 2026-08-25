@@ -51,7 +51,8 @@ public interface MatchService {
 	
 	//원정팀 매칭 신청
 	public void applyAwayMatch(Map<String, Object> map) throws Exception;
-	public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> param);
+	public List<MatchApplyDTO> listMyMatchApply(Map<String, Object> map) throws Exception;
+	int countMyMatchApply(Map<String, Object> map) throws Exception;
     
 	public List<ClubMatchBoardDTO> listMyMatchRequest(Map<String, Object> param);
 	
