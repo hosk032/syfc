@@ -1,5 +1,5 @@
 /* ==========================================================================
-   구단주 마이페이지 전용 통합 JS (ownerpage.js v3.10 - 최종 전체 버전)
+   구단주 마이페이지 전용 통합 JS
    ========================================================================== */
 
 let selectedStadiumName = "쌍용 주 경기장";
@@ -28,36 +28,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 💡 [최종 해결] 사이드바 메뉴 클릭 시 강제로 탭을 활성화하고 데이터 로드 (이벤트 위임 방식)
+    // 💡 사이드바 메뉴 클릭 시 탭 전환 또는 페이지 이동 처리 (이벤트 위임 방식)
     $(document).on('click', '.owner-sidebar a[data-bs-toggle="list"]', function(e) {
+        var target = $(this).attr('href');
+
+        // 개인 프로필 클릭 시 일반회원 마이페이지로 이동 처리
+        if (target === '#profile-edit') {
+            e.preventDefault();
+            loadUserProfileForm();
+            return;
+        }
+
         e.preventDefault();
 
         // 1. 사이드바 active 이동
         $('.owner-sidebar a[data-bs-toggle="list"]').removeClass('active');
         $(this).addClass('active');
 
-        // 2. 대상 탭 ID 추출 (#team-history 등)
-        var target = $(this).attr('href');
-
-        // 3. 모든 탭 컨텐츠 숨기고 선택한 탭만 강제 노출
+        // 2. 모든 탭 컨텐츠 숨기고 선택한 탭만 강제 노출
         $('.tab-content .tab-pane').removeClass('show active');
         $(target).addClass('show active');
 
-        // 4. 구단 경기 이력 탭이면 AJAX 데이터 로드 실행
+        // 3. 구단 경기 이력 탭이면 AJAX 데이터 로드 실행
         if (target === '#team-history') {
             loadTeamHistory();
         }
     });
 
-    // 페이지 최초 로딩 시 첫 번째 active 탭 강제 노출
+    // 페이지 최초 로딩 시 첫 번째 active 탭 처리
     var initialTarget = $('.owner-sidebar a.active').attr('href');
     if (initialTarget) {
-        $(initialTarget).addClass('show active');
+        if (initialTarget === '#profile-edit') {
+            loadUserProfileForm();
+        } else {
+            $(initialTarget).addClass('show active');
+        }
     }
 });
 
 function checkPlayerCount(count) {
     currentSelectedPlayerCount = count;
+}
+
+/* ==========================================================================
+   [개인 프로필] 일반회원 마이페이지 바로 이동 처리
+   ========================================================================== */
+
+function loadUserProfileForm() {
+    var basePath = (typeof contextPath !== 'undefined' ? contextPath : '/syfc');
+    location.href = basePath + '/player/mypage';
 }
 
 /* ==========================================================================
@@ -452,7 +471,7 @@ function saveMatchRecord() {
     const matchSelect = document.getElementById('matchNum');
     const matchNum = matchSelect.value;
     const clubJoinNum = document.getElementById('ratingPlayerSelect').value;
-    const inputGoal = parseInt(document.getElementById('statGoal').value) || 0; // 입력한 골
+    const inputGoal = parseInt(document.getElementById('statGoal').value) || 0;
 
     if (!matchNum || !clubJoinNum) {
         alert('경기와 대상 선수를 모두 선택해 주세요.');
@@ -527,31 +546,6 @@ function deleteMatchRecord(recordId) {
             error: function(xhr, status, error) {
                 console.error("Delete record error:", error);
                 alert('삭제 중 오류가 발생했습니다.');
-            }
-        });
-    }
-
-
-}
-
-$(function() {
-    // 1. 페이지가 처음 로드될 때 '프로필 수정' 탭 영역에 상대방 폼 불러오기
-    loadUserProfileForm();
-
-    // 2. 만약 다른 메뉴에 갔다 오거나 탭 클릭 시 다시 불러오도록 이벤트 연결
-    $('a[href="#profile-edit"]').on('click', function() {
-        loadUserProfileForm();
-    });
-});
-
-// 상대방 프로필 수정 폼을 불러오는 함수
-function loadUserProfileForm() {
-    // #profile-edit 패널의 내용이 아직 비어있을 때만 불러옴 (중복 요청 방지)
-    if ($('#profile-edit').children().length === 0) {
-        $('#profile-edit').load('${pageContext.request.contextPath}/player/profile .profile-form', function(response, status, xhr) {
-            if (status === "error") {
-                console.error("프로필 수정 폼 로드 실패:", xhr.statusText);
-                $('#profile-edit').html('<p class="text-danger p-3">프로필 수정 정보를 불러오는데 실패했습니다.</p>');
             }
         });
     }

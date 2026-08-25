@@ -145,7 +145,6 @@
 				</c:otherwise>
 			</c:choose>
 
-			<!-- 나머지 버튼들 (경기정보, 내 구단정보, 경기 신청) -->
 			<button class="tag-btn"
 				onclick="location.href='${pageContext.request.contextPath}/player/matchHistory';">
 				<i class="bi bi-trophy me-1"></i> 경기정보
@@ -159,6 +158,12 @@
 			<button class="tag-btn"
 				onclick="location.href='${pageContext.request.contextPath}/match2/playermatchtab';">
 				<i class="bi bi-calendar-check me-1"></i> 경기 신청
+			</button>
+
+
+			<button class="tag-btn"
+				onclick="location.href='${pageContext.request.contextPath}/player/miniGame';">
+				<i class="bi bi-controller me-1"></i> 미니게임
 			</button>
 		</div>
 	</div>
