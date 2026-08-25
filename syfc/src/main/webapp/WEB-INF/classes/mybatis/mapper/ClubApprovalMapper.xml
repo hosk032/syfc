@@ -8,21 +8,27 @@
 		resultType="com.syfc.dto.ClubApprovalDTO">
 		SELECT
 		cj.clubJoin_num AS applyNum,
-		cj.clubOwner_key AS clubOwner_key,
+		cj.clubOwner_key AS
+		clubOwner_key,
 		cj.memberIdx AS memberIdx,
 		m1.userName AS userName,
 		TRUNC(MONTHS_BETWEEN(SYSDATE, m2.birth) / 12) AS userAge,
 		cj.clubJoin_position AS position,
-		TO_CHAR(cj.clubJoin_date, 'YYYY-MM-DD') AS applyDate,
+		TO_CHAR(cj.clubJoin_date,
+		'YYYY-MM-DD') AS applyDate,
 		cj.clubJoin_intro AS memo,
 		cj.clubJoin_content AS content,
 		cj.clubJoin_result AS status
-		FROM clubJoin cj
+		FROM
+		clubJoin cj
 		JOIN member1 m1 ON cj.memberIdx = m1.memberIdx
-		LEFT JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
-		WHERE cj.clubOwner_key = #{clubOwnerKey}
+		LEFT JOIN
+		member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE cj.clubOwner_key =
+		#{clubOwnerKey}
 		AND cj.clubJoin_result = 2
-		ORDER BY cj.clubJoin_date DESC
+		ORDER BY cj.clubJoin_date
+		DESC
 	</select>
 
 	<!-- 2. 신청 상세 정보 단건 조회 -->
@@ -30,7 +36,8 @@
 		resultType="com.syfc.dto.ClubApprovalDTO">
 		SELECT
 		clubJoin_num AS applyNum,
-		clubOwner_key AS clubOwner_key,
+		clubOwner_key AS
+		clubOwner_key,
 		memberIdx AS memberIdx,
 		clubJoin_position AS position
 		FROM clubJoin
@@ -49,16 +56,24 @@
 		UPDATE clubJoin
 		SET clubJoin_result = 0,
 		clubJoin_reason = #{rejectReason}
-		WHERE clubJoin_num = #{applyNum}
+		WHERE
+		clubJoin_num = #{applyNum}
 	</update>
 
 	<!-- 5. 승인 시 소속 선수(clubPlayer) 테이블로 정식 등록 -->
-	<insert id="insertClubPlayer"
-		parameterType="com.syfc.dto.ClubApprovalDTO">
+	<insert id="insertClubPlayer" parameterType="map">
 		INSERT INTO Player (
-		clubPlayer_num, clubOwner_key, memberIdx, position, reg_date
+		clubJoin_num,
+		clubOwner_key,
+		position,
+		join_date,
+		status
 		) VALUES (
-		clubPlayer_seq.NEXTVAL, #{clubOwner_key}, #{memberIdx}, #{position}, SYSDATE
+		#{applyNum},       <!-- clubJoin_num 값 -->
+		#{clubOwner_key},
+		#{position},
+		SYSDATE,
+		'1'                <!-- 1: 정상 등록 상태 -->
 		)
 	</insert>
 

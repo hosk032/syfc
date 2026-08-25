@@ -11,7 +11,9 @@ public class ClubRequestServiceImpl implements ClubRequestService {
 	public int insertClubRequest(ClubRequestDTO dto) {
 		try {
 			return mapper.insertClubRequest(dto);
+
 		} catch (Exception e) {
+
 			e.printStackTrace();
 		}
 		return 0;
