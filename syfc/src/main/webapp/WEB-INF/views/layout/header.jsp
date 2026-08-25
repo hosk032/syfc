@@ -144,7 +144,9 @@
 					</button>
 				</c:otherwise>
 			</c:choose>
-
+			
+			<c:choose>
+			<c:when test="${sessionScope.member.userLevel < 90}">
 			<button class="tag-btn"
 				onclick="location.href='${pageContext.request.contextPath}/player/matchHistory';">
 				<i class="bi bi-trophy me-1"></i> 경기정보
@@ -165,6 +167,8 @@
 				onclick="location.href='${pageContext.request.contextPath}/player/miniGame';">
 				<i class="bi bi-controller me-1"></i> 미니게임
 			</button>
+			</c:when>
+			</c:choose>
 		</div>
 	</div>
 </div>
