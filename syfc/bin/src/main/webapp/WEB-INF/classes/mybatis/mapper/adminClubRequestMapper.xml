@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.AdminClubRequestMapper">
+
+	<!-- =====================================================
+	     구단 창설 신청 검색 조건
+	     ===================================================== -->
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all'">
+				(INSTR(m.userId, #{kwd}) &gt; 0
+					OR INSTR(m.userName, #{kwd}) &gt; 0
+					OR INSTR(cr.content, #{kwd}) &gt; 0)
+			</when>
+			<when test="schType == 'userId'"> 
+				INSTR(m.userId, #{kwd}) &gt; 0
+			</when>
+			<when test="schType == 'userName'">
+				INSTR(m.userName, #{kwd}) &gt; 0
+			</when>
+		</choose>
+	</sql>
+	
+	<!-- =====================================================
+	     구단 창설 신청 전체 개수
+	     ===================================================== -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM Club_Request cr
+		JOIN member1 m ON cr.memberIdx = m.memberIdx
+		
+		<where>
+			<!-- 신청 상태 검색 -->
+			<if test="requestStatus != null">
+				cr.request_status = #{requestStatus}
+			</if>
+			
+			<!-- 검색어 -->
+			<if test="kwd != null and kwd != ''">
+				<if test="requestStatus != null">
+					AND
+				</if>
+				<include refid="where-list"/>
+			</if>
+		</where>
+		
+	</select>
+	
+	<!-- =====================================================
+	     구단 창설 신청 목록
+	     ===================================================== -->
+	<select id="listRequest" parameterType="map" resultType="com.syfc.dto.AdminClubRequestDTO">
+		SELECT cr.request_id AS requestId,
+			TO_CHAR(cr.request_date, 'YYYY-MM-DD') AS requestDate,
+			TO_CHAR(cr.approve_date, 'YYYY-MM-DD') AS approveDate,
+			cr.request_status AS requestStatus,
+			cr.memberIdx AS memberIdx,
+			cr.content AS content,
+			m.userId AS userId,
+			m.userName AS userName
+		FROM Club_Request cr
+		JOIN member1 m ON cr.memberIdx = m.memberIdx
+		
+		<where>
+			<!-- 신청 상태 검색 -->
+			<if test="requestStatus != null">
+				cr.request_status = #{requestStatus}
+			</if>
+			
+			<!-- 검색어 -->
+			<if test="kwd != null and kwd != ''">
+				<if test="requestStatus != null">
+					AND
+				</if>
+				<include refid="where-list"/>
+			</if>
+		</where>
+		
+		ORDER BY cr.request_id DESC
+		OFFSET #{offset} ROWS
+		FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<!-- =====================================================
+	     구단 창설 신청 한 건 조회
+	     ===================================================== -->
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.AdminClubRequestDTO">
+		SELECT cr.request_id AS requestId,
+			TO_CHAR(cr.request_date, 'YYYY-MM-DD') AS requestDate,
+			TO_CHAR(cr.approve_date, 'YYYY-MM-DD') AS approveDate,
+			cr.request_status AS requestStatus,
+			cr.memberIdx AS memberIdx,
+			cr.content AS content,
+			m.userId AS userId,
+			m.userName AS userName
+		FROM Club_Request cr
+		JOIN member1 m ON cr.memberIdx = m.memberIdx
+		WHERE cr.request_id = #{requestId}
+	</select>
+	
+	<!-- =====================================================
+	     구단 창설 신청 상태 변경
+
+	     2 : 신청대기
+	     1 : 승인
+	     0 : 거절
+	     ===================================================== -->
+	<update id="updateRequestStatus" parameterType="map">
+		UPDATE Club_Request
+		SET request_status = #{requestStatus},
+			approve_date = SYSDATE
+		WHERE request_id = #{requestId}
+	</update>
+	
+	
+	<!-- =====================================================
+	     승인된 회원을 clubOwner 테이블에 등록
+
+	     NEXTVAL : 새로운 clubOwner_key 생성
+	     ===================================================== -->
+	<insert id="insertClubOwner" parameterType="Long">
+		INSERT INTO clubOwner (clubOwner_key, memberIdx)
+		VALUES (clubOwner_key_seq.NEXTVAL, #{memberIdx})
+	</insert>
+	
+	<!-- =====================================================
+	     승인된 구단의 기본 정보 생성
+
+	     바로 위에서 생성한 clubOwner_key를
+	     CURRVAL로 다시 사용
+
+	      club_status
+     	  1 : 운영
+     	  0 : 해체
+	     ===================================================== -->
+	<insert id="insertClub">
+		INSERT INTO Club (clubOwner_key, club_status, club_created)
+		VALUES (clubOwner_key_seq.CURRVAL, 1, SYSDATE)
+	</insert>     
+	     
+</mapper>

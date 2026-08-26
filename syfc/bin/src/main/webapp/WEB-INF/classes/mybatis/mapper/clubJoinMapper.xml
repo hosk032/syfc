@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.ClubJoinMapper">
+	<!-- 입단 신청 -->
+	<insert id="clubJoinRequest" parameterType="com.syfc.dto.ClubJoinDTO">
+		INSERT INTO clubJoin(
+			clubJoin_num, memberIdx, clubOwner_key, clubJoin_content, 
+	   		clubJoin_date, clubJoin_result, clubJoin_intro, 
+	   		clubJoin_position, clubJoin_reason
+	   	)
+		VALUES(
+		  clubJoin_seq.NEXTVAL, #{memberIdx}, #{clubOwnerKey},
+		  #{clubJoinContent}, TO_DATE(#{clubJoinDate}, 'YYYY-MM-DD'),
+		  #{clubJoinResult}, #{clubJoinIntro}, 
+		  #{clubJoinPosition}, #{clubJoinReason, jdbcType=VARCHAR})
+	</insert>
+
+
+</mapper>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	=========================================================
+	관리자 - 구단주 신청 관리 Mapper XML
+	=========================================================
+
+	ClubOwnerRequest : 구단주 신청정보
+	member1          : 회원 기본정보
+	member2          : 회원 추가정보
+	clubOwner        : 승인된 구단주 정보
+-->
+<mapper namespace="com.syfc.mapper.AdminClubOwnerRequestMapper">
+
+	<!-- 검색 조건 -->
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all'">
+				( INSTR(m.userId, #{kwd}) &gt; 0
+					OR INSTR(m.userName, #{kwd}) &gt; 0
+					OR INSTR(cor.cor_content, #{kwd}) &gt; 0 )
+			</when>
+
+			<when test="schType == 'userId'">
+				INSTR(m.userId, #{kwd}) &gt; 0
+			</when>
+
+			<when test="schType == 'userName'">
+				INSTR(m.userName, #{kwd}) &gt; 0
+			</when>
+
+			<when test="schType == 'content'">
+				INSTR(cor.cor_content, #{kwd}) &gt; 0
+			</when>
+		</choose>
+	</sql>
+
+
+	<!--
+		전체 구단주 신청 개수
+		
+		2 : 대기
+		1 : 승인
+		0 : 반려
+		null : 전체
+	-->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM ClubOwnerRequest cor
+		JOIN member1 m ON cor.memberIdx = m.memberIdx
+		<where>
+			<if test="requestStatus != null">
+				cor.cor_status = #{requestStatus}
+			</if>
+
+			<if test="kwd != null and kwd != ''">
+				<if test="requestStatus != null">
+					AND
+				</if>
+				<include refid="where-list"/>
+			</if>
+		</where>
+	</select>
+
+
+	<!--
+		구단주 신청 목록
+		
+		★ DECODE를 이용하여 대기(2) 상태를 먼저 정렬한다.
+		같은 상태에서는 최근 신청부터 출력한다.
+	-->
+	<select id="listRequest" parameterType="map" resultType="com.syfc.dto.AdminClubOwnerRequestDTO">
+		SELECT cor.cor_request_num AS requestNum, cor.cor_content AS content,
+			TO_CHAR(cor.cor_requestdate, 'YYYY-MM-DD') AS requestDate,
+			cor.cor_status AS status, cor.memberIdx AS memberIdx,
+			m.userId AS userId, m.userName AS userName,
+			m.userLevel AS userLevel, TO_CHAR(m2.tel) AS tel
+		FROM ClubOwnerRequest cor
+		JOIN member1 m ON cor.memberIdx = m.memberIdx
+		LEFT OUTER JOIN member2 m2 ON cor.memberIdx = m2.memberIdx
+		<where>
+			<if test="requestStatus != null">
+				cor.cor_status = #{requestStatus}
+			</if>
+
+			<if test="kwd != null and kwd != ''">
+				<if test="requestStatus != null">
+					AND
+				</if>
+				<include refid="where-list"/>
+			</if>
+		</where>
+		ORDER BY DECODE(cor.cor_status, 2, 0, 1), cor.cor_request_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+
+	<!-- 구단주 신청 한 건 조회 -->
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.AdminClubOwnerRequestDTO">
+		SELECT cor.cor_request_num AS requestNum, cor.cor_content AS content,
+			TO_CHAR(cor.cor_requestdate, 'YYYY-MM-DD') AS requestDate,
+			cor.cor_status AS status, cor.memberIdx AS memberIdx,
+			m.userId AS userId, m.userName AS userName,
+			m.userLevel AS userLevel
+		FROM ClubOwnerRequest cor
+		JOIN member1 m ON cor.memberIdx = m.memberIdx
+		WHERE cor.cor_request_num = #{requestNum}
+	</select>
+
+
+	<!--
+		구단주 신청 상태 변경
+		
+		1 : 승인
+		0 : 반려
+		
+		★ 현재 대기(2) 상태인 신청만 처리
+	-->
+	<update id="updateRequestStatus" parameterType="map">
+		UPDATE ClubOwnerRequest SET cor_status = #{status}
+		WHERE cor_request_num = #{requestNum}
+			AND cor_status = 2
+	</update>
+
+
+	<!-- 구단주 승인 후 회원등급을 50으로 변경 -->
+	<update id="updateMemberLevel" parameterType="map">
+		UPDATE member1 SET userLevel = #{userLevel}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+
+	<!-- clubOwner 중복 등록 확인 -->
+	<select id="clubOwnerCount" parameterType="Long" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM clubOwner
+		WHERE memberIdx = #{memberIdx}
+	</select>
+
+
+	<!-- 승인된 회원을 구단주 테이블에 등록 -->
+	<insert id="insertClubOwner" parameterType="Long">
+		INSERT INTO clubOwner(clubOwner_key, memberIdx)
+		VALUES(clubOwner_key_seq.NEXTVAL, #{memberIdx})
+	</insert>
+
+</mapper>

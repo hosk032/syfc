@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.MemberMapper">
+	<select id="loginMember" parameterType="map" resultType="com.syfc.dto.MemberDTO">
+		SELECT m1.memberIdx, m1.userId, m1.userPwd, m1.userName, m1.userLevel, m2.profile_photo
+		FROM member1 m1
+		LEFT OUTER JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE m1.userId = #{userId} AND m1.userPwd = #{userPwd} AND m1.status = 1
+	</select>
+	
+    <insert id="insertMember1" parameterType="com.syfc.dto.MemberDTO">
+		INSERT INTO member1(memberIdx, userId, userPwd, userName, userLevel, status)
+		VALUES (member_seq.NEXTVAL, #{userId}, #{userPwd}, #{userName}, 1, 1) 
+    </insert>
+
+    <insert id="insertMember2" parameterType="com.syfc.dto.MemberDTO">
+		INSERT INTO member2(memberIdx, email, birth, tel, profile_photo, zip, addr1, addr2, gender, pref_position)
+		VALUES (member_seq.CURRVAL, #{email}, TO_DATE(#{birth}, 'YYYY-MM-DD'), #{tel, jdbcType=VARCHAR}, 
+			#{profile_photo, jdbcType=VARCHAR}, #{zip, jdbcType=VARCHAR},
+			#{addr1, jdbcType=VARCHAR}, #{addr2, jdbcType=VARCHAR}, #{gender}, #{pref_position, jdbcType=INTEGER})
+    </insert>
+
+    
+	<select id="findById" parameterType="String" resultType="com.syfc.dto.MemberDTO">
+		SELECT m1.memberIdx, userId, userPwd, userName,
+			userLevel, status, email, TO_CHAR(birth, 'YYYY-MM-DD') birth,
+			profile_photo, tel, zip, addr1, addr2, gender, pref_position
+		FROM member1 m1
+		LEFT OUTER JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE m1.userId = #{userId}
+	</select>
+	
+	<select id="idFind" parameterType="map" resultType="com.syfc.dto.MemberDTO">
+		SELECT m1.memberIdx, userId, userName, userLevel, status, email
+		FROM member1 m1
+		LEFT OUTER JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE m1.userName = #{userName} and email = #{email}
+	</select>
+	    
+	<update id="updateMember1" parameterType="com.syfc.dto.MemberDTO">
+		UPDATE member1 SET userPwd = #{userPwd}, userName = #{userName}
+		WHERE userId = #{userId}
+    </update>
+	
+    <update id="updateMember2" parameterType="com.syfc.dto.MemberDTO">
+		UPDATE member2 SET email = #{email}, birth = TO_DATE(#{birth},'YYYY-MM-DD'), 
+			tel = #{tel, jdbcType=VARCHAR}, 
+			profile_photo = #{profile_photo, jdbcType=VARCHAR}, 
+			zip = #{zip, jdbcType=VARCHAR}, addr1 = #{addr1, jdbcType=VARCHAR}, 
+			addr2 = #{addr2, jdbcType=VARCHAR}, gender = #{gender}, pref_position = #{pref_position}
+		WHERE memberIdx = #{memberIdx}
+    </update>
+    
+    <update id="updateMemberLevel" parameterType="map">
+		UPDATE member1 SET userLevel = #{userLevel}
+		WHERE userId = #{userId}
+    </update>
+    
+	<update id="deleteProfilePhoto" parameterType="map">
+		UPDATE member2 SET profile_photo = ''
+		WHERE memberIdx = #{memberIdx}
+    </update>
+
+    <update id="deleteMember1" parameterType="map">
+		UPDATE member1 SET status = 0
+		WHERE userId = #{userId}
+    </update>
+    
+    <delete id="deleteMember2" parameterType="map">
+		DELETE FROM member2
+		WHERE memberIdx = #{memberIdx}
+    </delete>
+    
+</mapper>

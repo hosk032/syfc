@@ -1,0 +1,549 @@
+@charset "UTF-8";
+/* ==================================================
+   QnA / FAQ
+================================================== */
+
+.qna-container {
+max-width: 1024px;
+	width: 100%;
+	margin: 40px auto 80px;
+	box-sizing: border-box;
+}
+
+.qna-search-form {
+	display: flex;
+	width: 100%;
+	max-width: 525px; /* 최대 크기 제한 */
+}
+
+/* ==================================================
+   제목
+================================================== */
+
+.qna-title-wrap {
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 25px;
+}
+
+
+.qna-title {
+	display: inline-block;
+	margin: 0;
+	padding: 0 0 12px;
+	min-width: 300px;
+
+	font-size: 27px;
+	font-weight: 600;
+	color: #333;
+
+	border-bottom: 3px solid #444;
+}
+
+
+.qna-title-icon {
+	font-size: 24px;
+	margin-right: 7px;
+}
+
+
+/* ==================================================
+   검색
+================================================== */
+
+.qna-search-wrap {
+	display: flex;
+	justify-content: center;
+
+	margin-bottom: 15px;
+}
+
+
+.qna-search-form {
+	display: flex;
+	width: 525px;
+}
+
+
+.qna-search-input {
+	width: 480px;
+	height: 38px;
+
+	padding: 0 13px;
+
+	border: 1px solid #ddd;
+	border-radius: 6px;
+
+	font-size: 14px;
+
+	outline: none;
+}
+
+
+.qna-search-input:focus {
+	border-color: #999;
+}
+
+
+.qna-search-btn {
+	width: 43px;
+	height: 38px;
+
+	margin-left: 4px;
+
+	border: 0;
+	border-radius: 6px;
+
+	background: #f7f7f7;
+
+	cursor: pointer;
+}
+
+
+.qna-search-btn:hover {
+	background: #eee;
+}
+
+
+/* ==================================================
+   카테고리
+================================================== */
+
+.qna-category {
+	display: flex;
+
+	width: 650px;
+	height: 38px;
+
+	margin-bottom: 12px;
+}
+
+
+.qna-category button {
+	flex: 1;
+
+	border: 1px solid #ddd;
+	border-right: 0;
+
+	background: #f5f6f7;
+
+	font-size: 14px;
+	font-weight: 600;
+
+	cursor: pointer;
+}
+
+
+.qna-category button:last-child {
+	border-right: 1px solid #ddd;
+}
+
+
+.qna-category button:hover {
+	background: #e9eaed;
+}
+
+
+.qna-category button.active {
+	background: #3e3e50;
+	color: #fff;
+
+	border-color: #3e3e50;
+}
+
+
+/* ==================================================
+   QnA 목록
+================================================== */
+
+.qna-list {
+	width: 100%;
+
+	border-top: 1px solid #ddd;
+}
+
+
+.qna-item {
+	border-bottom: 1px solid #ddd;
+}
+
+
+/* ==================================================
+   질문
+================================================== */
+
+.qna-question {
+	display: flex;
+	align-items: center;
+
+	min-height: 58px;
+
+	padding: 0 20px;
+
+	background: #fff;
+
+	cursor: pointer;
+
+	transition:
+		background 0.15s ease;
+}
+
+
+.qna-question:hover {
+	background: #fafafa;
+}
+
+
+.qna-question.open {
+	background: #f8f9fa;
+
+	border: 3px solid #b7d4f7;
+
+	padding-left: 17px;
+}
+
+
+/* 질문 제목 */
+
+.qna-subject {
+	flex: 1;
+
+	font-size: 15px;
+	color: #333;
+
+	padding-right: 20px;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+
+/* 화살표 */
+
+.qna-arrow {
+	width: 30px;
+
+	text-align: right;
+
+	font-size: 20px;
+	color: #333;
+
+	transition:
+		transform 0.2s ease;
+}
+
+
+.qna-question.open .qna-arrow {
+	transform: rotate(180deg);
+}
+
+
+/* ==================================================
+   펼쳐지는 영역
+================================================== */
+
+.qna-answer-box {
+	display: none;
+
+	padding: 0 22px 25px;
+
+	background: #fff;
+}
+
+
+.qna-answer-box.open {
+	display: block;
+}
+
+
+/* ==================================================
+   작성자 / 날짜
+================================================== */
+
+.qna-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 14px 18px;
+
+	border-bottom: 1px solid #eee;
+
+	font-size: 13px;
+}
+
+
+.qna-writer {
+	color: #555;
+}
+
+
+.qna-date {
+	color: #777;
+}
+
+
+/* ==================================================
+   문의 내용
+================================================== */
+
+.qna-question-content {
+	padding: 22px 18px;
+
+	border-bottom: 1px solid #eee;
+}
+
+
+.qna-label {
+	margin-bottom: 10px;
+
+	font-size: 14px;
+	font-weight: 600;
+
+	color: #333;
+}
+
+
+.qna-content {
+	font-size: 14px;
+	line-height: 1.8;
+
+	color: #444;
+
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+
+/* ==================================================
+   관리자 답변
+================================================== */
+
+.qna-admin-answer {
+	margin-top: 18px;
+
+	padding: 18px 20px;
+
+	background: #f7f8fa;
+
+	border-radius: 5px;
+}
+
+
+.qna-answer-date {
+	margin-top: 12px;
+
+	font-size: 12px;
+
+	color: #888;
+
+	text-align: right;
+}
+
+
+/* ==================================================
+   답변 대기
+================================================== */
+
+.qna-no-answer {
+	margin-top: 18px;
+
+	padding: 18px;
+
+	background: #fafafa;
+
+	border-radius: 5px;
+
+	font-size: 14px;
+
+	color: #888;
+
+	text-align: center;
+}
+
+
+/* ==================================================
+   데이터 없음
+================================================== */
+
+.qna-empty {
+	padding: 60px 0;
+
+	text-align: center;
+
+	color: #888;
+
+	border-bottom: 1px solid #ddd;
+}
+
+
+/* ==================================================
+   하단
+================================================== */
+
+.qna-bottom {
+	position: relative;
+
+	min-height: 45px;
+
+	margin-top: 15px;
+}
+
+
+.qna-refresh {
+	position: absolute;
+
+	left: 0;
+	top: 0;
+
+	width: 40px;
+	height: 38px;
+
+	border: 1px solid #ddd;
+	border-radius: 5px;
+
+	background: #fff;
+
+	cursor: pointer;
+}
+
+
+.qna-write {
+	position: absolute;
+
+	right: 0;
+	top: 0;
+
+	height: 38px;
+
+	padding: 0 18px;
+
+	border: 1px solid #ddd;
+	border-radius: 5px;
+
+	background: #fff;
+
+	cursor: pointer;
+}
+
+
+.qna-refresh:hover,
+.qna-write:hover {
+	background: #f5f5f5;
+}
+
+
+/* ==================================================
+   반응형
+================================================== */
+
+@media (max-width: 1024px) {
+	.qna-container {
+		width: calc(100% - 30px);
+	}
+}
+
+
+@media (max-width: 700px) {
+
+	.qna-search-form {
+		width: 100%;
+	}
+
+
+	.qna-search-input {
+		width: 100%;
+	}
+
+
+	.qna-category {
+		width: 100%;
+	}
+
+
+	.qna-subject {
+		font-size: 14px;
+	}
+
+}
+
+/* 페이지 전환 시 스크롤바 생성/소멸로 인한 좌우 흔들림 차단 */
+html {
+    overflow-y: scroll;
+}
+
+/* 페이징 영역 높이 및 규격 고정 */
+.board-number {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 50px !important;
+    margin-top: 20px !important;
+}
+
+.board-number a, 
+.board-number span,
+.board-number strong {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    line-height: 1 !important;
+    margin: 0 2px !important;
+    box-sizing: border-box !important;
+}
+
+.board-list-footer {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* ==================================================
+   수정 / 삭제 버튼
+================================================== */
+
+.qna-actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+
+	gap: 6px;
+
+	margin-top: 15px;
+	padding-top: 15px;
+
+	border-top: 1px solid #eee;
+}
+
+
+.qna-action-btn {
+	height: 34px;
+
+	padding: 0 15px;
+
+	border: 1px solid #ddd;
+	border-radius: 4px;
+
+	background: #fff;
+
+	font-size: 13px;
+	color: #555;
+
+	cursor: pointer;
+}
+
+
+.qna-action-btn:hover {
+	background: #f5f5f5;
+}
+
+
+.qna-action-btn.delete {
+	color: #555;
+}
+
+
+.qna-action-btn.delete:hover {
+	background: #f8f8f8;
+}

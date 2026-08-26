@@ -1,0 +1,361 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", sans-serif;
+  list-style: none;
+}
+
+body {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* =========================================
+   공통 레이아웃 (1024px 중앙 정렬)
+========================================= */
+.board-container,
+.club-container,
+.header_bottom,
+#banner-placeholder,
+.match_section,
+.footer {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.container {
+  padding: 0 16px;
+}
+
+/* =========================================
+   1. 상단 헤더
+========================================= */
+.header_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 900;
+  font-style: italic;
+  color: #1a1a1a;
+  letter-spacing: -1px;
+}
+
+.header-icons i {
+  font-size: 18px;
+  margin-left: 16px;
+  cursor: pointer;
+  color: #333;
+  transition: 0.3s;
+}
+
+.header-icons i:hover {
+  color: blue;
+  font-weight: 400;
+}
+
+.header_bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* =========================================
+   2. 네비게이션 & 필터 태그
+========================================= */
+nav.main-nav {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+nav.main-nav a {
+  text-decoration: none;
+  color: #888;
+}
+
+nav.main-nav a.active {
+  color: #1a1a1a;
+}
+
+.tag-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin-top: 15px;
+}
+
+.tag-btn {
+  background-color: #f5f7f9;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-btn:hover {
+  transition: 0.2s ease-in;
+  background: rgba(0, 0, 0, 0.3);
+  color: black;
+}
+
+/* =========================================
+   3. 게시판 / 선수 목록 컨테이너
+========================================= */
+.board-container,
+.club-container {
+  max-width: 1024px;
+  margin: 30px auto;
+}
+
+.board-top,
+.club-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.board-top h3,
+.club-top h3 {
+  font-weight: 700;
+  margin: 0;
+}
+
+.board-category {
+  display: flex;
+  gap: 30px;
+}
+
+/* 사이드 메뉴 (존재할 경우) */
+.community-side-menu {
+  width: 160px;
+  border: 1px solid #333;
+}
+
+.side-menu-title {
+  background-color: #b8abd9;
+  text-align: center;
+  font-weight: bold;
+  padding: 6px 0;
+}
+
+.community-side-menu a {
+  display: block;
+  text-align: center;
+  padding: 6px 0;
+  border-top: 1px solid #333;
+  color: #000;
+  text-decoration: none;
+}
+
+.board-list-area,
+.club-content-area {
+  flex: 1;
+  width: 100%;
+}
+
+.board-list a,
+.board-list a:hover,
+.board-list a:focus {
+  text-decoration: none;
+}
+
+/* =========================================
+   4. 선수 목록 테이블 스타일
+========================================= */
+.player-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.player-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #333333;
+  border-bottom: 1px solid #dddddd;
+  background-color: #ffffff;
+}
+
+/* 테이블 헤더 */
+.player-table thead th {
+  background-color: #f8f9fa;
+  color: #333333;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding: 14px 10px;
+  border-bottom: 1px solid #dddddd;
+  white-space: nowrap;
+}
+
+/* 테이블 바디 행 */
+.player-table tbody tr {
+  border-bottom: 1px solid #eeeeee;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.player-table tbody tr:hover {
+  background-color: #f8fbff;
+}
+
+.player-table tbody td {
+  padding: 12px 10px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #333333;
+  text-align: center;
+}
+
+/* 선수명 (좌측 정렬) */
+.player-table tbody td.col-name {
+  text-align: center;
+  font-weight: bold;
+}
+
+.col-name strong {
+  color: #1a1a1a;
+}
+
+/* 구단명 (좌측 정렬) */
+.player-table tbody td.col-club {
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* 포지션 뱃지 */
+.position-badge {
+  display: inline-flex;
+  min-width: 48px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 14px;
+  background-color: #f5f7f9;
+  border: 1px solid #dce3ea;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 등번호 뱃지 */
+.number-badge {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #e7f1ff;
+  border: 1px solid #cfe2ff;
+  color: #0d6efd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 키, 몸무게, 생년월일 */
+.col-height,
+.col-weight,
+.col-birth {
+  color: #666666;
+  font-size: 13px;
+}
+
+/* 데이터 없음 */
+.player-empty {
+  padding: 60px 20px !important;
+  text-align: center;
+  color: #888888;
+  font-size: 14px;
+}
+
+/* =========================================
+   5. 하단 검색 및 페이징
+========================================= */
+.board-list-footer {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.club-list-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.club-list-footer a {
+  display: inline-block;
+  margin: 0 10px;
+  text-decoration: none;
+  color: #555;
+}
+
+.club-list-footer a:hover {
+  color: #6f42c1;
+}
+
+/* 페이지 전환 시 스크롤바 생성/소멸로 인한 좌우 흔들림 차단 */
+html {
+    overflow-y: scroll;
+}
+
+/* 페이징 영역 높이 및 규격 고정 */
+.board-number {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 50px !important;
+    margin-top: 20px !important;
+    width: 100% !important;
+    text-align: center !important; /* 내부 텍스트 및 인라인 요소 중앙 정렬 */
+}
+
+/* paging 내부의 감싸는 div/ul 등이 있을 경우 대응 */
+.board-number > * {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+}
+
+/* 실제 페이지 번호 버튼들 스타일 */
+.board-number a, 
+.board-number span,
+.board-number strong {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    line-height: 1 !important;
+    margin: 0 2px !important;
+    box-sizing: border-box !important;
+}

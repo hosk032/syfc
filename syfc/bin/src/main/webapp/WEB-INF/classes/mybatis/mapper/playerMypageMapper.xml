@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.PlayerProfileMapper">
+	<!-- 프로필 조회 컬럼: memberIdx, email, birth, profile_photo,
+			tel, zip, addr1, addr2, gender, pref_position  -->
+	<select id="findByMemberIdx" parameterType="long" resultType="com.syfc.dto.PlayerMypageDTO">
+		SELECT memberIdx, email, TO_CHAR(birth, 'YYYY-MM-DD') AS birth, profile_photo, tel,
+			zip, addr1, addr2, gender, pref_position, uniform_no, height, weight
+		FROM member2
+		WHERE memberIdx = #{memberIdx}
+	</select>
+	
+	<!-- 프로필 수정 -->
+	<update id="updateProfile" parameterType="com.syfc.dto.PlayerMypageDTO">
+		UPDATE member2 SET email = #{email}, birth = TO_DATE(#{birth}, 'YYYY-MM-DD'), 
+			profile_photo = #{profile_photo, jdbcType=VARCHAR}, tel = #{tel}, zip = #{zip}, addr1 = #{addr1}, 
+			addr2 = #{addr2}, gender = #{gender}, pref_position = #{pref_position}, 
+			uniform_no = #{uniform_no, jdbcType=INTEGER},
+        		height = #{height, jdbcType=INTEGER}, weight = #{weight, jdbcType=INTEGER}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+	
+	<!-- 선수 정보조회: 선택사항 (키, 몸무게, 등번호) -->
+	<!-- if 정보가 있으면(null 포함) 입력필드 보여주기 + 받은값 넣기 -->
+	<!-- 정보가 없으면 입력필드 보여주지 않기 -->
+	<select id="selectProfile" parameterType="long" resultType="com.syfc.dto.PlayerMypageDTO">
+		SELECT p.uniform_no, p.height, p.weight, p.clubJoin_num
+		FROM clubJoin cj
+		JOIN player p ON p.clubJoin_num = cj.clubJoin_num
+		WHERE cj.memberIdx = #{memberIdx} AND p.leave_date IS null
+	</select>
+	
+	<!-- 내 프로필 선택사항 업데이트 -->
+	<update id="updateSelectProfile" parameterType="com.syfc.dto.PlayerMypageDTO">
+		UPDATE player SET uniform_no = #{uniform_no}, height = #{height}, weight = #{weight}
+		WHERE clubJoin_num = #{clubJoin_num}
+	</update>
+
+	<!-- 이름 수정 -->
+	<update id="updateName" parameterType="com.syfc.dto.PlayerMypageDTO">
+		UPDATE member1 SET userName = #{name}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+</mapper>

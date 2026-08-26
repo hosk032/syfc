@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.AdminClubMapper">
+	
+	<!-- =====================================================
+	     구단 검색 조건
+	     ===================================================== -->
+	<sql id="where-list">
+		<choose>
+	 		<when test="schType == 'all'">
+	 			(INSTR(c.club_name, #{kwd}) &gt; 0
+	 				OR INSTR(c.club_region, #{kwd}) &gt; 0
+	 				OR INSTR(m.userId, #{kwd}) &gt; 0
+	 				OR INSTR(m.userName, #{kwd}) &gt; 0)
+	 		</when>
+	 		<when test="schType == 'clubName'">
+	 			INSTR(c.club_name, #{kwd}) &gt; 0
+	 		</when>
+	 		<when test="schType == 'clubRegion'">
+	 			INSTR(c.club_region, #{kwd}) &gt; 0
+	 		</when>
+	 		<when test="schType == 'userName'">
+	 			INSTR(m.userName, #{kwd}) &gt; 0
+	 		</when>
+	 	</choose>
+	</sql>    
+	
+	<!-- =====================================================
+	     구단 전체 개수
+	     ===================================================== -->  
+	<select id="dataCount" parameterType="map" resultType="Integer">
+	 	SELECT COUNT(*)
+	 	FROM Club c
+	 	JOIN clubOwner co ON c.clubOwner_key = co.clubOwner_key
+	 	JOIN member1 m ON co.memberIdx = m.memberIdx
+	 	
+	 	<where>
+	 		<!-- 구단 상태 
+	 			 1 : 운영
+	 		 	 0 : 정지 -->
+	 		<if test="clubStatus != null">
+	 			c.club_status = #{clubStatus}
+	 		</if>
+	 		
+	 		<!-- 검색어 -->
+	 		<if test="kwd != null and kwd != ''">
+	 			<if test="clubStatus != null">
+	 				AND
+	 			</if>
+	 			<include refid="where-list"/>
+	 		</if>
+	 	</where>
+	</select> 
+	
+	<!-- =====================================================
+	     구단 목록
+	     ===================================================== -->
+	<select id="listClub" parameterType="map" resultType="com.syfc.dto.AdminClubDTO">
+
+		SELECT c.clubOwner_key AS clubOwnerKey,
+			c.club_name AS clubName,
+			c.club_logo AS clubLogo,
+			c.club_region AS clubRegion,
+			c.club_status AS clubStatus,
+			TO_CHAR(c.club_created, 'YYYY-MM-DD') AS clubCreated,
+			c.club_content AS clubContent,
+			co.memberIdx AS memberIdx,
+			m.userId AS userId,
+			m.userName AS userName
+		FROM Club c
+		JOIN clubOwner co ON c.clubOwner_key = co.clubOwner_key
+		JOIN member1 m ON co.memberIdx = m.memberIdx
+
+		<where>
+			<if test="clubStatus != null">
+				c.club_status = #{clubStatus}
+			</if>
+	
+			<if test="kwd != null and kwd != ''">
+				<if test="clubStatus != null">
+					AND
+				</if>
+	
+				<include refid="where-list"/>
+			</if>
+		</where>
+	
+		ORDER BY c.clubOwner_key DESC
+		OFFSET #{offset} ROWS
+		FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<!-- =====================================================
+	     구단 한 건 조회
+	     ===================================================== -->
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.AdminClubDTO">
+		SELECT c.clubOwner_key AS clubOwnerKey,
+			c.club_name AS clubName,
+			c.club_logo AS clubLogo,
+			c.club_region AS clubRegion,
+			c.club_status AS clubStatus,
+			TO_CHAR(c.club_created, 'YYYY-MM-DD') AS clubCreated,
+			c.club_content AS clubContent,
+			co.memberIdx AS memberIdx,
+			m.userId AS userId,
+			m.userName AS userName
+		FROM Club c
+		JOIN clubOwner co ON c.clubOwner_key = co.clubOwner_key
+		JOIN member1 m ON co.memberIdx = m.memberIdx
+		WHERE c.clubOwner_key = #{clubOwnerKey}
+	</select>
+	
+	<!-- =====================================================
+	     구단 상태 변경
+
+	     1 : 운영
+	     0 : 정지
+	     ===================================================== -->
+	<update id="updateClubStatus" parameterType="map">
+		UPDATE Club
+		SET club_status = #{clubStatus}
+		WHERE clubOwner_key = #{clubOwnerKey}
+	</update> 
+	     
+</mapper>

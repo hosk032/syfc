@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.MyClubInfoMapper">
+	<!-- 내 구단팀 조회 -->
+	<select id="MyClubInfo" parameterType="long" resultType="com.syfc.dto.ClubInfoDTO">
+		SELECT c.clubOwner_key, c.club_name, c.club_logo,
+		    c.club_region, c.club_status, 
+		    TO_CHAR(c.club_created, 'YYYY-MM-DD')AS club_created,
+		    c.club_content
+		FROM club c
+		JOIN clubJoin cj ON cj.clubOwner_key = c.clubOwner_key
+		JOIN player p ON p.clubJoin_num = cj.clubJoin_num
+		WHERE cj.memberIdx = #{memberIdx} AND cj.clubJoin_result = 1 
+		    AND c.club_status = 1
+		    AND p.leave_date IS NULL
+	</select>
+
+
+</mapper>

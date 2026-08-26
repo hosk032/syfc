@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.AdminBoardMapper">
+
+	<!-- =========================================================
+		 자유게시판 검색 조건
+		 ========================================================= -->
+	<sql id="where-list">
+		<if test="schType == 'all' ">
+			( INSTR(b.b_Subject, #{kwd}) &gt; 0
+				OR DBMS_LOB.INSTR(b.b_Content, #{kwd}) &gt; 0 )
+		</if>
+
+		<if test="schType == 'subject' ">
+			INSTR(b.b_Subject, #{kwd}) &gt; 0
+		</if>
+
+		<if test="schType == 'content' ">
+			DBMS_LOB.INSTR(b.b_Content, #{kwd}) &gt; 0
+		</if>
+
+		<if test="schType == 'userName' ">
+			INSTR(m.userName, #{kwd}) &gt; 0
+		</if>
+
+		<if test="schType == 'regDate' ">
+			( TO_CHAR(b.b_Reg_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(b.b_Reg_date, 'YYYYMMDD') = #{kwd} )
+		</if>
+	</sql>
+
+
+	<!-- 자유게시판 전체 글 개수 -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			b.b_Type = 0
+
+			<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 자유게시판 목록 -->
+	<select id="listBoard" parameterType="map" resultType="com.syfc.dto.AdminBoardDTO">
+		SELECT b.bNum AS num, b.memberIdx AS memberIdx,
+			m.userName AS userName, b.b_Subject AS subject,
+			b.b_Content AS content, b.b_HitCount AS hitCount,
+			TO_CHAR(b.b_Reg_date, 'YYYY-MM-DD') AS regDate,
+			b.b_Block AS block
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			b.b_Type = 0
+
+			<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+		ORDER BY b.b_Reg_date DESC, b.bNum DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+
+	<!--
+		블라인드 / 블라인드 해제
+		b_Block = 1 : 블라인드
+		b_Block = 0 : 정상
+	-->
+	<update id="updateBlock" parameterType="map">
+		UPDATE board SET b_Block = #{block}
+		WHERE bNum = #{num}
+			AND b_Type = 0
+	</update>
+
+
+	<!-- 자유게시판 글 실제 삭제 -->
+	<delete id="deleteBoard" parameterType="map">
+		DELETE FROM board
+		WHERE bNum = #{num}
+			AND b_Type = 0
+	</delete>
+
+</mapper>

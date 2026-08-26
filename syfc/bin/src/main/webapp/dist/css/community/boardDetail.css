@@ -1,0 +1,479 @@
+@charset "UTF-8";
+
+/* =========================================================
+   게시글 상세 전체
+========================================================= */
+
+.board-detail-area {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 게시판 제목 + 목록 버튼 */
+.detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.detail-top h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+}
+
+.list-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 18px;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background-color: #fff;
+    color: #333;
+
+    text-decoration: none;
+    font-size: 14px;
+
+    transition: all 0.2s ease;
+}
+
+.list-btn:hover {
+    background-color: #f5f7f9;
+    border-color: #ccc;
+}
+
+
+/* =========================================================
+   게시글 전체 박스
+========================================================= */
+
+.detail-box {
+    margin-top: 0;
+    border-top: 2px solid #333;
+}
+
+
+/* =========================================================
+   게시글 제목
+========================================================= */
+
+.detail-title {
+    padding: 22px 0 18px;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-title h4 {
+    margin: 0;
+
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.5;
+
+    color: #222;
+}
+
+
+/* =========================================================
+   작성자 / 날짜 / 조회수
+   제목 바로 아래 오른쪽 정렬
+========================================================= */
+
+.detail-info {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 0;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #eee;
+
+    color: #777;
+    font-size: 13px;
+}
+
+.detail-info span {
+    display: inline-flex;
+    align-items: center;
+}
+
+.detail-info span + span::before {
+    content: "|";
+    margin: 0 12px;
+
+    color: #d5d5d5;
+}
+
+
+/* =========================================================
+   게시글 본문
+========================================================= */
+
+.detail-content {
+    min-height: 260px;
+
+    padding: 15px 10px;
+
+    font-size: 16px;
+    line-height: 1.8;
+
+    color: #333;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   좋아요
+========================================================= */
+
+.detail-like {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px 0;
+
+    border-bottom: 1px solid #eee;
+}
+
+.btnSendBoardLike {
+    min-width: 54px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    border-radius: 6px;
+}
+
+
+/* =========================================================
+   이전글 / 다음글
+========================================================= */
+
+.detail-navigation {
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-navigation-row {
+    display: flex;
+    align-items: center;
+
+    min-height: 46px;
+
+    border-bottom: 1px solid #eee;
+}
+
+.detail-navigation-row:last-child {
+    border-bottom: none;
+}
+
+.navigation-label {
+    width: 70px;
+
+    flex-shrink: 0;
+
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.navigation-link {
+    overflow: hidden;
+
+    color: #333;
+    text-decoration: none;
+
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.navigation-link:hover {
+    color: #6f42c1;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   게시글 수정 / 삭제 / 리스트
+========================================================= */
+
+.detail-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 0;
+}
+
+.detail-actions-left,
+.detail-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-actions .btn {
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   댓글 영역과 게시글 사이 간격
+========================================================= */
+
+#replyArea {
+    margin-top: 35px;
+    padding-top: 25px;
+
+    border-top: 2px solid #333;
+}
+
+
+/* =========================================================
+   반응형
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .detail-top h3 {
+        font-size: 24px;
+    }
+
+    .detail-title h4 {
+        font-size: 19px;
+    }
+
+    .detail-info {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .detail-content {
+        min-height: 200px;
+        padding: 25px 5px;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .detail-actions-left,
+    .detail-actions-right {
+        justify-content: flex-end;
+    }
+}
+
+ /* =====================================================
+    게시글 본문 아래 영역
+ ===================================================== */
+
+
+/* 좋아요 영역 */
+.board-detail-area .detail-like {
+    width: 100% !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    box-sizing: border-box;
+
+    padding: 25px 0 !important;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+/* 좋아요 버튼 */
+.board-detail-area .detail-like .btnSendBoardLike {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 54px;
+    height: 38px;
+
+    padding: 0 !important;
+
+    margin: 0 !important;
+
+    border-radius: 6px;
+}
+
+
+/* =====================================================
+   이전글 / 다음글
+ ===================================================== */
+
+.board-detail-area .detail-navigation {
+    display: block !important;
+
+    width: 100%;
+
+    border-bottom: 1px solid #ddd;
+}
+
+
+.board-detail-area .detail-navigation-row {
+    display: flex !important;
+
+    align-items: center !important;
+
+    width: 100%;
+    min-height: 48px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.board-detail-area .detail-navigation-row:last-child {
+    border-bottom: none;
+}
+
+
+/* 이전글 / 다음글 글자 */
+.board-detail-area .navigation-label {
+    display: block;
+
+    width: 70px;
+    min-width: 70px;
+
+    color: #666;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* 게시글 제목 링크 */
+.board-detail-area .navigation-link {
+    display: block;
+
+    overflow: hidden;
+
+    flex: 1;
+
+    color: #333;
+
+    font-size: 14px;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.board-detail-area .navigation-link:hover {
+    color: #6f42c1;
+
+    text-decoration: underline;
+}
+
+
+/* 이전글이 없을 때 */
+.board-detail-area .navigation-empty {
+    color: #999;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   수정 / 삭제 / 리스트
+ ===================================================== */
+
+.board-detail-area .detail-actions {
+    display: flex !important;
+
+    justify-content: space-between !important;
+    align-items: center !important;
+
+    width: 100%;
+
+    min-height: 70px;
+
+    box-sizing: border-box;
+
+    padding: 18px 0 !important;
+}
+
+
+.board-detail-area .detail-actions-left {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 6px;
+}
+
+
+.board-detail-area .detail-actions-right {
+    display: flex !important;
+
+    align-items: center !important;
+}
+
+
+/* 버튼 */
+.board-detail-area .detail-actions .btn {
+    margin: 0 !important;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   댓글 영역
+ ===================================================== */
+
+.board-detail-area #replyArea {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 35px !important;
+    padding-top: 30px !important;
+
+    border-top: 2px solid #333 !important;
+}
+
+
+/* =====================================================
+   본문
+ ===================================================== */
+
+.board-detail-area .detail-content {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 100px;
+    padding: 10px 0 !important;
+    
+    color: #333;
+    font-size: 16px;
+    line-height: 1.8;
+    
+    white-space: pre-line;
+    word-break: break-word;
+}

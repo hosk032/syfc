@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.AdminStadiumMapper">
+
+	<!-- =====================================================
+	     경기장 검색 조건
+	     ===================================================== -->
+	<sql id="where-list">
+		<choose>
+
+			<!-- 지역 검색 -->
+			<when test="schType == 'region'">
+				s.region = #{kwd}
+			</when>
+
+			<!-- 경기장 이름 검색 -->
+			<when test="schType == 'stadiumName'">
+				INSTR(s.stadium_name, #{kwd}) &gt; 0
+			</when>
+
+			<!-- 전체 검색 -->
+			<otherwise>
+				(INSTR(s.stadium_name, #{kwd}) &gt; 0
+					OR INSTR(s.region, #{kwd}) &gt; 0)
+			</otherwise>
+
+		</choose>
+	</sql>
+
+
+	<!-- =====================================================
+	     경기장 전체 개수
+	     ===================================================== -->
+	<select id="dataCount"
+		parameterType="map"
+		resultType="Integer">
+
+		SELECT COUNT(*)
+		FROM Stadium s
+
+		<where>
+			<if test="kwd != null and kwd != ''">
+				<include refid="where-list"/>
+			</if>
+		</where>
+
+	</select>
+
+
+	<!-- =====================================================
+	     경기장 목록
+	     ===================================================== -->
+	<select id="listStadium"
+		parameterType="map"
+		resultType="com.syfc.dto.AdminStadiumDTO">
+
+		SELECT s.stadium_id AS stadiumId,
+			s.stadium_name AS stadiumName,
+			s.region AS region,
+			s.capacity AS capacity,
+			s.status AS status,
+			s.latitude AS latitude,
+			s.longitude AS longitude,
+			s.addr1 AS addr1,
+			s.addr2 AS addr2,
+			s.zip AS zip,
+			s.stadium_cost AS stadiumCost,
+			s.stadium_img AS stadiumImg
+		FROM Stadium s
+
+		<where>
+			<if test="kwd != null and kwd != ''">
+				<include refid="where-list"/>
+			</if>
+		</where>
+
+		ORDER BY s.stadium_id DESC
+		OFFSET #{offset} ROWS
+		FETCH FIRST #{size} ROWS ONLY
+
+	</select>
+
+
+	<!-- =====================================================
+	     경기장 한 건 조회
+	     경기장 상세 페이지에서 사용
+	     ===================================================== -->
+	<select id="findById"
+		parameterType="Long"
+		resultType="com.syfc.dto.AdminStadiumDTO">
+
+		SELECT s.stadium_id AS stadiumId,
+			s.stadium_name AS stadiumName,
+			s.region AS region,
+			s.capacity AS capacity,
+			s.status AS status,
+			s.latitude AS latitude,
+			s.longitude AS longitude,
+			s.addr1 AS addr1,
+			s.addr2 AS addr2,
+			s.zip AS zip,
+			s.stadium_cost AS stadiumCost,
+			s.stadium_img AS stadiumImg
+		FROM Stadium s
+		WHERE s.stadium_id = #{stadiumId}
+
+	</select>
+
+
+	<!-- =====================================================
+	     경기장 등록
+
+	     stadium_id
+	     → STADIUM_SEQ.NEXTVAL 사용
+
+	     status
+	     → 신규 등록 시 기본값 1(예약 가능)
+	     ===================================================== -->
+	<insert id="insertStadium"
+		parameterType="com.syfc.dto.AdminStadiumDTO">
+
+		INSERT INTO Stadium (
+			stadium_id,
+			stadium_name,
+			region,
+			capacity,
+			status,
+			latitude,
+			longitude,
+			addr1,
+			addr2,
+			zip,
+			stadium_cost,
+			stadium_img
+		)
+		VALUES (
+			STADIUM_SEQ.NEXTVAL,
+			#{stadiumName},
+			#{region},
+			#{capacity},
+			1,
+			#{latitude},
+			#{longitude},
+			#{addr1},
+			#{addr2},
+			#{zip},
+			#{stadiumCost},
+			#{stadiumImg}
+		)
+
+	</insert>
+
+
+	<!-- =====================================================
+	     경기장 수정
+
+	     status
+	     1 : 예약 가능
+	     0 : 예약 불가
+
+	     경기장은 DELETE 하지 않고
+	     status를 이용해 사용 가능 여부를 관리한다.
+	     ===================================================== -->
+	<update id="updateStadium"
+		parameterType="com.syfc.dto.AdminStadiumDTO">
+
+		UPDATE Stadium
+		SET stadium_name = #{stadiumName},
+			region = #{region},
+			capacity = #{capacity},
+			status = #{status},
+			latitude = #{latitude},
+			longitude = #{longitude},
+			addr1 = #{addr1},
+			addr2 = #{addr2},
+			zip = #{zip},
+			stadium_cost = #{stadiumCost},
+			stadium_img = NVL(#{stadiumImg}, stadium_img)
+		WHERE stadium_id = #{stadiumId}
+
+	</update>
+
+</mapper>

@@ -56,46 +56,48 @@
 
 									<!-- 구단 대진 (홈팀 [점수 : 점수] 원정팀) -->
 									<td class="col-teams">
-										<div class="match-teams-wrap">
-											<!-- 홈팀 -->
-											<div class="team-info home">
-												<c:choose>
-												    <c:when test="${not empty dto.club_logo}">
-												        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
-												             class="team-logo"
-												             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
-												             alt="${dto.club_name}">
-												    </c:when>
-												    <c:otherwise>
-												        <span class="club-default-logo">⚽</span>
-												    </c:otherwise>
-												</c:choose>
-												<span class="team-name"><c:out value="${dto.homeClubName}"/></span>
-											</div>
-											
-											<!-- 스코어 -->
-											<div class="score-box">
-												<span class="score-num"><c:out value="${dto.homeScore != null ? dto.homeScore : 0}"/></span>
-												<span class="colon">:</span>
-												<span class="score-num"><c:out value="${dto.awayScore != null ? dto.awayScore : 0}"/></span>
-											</div>
-											
-											<!-- 원정팀 -->
-											<div class="team-info away">
-												<span class="team-name"><c:out value="${dto.awayClubName}"/></span>
-												<c:choose>
-												    <c:when test="${not empty dto.club_logo}">
-												        <img src="${pageContext.request.contextPath}/uploads/club/${dto.club_logo}" 
-												             class="team-logo"
-												             onerror="this.outerHTML='<span class=\'club-default-logo\'>⚽</span>';" 
-												             alt="${dto.club_name}">
-												    </c:when>
-												    <c:otherwise>
-												        <span class="club-default-logo">⚽</span>
-												    </c:otherwise>
-												</c:choose>
-											</div>
-										</div>
+									    <div class="match-teams-wrap">
+									        <!-- 홈팀 -->
+									        <div class="team-info home">
+									            <c:choose>
+									                <c:when test="${not empty dto.homeClubLogo}">
+									                    <img src="${pageContext.request.contextPath}/uploads/club/${dto.homeClubLogo}" 
+									                         class="team-logo"
+									                         alt="${dto.homeClubName}"
+									                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+									                    <span class="club-default-logo" style="display:none;">⚽</span>
+									                </c:when>
+									                <c:otherwise>
+									                    <span class="club-default-logo">⚽</span>
+									                </c:otherwise>
+									            </c:choose>
+									            <span class="team-name"><c:out value="${dto.homeClubName}"/></span>
+									        </div>
+									        
+									        <!-- 스코어 -->
+									        <div class="score-box">
+									            <span class="score-num"><c:out value="${dto.homeScore != null ? dto.homeScore : 0}"/></span>
+									            <span class="colon">:</span>
+									            <span class="score-num"><c:out value="${dto.awayScore != null ? dto.awayScore : 0}"/></span>
+									        </div>
+									        
+									        <!-- 원정팀 -->
+									        <div class="team-info away">
+									            <span class="team-name"><c:out value="${dto.awayClubName}"/></span>
+									            <c:choose>
+									                <c:when test="${not empty dto.awayClubLogo}">
+									                    <img src="${pageContext.request.contextPath}/uploads/club/${dto.awayClubLogo}" 
+									                         class="team-logo"
+									                         alt="${dto.awayClubName}"
+									                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+									                    <span class="club-default-logo" style="display:none;">⚽</span>
+									                </c:when>
+									                <c:otherwise>
+									                    <span class="club-default-logo">⚽</span>
+									                </c:otherwise>
+									            </c:choose>
+									        </div>
+									    </div>
 									</td>
 									
 									<!-- 원정팀 승무패 -->

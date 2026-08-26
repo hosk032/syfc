@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.AdminStadiumIssueMapper">
+	
+	<!-- 경기장 선택 목록 -->
+	<select id="listStadiumOption" resultType="com.syfc.dto.AdminStadiumIssueDTO">
+		SELECT s.stadium_id AS stadiumId,
+			s.stadium_name AS stadiumName,
+			s.region AS region
+		FROM Stadium s
+		ORDER BY s.stadium_name
+	</select>
+	
+	<!-- 경기장 이슈 등록 -->
+	<insert id="insertIssue" parameterType="com.syfc.dto.AdminStadiumIssueDTO">
+		
+		<!-- INSERT 전에 시퀀스로 이슈 번호 생성 -->
+		<selectKey keyProperty="issueId" resultType="Long" order="BEFORE">
+			SELECT ISSUE_SEQ.NEXTVAL
+			FROM dual
+		</selectKey>
+		
+		INSERT INTO Stadium_Issue (
+			issue_id, start_date, end_date, issue_type, reason, stadium_id
+		) VALUES (
+			#{issueId},
+			TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+			TO_DATE(#{endDate}, 'YYYY-MM-DD'),
+			#{issueType},
+			#{reason},
+			#{stadiumId}
+		)		
+	</insert>
+	
+	<!-- 등록된 경기장 이슈 목록 -->
+	<select id="listIssue" resultType="com.syfc.dto.AdminStadiumIssueDTO">
+		SELECT si.issue_id AS issueId,
+			TO_CHAR(si.start_date, 'YYYY-MM-DD') AS startDate,
+			TO_CHAR(si.end_date, 'YYYY-MM-DD') AS endDate,
+			si.issue_type AS issueType, si.reason AS reason,
+			si.stadium_id AS stadiumId,
+			s.stadium_name AS stadiumName, s.region AS region
+		FROM Stadium_Issue si
+		JOIN Stadium s ON s.stadium_id = si.stadium_id
+		ORDER BY si.issue_id DESC
+	</select>
+	
+	<!-- 등록한 경기장 이슈 한 건 조회 -->
+	<select id="findIssue" parameterType="Long" resultType="com.syfc.dto.AdminStadiumIssueDTO">
+		SELECT si.issue_id AS issueId,
+			TO_CHAR(si.start_date, 'YYYY-MM-DD') AS startDate,
+			TO_CHAR(si.end_date, 'YYYY-MM-DD') AS endDate,
+			si.issue_type AS issueType, si.reason AS reason, si.stadium_id AS stadiumId,
+			s.stadium_name AS stadiumName, s.region AS region
+		FROM Stadium_Issue si
+		JOIN Stadium s ON s.stadium_id = si.stadium_id
+		WHERE si.issue_id = #{issueId}
+	</select>
+	
+	<!-- 경기장 이슈 수정 -->
+	<update id="updateIssue" parameterType="com.syfc.dto.AdminStadiumIssueDTO">
+		UPDATE Stadium_Issue
+		SET start_date = TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+			end_date = TO_DATE(#{endDate}, 'YYYY-MM-DD'),
+			issue_type = #{issueType},
+			reason = #{reason}
+		WHERE issue_id = #{issueId}
+	</update>
+	
+	<!-- 이슈 기간에 영향받는 경기 목록 -->
+	<select id="listAffectedMatch" parameterType="Long" resultType="com.syfc.dto.AdminStadiumIssueDTO">
+		SELECT ma.apply_id AS applyId,
+			TO_CHAR(ma.apply_date, 'YYYY-MM-DD') AS applyDate,
+			ma.status AS applyStatus,
+			s.stadium_name AS stadiumName,
+			home.club_name AS homeClubName,
+			away.club_name AS awayClubName
+		FROM Stadium_Issue si
+		JOIN Stadium s ON s.stadium_id = si.stadium_id
+		JOIN Match_Apply ma ON ma.stadium_id = si.stadium_id
+		LEFT JOIN Club home ON home.clubOwner_key = ma.clubOwner_key
+		LEFT JOIN Club away ON away.clubOwner_key = ma.clubOwner_key2
+		WHERE si.issue_id = #{issueId}
+		  AND TRUNC(ma.apply_date) BETWEEN TRUNC(si.start_date) AND TRUNC(si.end_date)
+		ORDER BY ma.apply_date, ma.apply_id
+	</select>
+	
+	<!-- 경기 반려 : Match_Apply.status 4 = 반려 -->
+	<update id="rejectMatch" parameterType="Long">
+		UPDATE Match_Apply
+		SET status = 4
+		WHERE apply_id = #{applyId}
+	</update>
+	
+</mapper>

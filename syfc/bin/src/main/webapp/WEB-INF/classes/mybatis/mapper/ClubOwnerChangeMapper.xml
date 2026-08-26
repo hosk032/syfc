@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.ClubOwnerChangeMapper">
+
+	<!-- 정식 등록된 소속 선수(Player) 목록만 조회 (본인 제외) -->
+	<select id="listTransferCandidates" parameterType="map" resultType="com.syfc.dto.ClubOwnerChangeDTO">
+		SELECT 
+			cj.clubjoin_num,
+			m1.memberIdx AS targetMemberIdx,
+			m1.userName,
+			m2.tel,
+			TO_CHAR(p.join_date, 'YYYY-MM-DD') AS join_date,
+			m2.pref_position,
+			CASE
+				WHEN m2.pref_position = 1 THEN 'GK'
+				WHEN m2.pref_position = 2 THEN 'DF'
+				WHEN m2.pref_position = 3 THEN 'MF'
+				WHEN m2.pref_position = 4 THEN 'FW'
+				ELSE 'FW'
+			END AS positionName
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num
+		JOIN member1 m1 ON cj.memberIdx = m1.memberIdx
+		LEFT JOIN member2 m2 ON m1.memberIdx = m2.memberIdx
+		WHERE p.clubOwner_key = #{clubOwner_key}
+		  AND p.status = '1'                <!-- ★ 실제 활동 중인 소속 선수만 -->
+		  AND m1.memberIdx != #{memberIdx}  <!-- 본인 제외 -->
+		ORDER BY p.join_date ASC
+	</select>
+
+	<!-- 2. 비밀번호 확인 -->
+	<select id="getOwnerPassword" parameterType="Long" resultType="String">
+		SELECT userPwd FROM member1 WHERE memberIdx = #{memberIdx}
+	</select>
+
+	<!-- 3. 구단주 테이블 주인 변경 -->
+	<update id="updateClubOwner" parameterType="com.syfc.dto.ClubOwnerChangeDTO">
+		UPDATE clubOwner SET memberIdx = #{targetMemberIdx} WHERE clubOwner_key = #{clubOwner_key}
+	</update>
+
+	<!-- 4-1. 이전 구단주 권한 하향 -->
+	<update id="updateOwnerToMember" parameterType="com.syfc.dto.ClubOwnerChangeDTO">
+		UPDATE member1 SET userLevel = 1 WHERE memberIdx = #{memberIdx}
+	</update>
+
+	<!-- 4-2. 신규 구단주 권한 상향 -->
+	<update id="updatePlayerToOwner" parameterType="com.syfc.dto.ClubOwnerChangeDTO">
+		UPDATE member1 SET userLevel = 50 WHERE memberIdx = #{targetMemberIdx}
+	</update>
+
+</mapper>

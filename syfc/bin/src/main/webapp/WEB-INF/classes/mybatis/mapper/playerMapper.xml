@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.PlayerMapper">
+	<!-- 내 선수 프로필 조회 컬럼: memberIdx, clubJoinNum, position, uniformNo, 
+		height, weight, joinDate, status 선수상태, clubOwnerKey, reason, leaveDate, 
+		clubName 구단명 -->
+	<select id="findPlayer" parameterType="long" resultType="com.syfc.dto.PlayerProfileDTO">
+		WITH my_club AS (
+		    SELECT DISTINCT my_p.clubOwner_Key
+		    FROM clubjoin my_cj
+		    JOIN player my_p ON my_p.clubJoin_Num = my_cj.clubJoin_Num
+		    WHERE my_cj.memberIdx = #{memberIdx}
+		)
+		SELECT cj.memberIdx, p.clubJoin_Num AS clubJoinNum, p.position, p.uniform_No AS uniformNo,
+		       p.height, p.weight, TO_CHAR(p.join_Date, 'YYYY-MM-DD') AS joinDate,
+		       p.clubOwner_Key AS clubOwnerKey, c.club_Name AS clubName,
+		       p.status, m1.userName, m2.profile_photo, b.ball_image
+		FROM player p
+		JOIN club c ON c.clubOwner_Key = p.clubOwner_Key
+		JOIN my_club mc ON mc.clubOwner_Key = p.clubOwner_Key
+		JOIN clubjoin cj ON cj.clubJoin_Num = p.clubJoin_Num
+		JOIN member1 m1 ON m1.memberIdx = cj.memberIdx
+		LEFT OUTER JOIN member2 m2 ON m2.memberIdx = cj.memberIdx
+        LEFT OUTER JOIN MemberBall_main mbm ON mbm.memberIdx = m1.memberIdx
+		LEFT OUTER JOIN Ball b ON b.ball_idx = mbm.ball_idx
+	</select>
+
+
+</mapper>

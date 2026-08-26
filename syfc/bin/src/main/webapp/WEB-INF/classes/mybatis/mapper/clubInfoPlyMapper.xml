@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.ClubInfoPlyMapper">
+
+	
+	<select id="listClubInfoPly" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT clubowner_key, club_name, club_logo, club_region, club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
+		FROM Club
+		<where>
+			club_status = '1'
+		  	<if test="kwd != null and kwd != '' ">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+		ORDER BY clubowner_key DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<sql id="where-list">
+		<choose>
+			<when test="schType == 'all' ">
+				(INSTR(club_name, #{kwd}) &gt; 0
+						OR INSTR(club_region, #{kwd}) &gt; 0)
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM Club
+		<where>
+			club_status = '1'
+ 			<if test="kwd != null and kwd != '' ">
+ 				AND <include refid="where-list"/>
+ 			</if>
+ 		</where>
+	</select>
+	
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT clubowner_key, club_name, club_logo, club_region, club_status,
+			TO_CHAR(club_created, 'YYYY-MM-DD') club_created, club_content
+		FROM Club 
+		WHERE clubowner_key = #{clubowner_key} AND club_status = '1'
+	</select>
+
+	<select id="listPlayer" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, p.position, p.height, p.weight, p.join_date, p.status, m.userName,
+			m.userLevel, m.memberIdx AS memberIdx, c.club_logo, m2.profile_photo, pr.rating
+		FROM Player p 
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		LEFT JOIN Player_Record pr ON p.clubJoin_num = pr.clubJoin_num
+		WHERE p.clubowner_key = #{clubowner_key} AND c.club_status = '1'
+		ORDER BY p.clubjoin_num ASC
+	</select>
+	
+	<select id="findClubOwner" parameterType="Long" resultType="String">
+		SELECT userName
+		FROM clubOwner cq 
+		JOIN Member1 m ON cq.memberIdx = m.memberIdx
+		WHERE cq.clubowner_key = #{clubowner_key}
+	</select>
+
+	<select id="listPlayerInfo" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
+        	TO_CHAR(p.join_date, 'YYYY-MM-DD') AS join_date, p.status,
+			m.userName, TO_CHAR(m2.birth, 'YYYY-MM-DD') AS birth, tel, gender, profile_photo,
+			NVL(pr.goal, 0) AS goal, NVL(pr.assist, 0) AS assist, NVL(pr.yellow, 0) AS yellow, NVL(pr.red, 0) AS red
+		FROM Player p
+ 		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+	    JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+	    LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+	    LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+	    LEFT JOIN (
+	        SELECT
+	            clubjoin_num,
+	            SUM(NVL(goal, 0)) AS goal,
+	            SUM(NVL(assist, 0)) AS assist,
+	            SUM(NVL(yellow, 0)) AS yellow,
+	            SUM(NVL(red, 0)) AS red
+	        FROM Player_Record
+	        GROUP BY clubjoin_num
+	    ) pr ON p.clubJoin_num = pr.clubjoin_num
+	    WHERE p.clubowner_key = #{clubowner_key} AND c.club_status = '1'
+		ORDER BY p.clubjoin_num
+</select>
+	 
+	<select id="getclubowner" parameterType="Long" resultType="Long">
+		SELECT clubowner_key
+		FROM clubOwner
+		WHERE memberIdx = #{memberIdx}
+    
+		UNION
+    
+		SELECT p.clubowner_key
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num
+		JOIN Club c ON c.clubOwner_key = p.clubowner_key
+		WHERE cj.memberIdx = #{memberIdx}
+		AND c.club_status = '1'
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	 
+	 
+
+	<select id="listPlayers" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
+			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status, c.club_name,
+			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		<where>
+		club_status = '1'
+	  	<if test="kwd != null and kwd != '' ">
+			AND <include refid="where-lists"/>
+		</if>
+		</where>
+		ORDER BY p.clubjoin_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	<sql id="where-lists">
+		<choose>
+			<when test="schType == 'all' ">
+				(INSTR(c.club_name, #{kwd}) &gt; 0
+						OR INSTR(m.userName, #{kwd}) &gt; 0)
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="playerDataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM Player p
+		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
+		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
+		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
+		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
+		<where>
+			club_status = '1'
+			<if test="kwd != null and kwd != '' ">
+				AND <include refid="where-lists"/>
+			</if>
+		</where>
+	</select>
+
+</mapper>
