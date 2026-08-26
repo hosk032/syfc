@@ -8,7 +8,7 @@
 			tel, zip, addr1, addr2, gender, pref_position  -->
 	<select id="findByMemberIdx" parameterType="long" resultType="com.syfc.dto.PlayerMypageDTO">
 		SELECT memberIdx, email, TO_CHAR(birth, 'YYYY-MM-DD') AS birth, profile_photo, tel,
-			zip, addr1, addr2, gender, pref_position
+			zip, addr1, addr2, gender, pref_position, uniform_no, height, weight
 		FROM member2
 		WHERE memberIdx = #{memberIdx}
 	</select>
@@ -17,7 +17,9 @@
 	<update id="updateProfile" parameterType="com.syfc.dto.PlayerMypageDTO">
 		UPDATE member2 SET email = #{email}, birth = TO_DATE(#{birth}, 'YYYY-MM-DD'), 
 			profile_photo = #{profile_photo, jdbcType=VARCHAR}, tel = #{tel}, zip = #{zip}, addr1 = #{addr1}, 
-			addr2 = #{addr2}, gender = #{gender}, pref_position = #{pref_position}
+			addr2 = #{addr2}, gender = #{gender}, pref_position = #{pref_position}, 
+			uniform_no = #{uniform_no, jdbcType=INTEGER},
+        		height = #{height, jdbcType=INTEGER}, weight = #{weight, jdbcType=INTEGER}
 		WHERE memberIdx = #{memberIdx}
 	</update>
 	

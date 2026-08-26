@@ -31,8 +31,8 @@
 					<c:choose>
 
 						<c:when test="${not empty dto.profile_photo}">
-							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}" alt="프로필 사진"
-     							class="summary-profile-image">
+							<img src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}"
+     							alt="프로필 사진" class="summary-profile-image">
 						</c:when>
 						<c:otherwise>
 							<div class="summary-default-profile" aria-label="기본 프로필 이미지">							
@@ -250,7 +250,7 @@
 											<label class="form-label" for="height">키</label>
 											<div class="input-group">
 												<input type="number" id="height" class="form-control" name="height"
-													min="50" max="300" step="1" inputmode="numeric" placeholder="예: 175" value="${dto.height}">
+													min="50" max="300" step="1" inputmode="numeric" placeholder="예: 175" value="${dto.height == 0 ? '' : dto.height}">
 												<span class="input-group-text">cm</span>
 											</div>
 										</div>
@@ -259,7 +259,7 @@
 											<label class="form-label" for="weight">몸무게</label>
 											<div class="input-group">
 												<input type="number" id="weight" class="form-control" name="weight"
-													min="20" max="300" step="1" inputmode="numeric" placeholder="예: 70" value="${dto.weight}">
+													min="20" max="300" step="1" inputmode="numeric" placeholder="예: 70" value="${dto.weight == 0 ? '' : dto.weight}">
 												<span class="input-group-text">kg</span>
 											</div>
 										</div>
@@ -268,7 +268,7 @@
 											<label class="form-label" for="uniformNo">등번호</label>
 											<div class="input-group">
 												<input type="number" id="uniformNo" class="form-control" name="uniform_no"
-													min="1" max="99" step="1" inputmode="numeric" placeholder="예: 7" value="${dto.uniform_no}">
+													min="1" max="99" step="1" inputmode="numeric" placeholder="예: 7" value="${dto.uniform_no == 0 ? '' : dto.uniform_no}">
 												<span class="input-group-text">번</span>
 											</div>
 										</div>

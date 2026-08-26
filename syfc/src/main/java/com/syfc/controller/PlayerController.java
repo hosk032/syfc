@@ -127,10 +127,15 @@ public class PlayerController {
 			dto.setAddr1(req.getParameter("addr1"));
 			dto.setAddr2(req.getParameter("addr2"));
 			dto.setGender(req.getParameter("gender"));
-			dto.setUniform_no(Integer.parseInt(req.getParameter("uniform_no")));
-			dto.setWeight(Integer.parseInt(req.getParameter("weight")));
-			dto.setHeight(Integer.parseInt(req.getParameter("height")));
 			dto.setClubJoin_num(Long.parseLong(req.getParameter("clubJoin_num")));
+			
+			String uniformNo = req.getParameter("uniform_no");
+			String weight = req.getParameter("weight");
+			String height = req.getParameter("height");
+
+			dto.setUniform_no(uniformNo == null || uniformNo.trim().isEmpty() ? null : Integer.valueOf(uniformNo));
+			dto.setWeight(weight == null || weight.trim().isEmpty() ? null : Integer.valueOf(weight));
+			dto.setHeight(height == null || height.trim().isEmpty() ? null : Integer.valueOf(height));
 			
 			// 사진 파일처리
 			String root = session.getServletContext().getRealPath("/");
@@ -154,10 +159,6 @@ public class PlayerController {
 			
 			
 			service.updateProfile(dto);
-			
-			if(dto.getClubJoin_num() != 0) {
-				service.updateSelectProfile(dto);
-			}
 			
 			// DB 수정 성공 후 이름도 변경 적용 
 			info.setUserName(dto.getName());
@@ -212,15 +213,7 @@ public class PlayerController {
 		}
 		
 		PlayerMypageDTO dto = service.findProfile(info.getMemberIdx());
-		PlayerMypageDTO tmp = service.selectProfile(info.getMemberIdx());
 		BallDTO mainBall = ballService.findMainBall(info.getMemberIdx());
-		
-		if(tmp != null) {
-			dto.setUniform_no(tmp.getUniform_no());
-			dto.setHeight(tmp.getHeight());
-			dto.setWeight(tmp.getWeight());
-			dto.setClubJoin_num(tmp.getClubJoin_num());
-		}
 		
 		boolean playerUpdateVerified = Boolean.TRUE.equals(session.getAttribute("playerUpdateVerified"));
 		boolean passwordError = "true".equals(req.getParameter("passwordError"));
@@ -390,6 +383,10 @@ public class PlayerController {
 		//-----------------------------------------------
 		// selectBall 의 ball_idx를 dto 에 저장
 		dto.setBall_idx(selectedBall.getBall_idx());
+		
+		// 테스트용 RARE 공 
+		// dto.setBall_idx(15);
+		dto.setBall_idx(21);
 
 		memberBallPickService.insertMemberBallPick(dto);
 		
