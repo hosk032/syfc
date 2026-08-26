@@ -114,7 +114,6 @@
 						<div class="col-auto">
 							<select name="schType" class="form-select">
 								<option value="club_name" ${schType=="club_name"?"selected":""}>구단명</option>
-								<option value="match_date" ${schType=="match_date"?"selected":""}>경기일정</option>
 							</select>
 						</div>
 						<div class="col-auto">
@@ -138,6 +137,34 @@
 			
 	</section>
 </div>
+
+<script type="text/javascript">
+// 검색 키워드 입력란에서 엔터를 누른 경우 서버 전송 막기 
+document.addEventListener('DOMContentLoaded', () => {
+	const inputEL = document.querySelector('form input[name=kwd]'); 
+	inputEL.addEventListener('keydown', function (evt) {
+		if(evt.key === 'Enter') {
+			evt.preventDefault();
+	    	
+			searchList();
+		}
+	});
+});
+
+function searchList() {
+	const f = document.searchForm;
+	if(! f.kwd.value.trim()) {
+		return;
+	}
+	
+	const formData = new FormData(f);
+	let params = new URLSearchParams(formData).toString();
+	
+	let url = '${pageContext.request.contextPath}/clubmatch/clubMatchRank';
+	location.href = url + '?' + params;
+}
+</script>
+
 
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
