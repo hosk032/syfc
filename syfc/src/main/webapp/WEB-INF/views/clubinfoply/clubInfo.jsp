@@ -50,7 +50,7 @@
 					<table class="table table-hover player-table align-middle">
 						<thead class="table-light">
 							<tr>
-								<th width="120">번호</th>
+								<th width="120">등번호</th>
 								<th>이름</th>
 								<th width="200">선호 포지션</th>
 								<th width="240">선수 평점</th>
@@ -61,7 +61,7 @@
 								<c:when test="${not empty playerList}">
 									<c:forEach var="player" items="${playerList}">
 										<tr class="player-row">
-											<td>${player.clubjoin_num}</td>
+											<td>${player.uniform_no}</td>
 											<td>${player.userName}</td>
 											<td>${player.position}</td>
 											<td>${player.rating}</td>
