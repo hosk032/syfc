@@ -16,9 +16,7 @@
 
     <!-- 카카오/다음 우편번호 서비스 API CDN -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script defer>
-    const contextPath = "${pageContext.request.contextPath}";
-	</script> 
+
     
 </head>
 <body>
@@ -57,14 +55,14 @@
                     <div class="input-group full-width">
                         <label for="userId">아이디</label>
                         <div class="input-wrapper">
-                            <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요" required>
+                            <input type="text" id="userId" name="userId" placeholder="아이디: 영문자+숫자 3개씩 이상" required>
                             <button type="button" id="userIdCheckBtn" class="btn-sub">중복확인</button>
                             <span id="userIdMessage"></span>
                         </div>
                     </div>
                     <div class="input-group">
                         <label for="userPwd">비밀번호</label>
-                        <input type="password" id="userPwd" name="userPwd" placeholder="영문, 숫자 포함 8자 이상" required>
+                        <input type="password" id="userPwd" name="userPwd" placeholder="숫자 3개 이상" required>
                     </div>
                     <div class="input-group">
                         <label for="userPwdCheck">비밀번호 확인</label>

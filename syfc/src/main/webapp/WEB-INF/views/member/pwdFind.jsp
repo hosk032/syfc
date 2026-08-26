@@ -9,9 +9,6 @@
 <title>쌍용축구예약</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/member/common.css" />
-<script defer>
-    const contextPath = "${pageContext.request.contextPath}";
-</script>
 <script defer src="${pageContext.request.contextPath}/dist/js/common/idpwdfind.js"></script>
 </head>
 <body>
