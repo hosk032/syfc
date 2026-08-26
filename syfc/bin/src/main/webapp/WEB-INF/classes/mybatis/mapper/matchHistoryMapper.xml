@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.MatchHistoryMapper">
+	<!-- 내 경기 참가이력 컬럼: 경기번호, 경기일, 경기시간, 홈팀점수, 원정팀점수, 신청번호 -->
+	<select id="listMatchHistory" parameterType="long" resultType="com.syfc.dto.MatchHistoryDTO">
+		SELECT m.match_num AS matchNum, TO_CHAR(m.match_date, 'YYYY-MM-DD')AS matchDate,
+				m.match_time AS matchTime, m.home_score AS homeScore, 
+				m.away_score AS awayScore, m.apply_id AS applyId
+		FROM clubJoin cj
+		JOIN player_record pr ON pr.clubJoin_num = cj.clubJoin_num
+		JOIN match m ON m.match_num = pr.match_num
+		WHERE cj.memberIdx = #{memberIdx}
+	</select>
+	
+	<!-- 미니게임: 선수가 경기한 횟수 조회(레어공 확률 배분 분류시 필요) -->
+	<select id="countPlayedMatches" parameterType="long" resultType="int">
+		SELECT COUNT(DISTINCT pr.match_num) AS played_match_count
+		FROM Player_Record pr
+		JOIN clubJoin cj ON cj.clubJoin_num = pr.clubJoin_num
+		JOIN match m ON m.match_num = pr.match_num
+		WHERE cj.memberIdx = #{memberIdx} AND m.match_date &lt; TRUNC(SYSDATE)
+	</select>
+
+</mapper>

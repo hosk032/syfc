@@ -249,5 +249,5 @@
 
 </div>
 <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f716aa59f3d960482433e56089cebe0c&libraries=services">
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=kakaomapkey&libraries=services">
 </script>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.BallMapper">
+	<!-- 축구공 테이블: 대표 공 1개 조회 -->
+	<select id="findMainBall" parameterType="long" resultType="com.syfc.dto.BallDTO">
+		SELECT mbm.memberIdx, b.ball_idx, b.ball_name, 
+		    b.ball_image, b.ball_grade, b.ball_rating, 
+		    b.required_match_count, b.is_active,
+		    TO_CHAR(b.created_date, 'YYYY-MM-DD')AS created_date,
+		    TO_CHAR(b.update_date, 'YYYY-MM-DD')AS update_date
+		FROM MemberBall_main mbm
+		JOIN Ball b ON b.ball_idx = mbm.ball_idx
+		WHERE mbm.memberIdx = #{memberIdx}
+	</select>
+	
+	<!-- 뽑은 공 결과 조회 -->
+	<select id="findBallByIdx" parameterType="long" resultType="com.syfc.dto.BallDTO">
+		SELECT ball_idx, ball_name, ball_image, ball_grade
+		FROM Ball
+		WHERE ball_idx = #{ball_idx}
+	</select>
+	
+	<!-- 사용자가 뽑을 수 있는 공 목록 -->
+	<select id="findEligibleBalls" parameterType="int" resultType="com.syfc.dto.BallDTO">
+		SELECT ball_idx, ball_name, ball_image, 
+		    ball_grade, ball_rating, required_match_count
+		FROM Ball 
+		WHERE required_match_count &lt;= #{playedMatchCount} AND is_active = 1
+		ORDER BY ball_idx
+	</select>
+	
+	<!-- 프로필 대표 공 지정 -->
+	<insert id="insertProfileBall" parameterType="com.syfc.dto.MemberBallmainDTO">
+		INSERT INTO MemberBall_main(memberIdx, ball_idx)
+			VALUES(#{memberIdx}, #{ball_idx})
+	</insert>
+	
+	<!-- 대표공 변경 시 업데이트 -->
+	<update id="updateProfileBall" parameterType="com.syfc.dto.MemberBallmainDTO">
+		UPDATE MemberBall_main SET ball_idx = #{ball_idx}
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+	
+</mapper>

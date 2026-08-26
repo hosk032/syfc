@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syfc.mapper.MatchMapper">
+ 
+      <!-- 구단주의 경우  member1 -  clubOwner - clubOwner_key -->
+    <select id="findOwnerKeyByMemberIdx"
+            parameterType="Integer" resultType="long">
+        SELECT clubOwner_key
+        FROM clubOwner
+        WHERE memberIdx = #{memberIdx}
+    </select>
+
+
+    <!-- 선수의 경우  member1 - clubJoin - clubOwner_key -->
+    <select id="findClubOwnerKeyByMemberIdx"
+            parameterType="Integer" resultType="long">
+        SELECT clubOwner_key
+        FROM clubJoin
+        WHERE memberIdx = #{memberIdx}
+    </select>
+
+    <!-- 구단명 조회 -->
+    <select id="findClubName" parameterType="long" resultType="string">
+        SELECT club_name FROM Club
+        WHERE clubOwner_key = #{clubOwnerKey}
+    </select>
+
+    <!-- 홈 / 원정 구단주 번호 조회 -->
+    <select id="findHomeOwnerKey" parameterType="long" resultType="long">
+        SELECT clubOwner_key
+        FROM Match_Apply
+        WHERE apply_id = #{applyId}
+    </select>
+
+    <select id="findAwayOwnerKey" parameterType="long" resultType="long">
+        SELECT clubOwner_key2
+        FROM Match_Apply
+        WHERE apply_id = #{applyId}
+    </select>
+
+
+    <!-- 경기 신청 이력 조회 //현재는 안 쓰는 매퍼-->
+    <select id="listMatchHistory" parameterType="map"
+            resultType="com.syfc.dto.MatchApplyDTO">
+
+        SELECT
+              ma.apply_id, ma.apply_date, ma.apply_time, ma.status, ma.cancel_reason, 
+              ma.stadium_id, ma.clubOwner_key, ma.match_type1, ma.match_type2, 
+              ma.clubOwner_key2, ma.stadium_fee, ma.cmb_num, 
+              
+              home.club_name AS home_club_name, away.club_name AS away_club_name, 
+              
+              s.stadium_name AS stadium_name, s.region, s.addr1, s.addr2, s.zip, 
+              s.latitude, s.longitude, s.stadium_cost AS stadiumCost
+
+        FROM Match_Apply ma
+
+        INNER JOIN Club home ON ma.clubOwner_key = home.clubOwner_key
+
+        LEFT JOIN Club away ON ma.clubOwner_key2 = away.clubOwner_key
+
+        INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+
+        WHERE 1 = 1
+
+        <if test="clubOwnerKey != null">
+            AND (ma.clubOwner_key = #{clubOwnerKey}
+                OR ma.clubOwner_key2 = #{clubOwnerKey})
+        </if>
+
+        ORDER BY
+            ma.apply_date ASC,
+            ma.apply_time ASC,
+            ma.apply_id DESC
+
+    </select>
+
+
+    <!-- 상대팀 수락 -->
+    <update id="acceptOpponent" parameterType="map">
+        UPDATE Match_Apply
+        SET status = 1
+        WHERE apply_id = #{applyId}
+          AND clubOwner_key = #{homeOwnerKey}
+          AND clubOwner_key2 = #{opponentOwnerKey}
+          AND status = 2
+    </update>
+
+    <!-- 수락되지 않은 다른 상대팀 전부 거절 + 최초의 레코드(status 3)도 바꿔야 -->
+    <update id="rejectOtherOpponents" parameterType="map">
+        UPDATE Match_Apply
+        SET status = 6
+        WHERE (cmb_num = #{cmbNum}
+          AND clubOwner_key = #{homeOwnerKey}
+          AND clubOwner_key2 IS NOT NULL
+          AND clubOwner_key2 != #{opponentOwnerKey}
+          AND status = 2) OR (cmb_num = #{cmbNum} AND status = 3)
+    </update>
+
+    <!-- 상대팀 신청 거절 -->
+    <update id="rejectOpponent" parameterType="map">
+        UPDATE Match_Apply
+        SET status = 6
+        WHERE apply_id = #{applyId}
+          AND clubOwner_key = #{homeOwnerKey}
+          AND clubOwner_key2 = #{opponentOwnerKey}
+          AND status = 2
+    </update>
+
+    <!-- 경기 매칭 취소 -->
+    <update id="cancelMatch" parameterType="map">
+
+        UPDATE Match_Apply
+        SET status = 0, cancel_reason = #{cancelReason}
+        WHERE apply_id = #{applyId} AND status IN (1, 2, 3)
+    </update>
+    
+    <!-- 상대팀 수락 / 거절을 위한 경기 정보 조회-->
+    <select id="findMatchForDecision" parameterType="long"
+        resultType="com.syfc.dto.MatchApplyDTO">
+    SELECT apply_id, apply_date, apply_time, status, cancel_reason,
+        stadium_id, clubOwner_key, match_type1, match_type2,
+        clubOwner_key2, stadium_fee,cmb_num
+    FROM Match_Apply
+    WHERE apply_id = #{applyId}
+	</select>
+    
+
+    <!-- 원정팀 신청하기) 1. 기존 매칭 정보 조회 -->
+    <select id="findMatchForAwayApply" parameterType="map"
+            resultType="com.syfc.dto.MatchApplyDTO">
+        SELECT a.apply_id, a.apply_date, a.apply_time, a.status,
+            a.cancel_reason, a.stadium_id, a.clubOwner_key,
+            a.match_type1, a.match_type2, a.clubOwner_key2,
+            a.stadium_fee, a.cmb_num,
+            s.stadium_name,
+            c.club_name AS home_club_name
+
+        FROM Match_Apply a
+        LEFT JOIN Stadium s ON a.stadium_id = s.stadium_id
+        LEFT JOIN Club c ON a.clubOwner_key = c.clubOwner_key
+
+        WHERE a.apply_id = #{apply_id} AND a.status = 3
+          AND a.clubOwner_key2 IS NULL
+    </select> <!-- 즉 홈팀 상태가 3(매칭대기중)인 레코드 조회 -->
+
+
+    <!-- 2. 해당 매칭에 이미 원정팀으로 신청했는지 확인 -->
+	<select id="countAwayApply" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM Match_Apply a
+	    WHERE a.clubOwner_key = #{homeClubOwnerKey}
+	      AND a.clubOwner_key2 = #{clubOwner_key2}
+	      AND a.apply_date = #{apply_date}
+	      AND a.apply_time = #{apply_time}
+	      AND a.stadium_id = #{stadium_id}
+	      AND a.match_type1 = #{match_type1}
+	      AND a.match_type2 = #{match_type2}
+	      AND a.status IN (1, 2, 3)
+	</select>
+
+    <!-- 3. 신청하려는 구단이 홈팀과 동일한 팀인지 확인 -->
+    <select id="countSameClubApply" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM Match_Apply
+        WHERE cmb_num = #{cmb_num} AND clubOwner_key = #{clubOwner_key2}
+    </select>
+
+    <!-- 4. 마침내 원정팀 매칭 신청 //밑 두 개 insert는 하나의 트렌잭션으로 묶어야함 -->
+	<insert id="insertAwayClubMatchBoard"
+	        parameterType="com.syfc.dto.ClubMatchBoardDTO">
+	    <selectKey keyProperty="cmb_num" resultType="long" order="BEFORE">
+	        SELECT cmb_seq.NEXTVAL FROM dual
+	    </selectKey>
+	
+	    INSERT INTO clubMatchBoard
+	    (cmb_num, cmb_Subject, cmb_Content, cmb_HitCount, cmb_Reg_date, clubOwner_key)
+	    VALUES
+	    (#{cmb_num}, #{cmb_Subject}, #{cmb_Content}, 0, SYSDATE, #{clubOwner_key})
+	
+	</insert>
+	
+	<insert id="insertAwayMatchApply" parameterType="com.syfc.dto.MatchApplyDTO">
+	    INSERT INTO Match_Apply
+	    (apply_id, apply_date, apply_time, status, cancel_reason,
+	        stadium_id, clubOwner_key, match_type1, match_type2,
+	        clubOwner_key2, stadium_fee, cmb_num)
+	    VALUES
+	    (apply_id_seq.NEXTVAL, #{apply_date}, #{apply_time}, 2, NULL,
+	        #{stadium_id}, #{clubOwner_key}, #{match_type1}, #{match_type2},
+	        #{clubOwner_key2}, #{stadium_fee, jdbcType=INTEGER}, #{cmb_num})
+	</insert>
+    
+    
+    <!-- ③ 홈/원정 통합 경기신청 이력 조회 (페이징 기능 추가) -->
+	<select id="listMyMatchApply" parameterType="map"
+	        resultType="com.syfc.dto.MatchApplyDTO">
+	
+	    SELECT
+	        ma.apply_id, ma.apply_date, ma.apply_time, ma.status,
+	        ma.cancel_reason, ma.stadium_id, ma.clubOwner_key,
+	        ma.match_type1, ma.match_type2, ma.clubOwner_key2,
+	        ma.stadium_fee, ma.cmb_num,
+	        s.stadium_name, s.region, s.addr1, s.addr2, s.zip, s.latitude, s.longitude,
+	        home.club_name AS home_club_name,
+	        away.club_name AS away_club_name,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key} THEN 'HOME'
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key} THEN 'AWAY'
+	        END AS my_team_type,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key}
+	                THEN ma.clubOwner_key2
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key}
+	                THEN ma.clubOwner_key
+	        END AS opponent_clubOwner_key,
+	
+	        CASE
+	            WHEN ma.clubOwner_key = #{clubOwner_key}
+	                THEN away.club_name
+	            WHEN ma.clubOwner_key2 = #{clubOwner_key}
+	                THEN home.club_name
+	        END AS opponent_club_name
+	
+	    FROM Match_Apply ma
+	    INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+	    INNER JOIN Club home ON ma.clubOwner_key = home.clubOwner_key
+	    LEFT JOIN Club away ON ma.clubOwner_key2 = away.clubOwner_key
+	
+	    WHERE (ma.clubOwner_key = #{clubOwner_key}
+	            OR ma.clubOwner_key2 = #{clubOwner_key})
+	
+	    <if test="status != null and status != ''">
+	        AND ma.status = #{status}
+	    </if>
+	
+	    ORDER BY
+	        ma.apply_date DESC, ma.apply_time ASC, ma.apply_id DESC
+	    OFFSET #{offset} ROWS
+	    FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<!-- 경기신청 이력 전체 개수 -->
+	<select id="countMyMatchApply" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM Match_Apply ma
+	    WHERE (ma.clubOwner_key = #{clubOwner_key}
+	            OR ma.clubOwner_key2 = #{clubOwner_key})
+	    <if test="status != null and status != ''">
+	        AND ma.status = #{status}
+	    </if>
+	</select>
+	
+	<!-- 원정팀으로 참여하기 위해 기존 status3 경기 검색 -->
+	<select id="listWaitingMatches" parameterType="map"
+        resultType="com.syfc.dto.MatchApplyDTO">
+
+    SELECT
+        ma.apply_id, ma.apply_date, ma.apply_time, ma.status,
+        ma.stadium_id, ma.clubOwner_key, ma.match_type1,
+        ma.match_type2, ma.cmb_num,
+
+        s.stadium_name, s.region,
+
+        c.club_name AS home_club_name
+
+    FROM Match_Apply ma
+
+    INNER JOIN Stadium s ON ma.stadium_id = s.stadium_id
+
+    INNER JOIN Club c ON ma.clubOwner_key = c.clubOwner_key
+
+    WHERE ma.status = 3
+      AND ma.clubOwner_key2 IS NULL
+      AND TRUNC(ma.apply_date)
+          = TO_DATE(#{applyDate}, 'YYYY-MM-DD')
+      AND ma.apply_time = #{applyTime}
+      AND s.region = #{region}
+      AND ma.match_type1 = #{matchType1}
+      AND ma.match_type2 = #{matchType2}
+    ORDER BY ma.apply_id DESC
+
+</select>
+
+<!-- 경기일이 지났는데 상대팀이 매칭되지 않은 경기 자동 취소 -->
+<update id="cancelExpiredWaitingMatches">
+    UPDATE Match_Apply
+       SET status = 5,
+           cancel_reason = '경기일까지 상대팀이 매칭되지 않아 자동 취소되었습니다.'
+     WHERE status in (2, 3)
+       AND apply_date &lt; SYSDATE
+</update>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.ClubOwnerHistoryMapper">
+	<!-- 입단신청 결과 조회 -->
+	<select id="listClubOwnerHistory" parameterType="long" resultType="com.syfc.dto.ClubOwnerHistoryDTO">
+		SELECT cj.memberIdx, TO_CHAR(cj.clubJoin_date, 'YYYY-MM-DD')AS clubJoin_date,
+		       cj.clubJoin_result, cj.clubJoin_reason, c.club_name, cj.clubJoin_num
+		FROM clubJoin cj
+		JOIN club c ON c.clubOwner_key = cj.clubOwner_key
+		WHERE cj.memberIdx = #{memberIdx} AND c.club_status = 1
+	</select>
+
+	<!-- 입단신청 취소 -->
+	<delete id="cancelClubOwnerRequest" parameterType="map">
+		DELETE 
+		FROM clubJoin
+		WHERE clubJoin_num = #{clubJoin_num}
+		    AND memberIdx = #{memberIdx}
+		    AND clubJoin_result = 2
+	</delete>
+
+</mapper>

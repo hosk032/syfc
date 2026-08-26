@@ -1,0 +1,235 @@
+﻿@charset "UTF-8";
+
+/* ==========================================================================
+   0. FONT & GLOBAL RESET
+   ========================================================================== */
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", -apple-system, sans-serif;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #333333;
+}
+
+
+/* ==========================================================================
+   1. MAIN CONTAINER & HEADER
+   ========================================================================== */
+.writeContainer {
+    width: 100% !important;
+    max-width: 1024px !important;
+    margin: 40px auto 60px;
+    padding: 32px;
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+}
+
+.writeHeader {
+  margin-bottom: 30px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #6b4ba1; /* 메인 시그니처 보라색 */
+}
+
+.writeTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.writeTitle i {
+  color: #6b4ba1;
+  margin-right:5px;
+}
+
+.writeDesc {
+  font-size: 14px;
+  color: #868e96;
+  margin-top: 6px;
+}
+
+
+/* ==========================================================================
+   2. FORM & GROUP LAYOUT
+   ========================================================================== */
+.writeForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f1f3f5;
+  padding: 16px 0;
+}
+
+.formGroup.alignTop {
+  align-items: flex-start;
+}
+
+.formLabel {
+  width: 140px;
+  min-width: 120px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #495057;
+  padding-right: 12px;
+}
+
+.formGroup.alignTop .formLabel {
+  padding-top: 10px;
+}
+
+.formInputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+
+/* ==========================================================================
+   3. FORM CONTROLS (INPUT / SELECT / TEXTAREA)
+   ========================================================================== */
+.formControl {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #212529;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.formControl:focus {
+  background-color: #ffffff;
+  border-color: #6b4ba1;
+  box-shadow: 0 0 0 3px rgba(107, 75, 161, 0.12);
+}
+
+.selectControl {
+  max-width: 240px;
+  cursor: pointer;
+}
+
+.authorControl {
+  max-width: 200px;
+  background-color: #e9ecef;
+  color: #6c757d;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+.textareaControl {
+  min-height: 240px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+
+/* ==========================================================================
+   4. FILE INPUT CONTROL
+   ========================================================================== */
+.fileControl {
+  font-size: 13px;
+  color: #495057;
+  padding: 4px 0;
+}
+
+
+/* ==========================================================================
+   5. FORM ACTIONS (BUTTONS)
+   ========================================================================== */
+.formActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 35px;
+  width: 100%;
+}
+
+.btn {
+  height: 46px;
+  padding: 0 28px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSubmit {
+  background-color: #6b4ba1;
+  color: #ffffff;
+}
+
+.btnSubmit:hover {
+  background-color: #553982;
+  transform: translateY(-1px);
+}
+
+.btnReset {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.btnReset:hover {
+  background-color: #e9ecef;
+}
+
+.btnCancel {
+  background-color: #ffffff;
+  color: #868e96;
+  border: 1px solid #dee2e6;
+}
+
+.btnCancel:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+
+/* ==========================================================================
+   6. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+@media (max-width: 600px) {
+  .writeContainer {
+    padding: 20px 16px;
+  }
+
+  .formGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formLabel {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .selectControl,
+  .authorControl {
+    max-width: 100%;
+  }
+}

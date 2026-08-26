@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.MemberBallpickMapper">
+	<!-- 회원별 공 뽑기-->
+	<insert id="insertMemberBallPick" parameterType="com.syfc.dto.MemberBallpickDTO">
+		INSERT INTO MemberBall_pick 
+    			(memberBall_num, pickBall_date, memberIdx, ball_idx)
+		VALUES(memberBall_seq.NEXTVAL, TRUNC(SYSDATE), #{memberIdx}, #{ball_idx})
+	</insert>
+	
+	<!-- 이미 뽑은 공 확인 -->
+	<select id="countTodayPick" parameterType="long" resultType="int">
+		SELECT COUNT(*)
+		FROM MemberBall_pick
+		WHERE memberIdx = #{memberIdx} AND pickBall_date = TRUNC(SYSDATE)
+	</select>
+	
+	<!-- 회원이 획득한 공 도감 -->
+	<select id="findMemberBallCollection" parameterType="long" resultType="com.syfc.dto.BallDTO">
+		SELECT b.ball_idx, b.ball_name, 
+		    b.ball_image, b.ball_grade, COUNT(*) AS pickCount
+		FROM MemberBall_pick mbp
+		JOIN Ball b ON b.ball_idx = mbp.ball_idx
+		WHERE mbp.memberIdx = #{memberIdx}
+		GROUP BY b.ball_idx, b.ball_name, 
+			b.ball_image,b.ball_grade
+		ORDER BY b.ball_idx
+	</select>
+
+</mapper>

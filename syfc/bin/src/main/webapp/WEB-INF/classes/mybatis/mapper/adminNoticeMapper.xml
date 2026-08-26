@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.syfc.mapper.AdminNoticeMapper">
+
+	<!-- =========================================================
+		 공지사항 등록
+		 
+		 ★ board 테이블
+		 b_Type = 0 : 자유게시판
+		 b_Type = 1 : 공지사항
+		 ========================================================= -->
+	<insert id="insertNotice" parameterType="com.syfc.dto.AdminNoticeDTO">
+		INSERT INTO board(bNum, b_Subject, b_Content, b_HitCount, b_Reg_date, b_Block, b_Type, memberIdx)
+		VALUES(board_seq.NEXTVAL, #{subject}, #{content}, 0, SYSDATE, 0, 1, #{memberIdx})
+	</insert>
+	
+	
+	<!-- =========================================================
+		 검색 조건
+		 
+		 ★ 강사님 noticeMapper.xml 방식과 동일하게
+		   schType에 따라 if문으로 검색조건을 적용한다.
+		 ========================================================= -->
+	<sql id="where-list">
+		<if test="schType == 'all' ">
+			( INSTR(b.b_Subject, #{kwd}) &gt; 0
+				OR DBMS_LOB.INSTR(b.b_Content, #{kwd}) &gt; 0 )
+		</if>
+		
+		<if test="schType == 'subject' ">
+			INSTR(b.b_Subject, #{kwd}) &gt; 0
+		</if>
+		
+		<if test="schType == 'content' ">
+			DBMS_LOB.INSTR(b.b_Content, #{kwd}) &gt; 0
+		</if>
+		
+		<if test="schType == 'userName' ">
+			INSTR(m.userName, #{kwd}) &gt; 0
+		</if>
+		
+		<if test="schType == 'regDate' ">
+			( TO_CHAR(b.b_Reg_date, 'YYYY-MM-DD') = #{kwd}
+				OR TO_CHAR(b.b_Reg_date, 'YYYYMMDD') = #{kwd} )
+		</if>
+	</sql>
+	
+	
+	<!-- =========================================================
+		 데이터 개수
+		 
+		 ★ 공지사항이므로 b_Type = 1인 글만 가져온다.
+		 ========================================================= -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			b.b_Type = 1
+			AND b.b_Block = 0
+			
+			<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- =========================================================
+		 공지사항 리스트
+		 
+		 ★ OFFSET / FETCH FIRST를 이용해
+		   한 페이지에 정해진 개수만 가져온다.
+		 ========================================================= -->
+	<select id="listNotice" parameterType="map" resultType="com.syfc.dto.AdminNoticeDTO">
+		SELECT b.bNum AS num, b.b_Type AS type, b.memberIdx AS memberIdx,
+			m.userName AS userName, b.b_Subject AS subject,
+			b.b_HitCount AS hitCount, b.b_Block AS block,
+			TO_CHAR(b.b_Reg_date, 'YYYY-MM-DD') AS regDate
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		<where>
+			b.b_Type = 1
+			AND b.b_Block = 0
+			
+			<if test="kwd != null and kwd != ''">
+				AND <include refid="where-list"/>
+			</if>
+		</where>
+		ORDER BY b.b_Reg_date DESC, b.bNum DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	
+	<!-- =========================================================
+		 글보기
+		 
+		 자유게시판 글이 들어오지 않도록
+		 b_Type = 1 조건을 넣는다.
+		 ========================================================= -->
+	<select id="findById" parameterType="Long" resultType="com.syfc.dto.AdminNoticeDTO">
+		SELECT b.bNum AS num, b.memberIdx AS memberIdx,
+			m.userName AS userName, b.b_Subject AS subject,
+			b.b_Content AS content, b.b_Reg_date AS regDate,
+			b.b_HitCount AS hitCount, b.b_Type AS type,
+			b.b_Block AS block
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		WHERE b.bNum = #{bNum}
+			AND b.b_Type = 1
+			AND b.b_Block = 0
+	</select>
+	
+	
+	<!-- =========================================================
+		 조회수 증가
+		 ========================================================= -->
+	<update id="updateHitCount" parameterType="Long">
+		UPDATE board SET b_HitCount = NVL(b_HitCount, 0) + 1
+		WHERE bNum = #{bNum}
+			AND b_Type = 1
+	</update>
+	
+	
+	<!-- =========================================================
+		 이전글
+		 
+		 ★ 같은 공지사항 중 현재 글보다 최신 글
+		 ========================================================= -->
+	<select id="findByPrev" parameterType="map" resultType="com.syfc.dto.AdminNoticeDTO">
+		SELECT b.bNum AS num, b.b_Subject AS subject
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		WHERE b.b_Type = 1
+			AND b.b_Block = 0
+			AND b.bNum &gt; #{num}
+		ORDER BY b.bNum ASC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	
+	<!-- =========================================================
+		 다음글
+		 
+		 ★ 같은 공지사항 중 현재 글보다 이전 글
+		 ========================================================= -->
+	<select id="findByNext" parameterType="map" resultType="com.syfc.dto.AdminNoticeDTO">
+		SELECT b.bNum AS num, b.b_Subject AS subject
+		FROM board b
+		JOIN member1 m ON b.memberIdx = m.memberIdx
+		WHERE b.b_Type = 1
+			AND b.b_Block = 0
+			AND b.bNum &lt; #{num}
+		ORDER BY b.bNum DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	
+	<!-- =========================================================
+		 수정
+		 
+		 ★ 공지사항을 수정해도 b_Type은 1로 유지한다.
+		 ========================================================= -->
+	<update id="updateNotice" parameterType="com.syfc.dto.AdminNoticeDTO">
+		UPDATE board SET b_Subject = #{subject}, b_Content = #{content}, b_Type = 1
+		WHERE bNum = #{num}
+			AND b_Type = 1
+	</update>
+	
+	
+	<!-- =========================================================
+		 삭제
+		 
+		 ★ 공지사항은 블라인드가 아니라 실제 삭제
+		 ========================================================= -->
+	<delete id="deleteNotice" parameterType="Long">
+		DELETE FROM board
+		WHERE bNum = #{bNum}
+			AND b_Type = 1
+	</delete>
+
+</mapper>

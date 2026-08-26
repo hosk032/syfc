@@ -70,9 +70,9 @@
 	</select>
 
 	<select id="listPlayerInfo" parameterType="Long" resultType="com.syfc.dto.ClubInfoPlyDTO">
-		SELECT p.clubjoin_num, p.position, p.uniform_no, p.height, p.weight, p.clubowner_key,
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
         	TO_CHAR(p.join_date, 'YYYY-MM-DD') AS join_date, p.status,
-			m.userName, TO_CHAR(m2.birth, 'YYYY-MM-DD') AS birth, m2.tel, m2.gender, m2.profile_photo,
+			m.userName, TO_CHAR(m2.birth, 'YYYY-MM-DD') AS birth, tel, gender, profile_photo,
 			NVL(pr.goal, 0) AS goal, NVL(pr.assist, 0) AS assist, NVL(pr.yellow, 0) AS yellow, NVL(pr.red, 0) AS red
 		FROM Player p
  		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
@@ -112,16 +112,16 @@
 	 
 
 	<select id="listPlayers" parameterType="map" resultType="com.syfc.dto.ClubInfoPlyDTO">
-		SELECT p.clubjoin_num, p.position, p.uniform_no, p.height, p.weight, p.clubowner_key,
+		SELECT p.clubjoin_num, position, uniform_no, height, weight, p.clubowner_key,
 			TO_CHAR(join_date, 'YYYY-MM-DD') join_date, p.status, c.club_name,
-			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, m2.tel, m2.gender
+			m.userName, TO_CHAR(birth, 'YYYY-MM-DD') birth, tel, gender
 		FROM Player p
 		JOIN clubJoin cj ON p.clubJoin_num = cj.clubJoin_num 
 		JOIN Club c ON c.clubOwner_key = p.clubOwner_key
 		LEFT JOIN Member1 m ON cj.memberIdx = m.memberIdx
 		LEFT JOIN Member2 m2 ON m.memberIdx = m2.memberIdx
 		<where>
-		c.club_status = '1'
+		club_status = '1'
 	  	<if test="kwd != null and kwd != '' ">
 			AND <include refid="where-lists"/>
 		</if>
