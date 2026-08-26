@@ -14,9 +14,9 @@ public class PlayerMypageDTO {
 	private String gender;
 	private int pref_position;
 	private String name;
-	private int uniform_no;
-	private int height;
-	private int weight;
+	private Integer uniform_no;
+	private Integer height;
+	private Integer weight;
 	private long clubJoin_num;
 	
 	
@@ -26,22 +26,22 @@ public class PlayerMypageDTO {
 	public void setClubJoin_num(long clubJoin_num) {
 		this.clubJoin_num = clubJoin_num;
 	}
-	public int getUniform_no() {
+	public Integer getUniform_no() {
 		return uniform_no;
 	}
-	public void setUniform_no(int uniform_no) {
+	public void setUniform_no(Integer uniform_no) {
 		this.uniform_no = uniform_no;
 	}
-	public int getHeight() {
+	public Integer getHeight() {
 		return height;
 	}
-	public void setHeight(int height) {
+	public void setHeight(Integer height) {
 		this.height = height;
 	}
-	public int getWeight() {
+	public Integer getWeight() {
 		return weight;
 	}
-	public void setWeight(int weight) {
+	public void setWeight(Integer weight) {
 		this.weight = weight;
 	}
 	public String getName() {
