@@ -167,3 +167,41 @@
 .club-list-footer a:hover {
     color: #6f42c1;
 }
+
+/* 페이지 전환 시 스크롤바 생성/소멸로 인한 좌우 흔들림 차단 */
+html {
+    overflow-y: scroll;
+}
+
+/* 페이징 영역 높이 및 규격 고정 */
+.board-number {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 50px !important;
+    margin-top: 20px !important;
+    width: 100% !important;
+    text-align: center !important; /* 내부 텍스트 및 인라인 요소 중앙 정렬 */
+}
+
+/* paging 내부의 감싸는 div/ul 등이 있을 경우 대응 */
+.board-number > * {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+}
+
+/* 실제 페이지 번호 버튼들 스타일 */
+.board-number a, 
+.board-number span,
+.board-number strong {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    line-height: 1 !important;
+    margin: 0 2px !important;
+    box-sizing: border-box !important;
+}

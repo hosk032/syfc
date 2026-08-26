@@ -84,9 +84,8 @@
 					<button type="button" class="btn btn-light" style="display: none;" onclick="location.href='${pageContext.request.contextPath}/';">글올리기</button>
 				</div>
 			</div>
-			
 			<!-- 페이징 -->
-			<div class="club-list-footer my-3">
+			<div class="board-number">
 				${dataCount == 0 ? "" : paging}
 			</div>
 		</section>

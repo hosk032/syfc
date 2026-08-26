@@ -11,7 +11,7 @@
 		<where>
 			club_status = '1'
 		  	<if test="kwd != null and kwd != '' ">
-					<include refid="where-list"/>
+				AND <include refid="where-list"/>
 			</if>
 		</where>
 		ORDER BY clubowner_key DESC
@@ -37,7 +37,7 @@
 		<where>
 			club_status = '1'
  			<if test="kwd != null and kwd != '' ">
- 				<include refid="where-list"/>
+ 				AND <include refid="where-list"/>
  			</if>
  		</where>
 	</select>
@@ -123,7 +123,7 @@
 		<where>
 		club_status = '1'
 	  	<if test="kwd != null and kwd != '' ">
-				<include refid="where-lists"/>
+			AND <include refid="where-lists"/>
 		</if>
 		</where>
 		ORDER BY p.clubjoin_num DESC
@@ -152,7 +152,7 @@
 		<where>
 			club_status = '1'
 			<if test="kwd != null and kwd != '' ">
-				<include refid="where-lists"/>
+				AND <include refid="where-lists"/>
 			</if>
 		</where>
 	</select>

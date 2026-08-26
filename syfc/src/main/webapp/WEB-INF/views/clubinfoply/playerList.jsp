@@ -122,8 +122,8 @@
 			</div>
 			
 			<!-- 페이징 -->
-			<div class="club-list-footer my-3">
-				${dataCount == 0 ? "" : paging}
+			<div class="board-number d-flex justify-content-center align-items-center w-100 text-center">
+			    ${dataCount == 0 ? "" : paging}
 			</div>
 		</section>
 	</div>
