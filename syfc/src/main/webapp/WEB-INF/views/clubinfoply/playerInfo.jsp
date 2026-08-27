@@ -72,10 +72,13 @@
 				                                    <c:choose>
 				                                        <c:when test="${not empty dto.profile_photo}">
 				                                            <img
-				                                                src="${pageContext.request.contextPath}/uploads/player/${dto.profile_photo}"
+				                                                src="${pageContext.request.contextPath}/uploads/member/${dto.profile_photo}"
 				                                                class="player-img"
-				                                                onerror="this.outerHTML='<span class=\'club-default-logo\'><i class=\"fa-solid fa-user\"></i></span>';"
-				                                                alt="프로필">
+				                                                alt="프로필"
+				                                                onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+															<span class="club-default-logo" hidden>
+																<i class="fa-solid fa-user"></i>
+															</span>
 				                                        </c:when>
 				
 				                                        <c:otherwise>
